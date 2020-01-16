@@ -7,6 +7,7 @@
 
 package frc.robot.Component;
 
+import frc.robot.Component.Data.RobotPosition;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
@@ -100,6 +101,8 @@ public class Swerve {
     private ShifterMode _shiftMode = ShifterMode.Manual;
     private double _speedRatio = 0.5;
     private double _roationSpeedRatio = 0.5;
+
+    private RobotPosition _position = new RobotPosition(new Vector2d(0, 0));
 
     private boolean _shiftButtonLastState = false;
     private boolean _shiftState = false;
@@ -217,6 +220,10 @@ public class Swerve {
     {
         return (_IMU.getGyroAngleZ() / 180) * 3.1415;
     }
+    public Vector2d GetPostion()
+    {
+        return _position.GetPosition();
+    }
 
     int f = 0;
     public void DoSwerve()
@@ -310,6 +317,8 @@ public class Swerve {
             }
             break;
         }
+
+        _position.Evaluate(Mathf.RotatePoint(new Vector2d(_IMU.getAccelInstantX(), _IMU.getAccelInstantY()), GetHeading()), Timer.GetDeltaTime());
 
         _isRotationAxisOverriden = false;
         _isVerticalAxisOverride = false;

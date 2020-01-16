@@ -1,6 +1,7 @@
 package frc.robot.Component.Data;
 
 import edu.wpi.first.wpilibj.drive.Vector2d;
+import frc.robot.Math.Mathf;
 
 public class RobotPosition 
 {

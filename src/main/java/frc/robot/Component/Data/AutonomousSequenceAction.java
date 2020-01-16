@@ -35,7 +35,8 @@ public class AutonomousSequenceAction
         RotateToward,
         Rotate,
         Translate,
-        MoveTo
+        MoveTo,
+        ShiftTo
     }
     
     private ActionType _type;
@@ -64,6 +65,10 @@ public class AutonomousSequenceAction
     public static AutonomousSequenceAction CreateMoveTo(double Time, Vector2d TargetPosition)
     {
         return new AutonomousSequenceAction(Time, TargetPosition, ActionType.MoveTo);
+    }
+    public static AutonomousSequenceAction CreateShiftTo(double Time, double Gear)
+    {
+        return new AutonomousSequenceAction(Time, Gear, ActionType.ShiftTo);
     }
 
     public ActionType GetType()

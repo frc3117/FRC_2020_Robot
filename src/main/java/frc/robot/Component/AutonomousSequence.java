@@ -7,7 +7,11 @@
 
 package frc.robot.Component;
 
+import edu.wpi.first.wpilibj.drive.Vector2d;
+import frc.robot.Robot;
 import frc.robot.Component.Data.AutonomousSequenceAction;
+import frc.robot.Math.Mathf;
+import frc.robot.Math.Timer;
 
 public class AutonomousSequence 
 {
@@ -38,6 +42,10 @@ public class AutonomousSequence
         int i = 0;
         double waitTime = 0;
 
+        double targetAngle = 0;
+        Vector2d targetPosition = new Vector2d(0, 0);
+        int targetShiftGear = 0;
+
         while(_isRunning)
         {
             try 
@@ -58,29 +66,42 @@ public class AutonomousSequence
                     switch(currentAction.GetType())
                     {
                         case Wait:
-
+                        //Nothing Else
                         break;
 
                         case RotateToward:
-
+                        targetAngle = currentAction.GetNumber();
                         break;
 
                         case Rotate:
-
+                        targetAngle += currentAction.GetNumber();                   
                         break;
 
                         case Translate:
-
+                        targetPosition = new Vector2d(targetPosition.x + currentAction.GetVector().x, targetPosition.y + currentAction.GetVector().y);
                         break;
 
                         case MoveTo:
+                        targetPosition = currentAction.GetVector();
+                        break;
 
+                        case ShiftTo:
+                        targetShiftGear = (int)currentAction.GetNumber();
                         break;
                     }
 
                     i++;
                 }
             }
+
+            Vector2d pos = Robot.SwerveDrive.GetPostion();
+
+            Robot.SwerveDrive.OverrideRotationAxis(Robot.DirectionHoldPID.Evaluate(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), targetAngle), Timer.GetDeltaTime()));
+
+            Robot.SwerveDrive.OverrideHorizontalAxis(Robot.PositionHoldPID.Evaluate(targetPosition.x - pos.x, Timer.GetDeltaTime()));
+            Robot.SwerveDrive.OverrideVerticalAxis(Robot.PositionHoldPID.Evaluate(targetPosition.y - pos.y, Timer.GetDeltaTime()));
+
+            Robot.SwerveDrive.OverrideShift(targetShiftGear);
         }
     }
 }
