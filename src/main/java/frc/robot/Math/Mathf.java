@@ -6,6 +6,9 @@ import java.lang.Math;
 
 public class Mathf 
 {
+    public final static double DEG2RAD = 0.0174533;
+    public final static double RAD2DEG = 57.2958;
+
     public static double Clamp(double value, double min, double max)
     {
         return Math.max(min, Math.min(max, value));
@@ -20,6 +23,10 @@ public class Mathf
         return new Vector2d(x, ((p2.y - p2.y) * ((x - p1.x) / (p2.x - p1.x))) + p1.y);
     }
 
+    public static double DeltaAngle(double Source, double Target)
+    {
+        return DeltaAngle(new Polar(1, Source).vector(), new Polar(1, Target).vector());
+    }
     public static double DeltaAngle(Vector2d Source, Vector2d Target)
     {
         double SourceAngle = Polar.fromVector(Source).azymuth;
