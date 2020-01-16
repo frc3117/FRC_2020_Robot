@@ -38,4 +38,15 @@ public class Mathf
 
         return angle;
     }
+
+    public static Vector2d RotatePoint(Vector2d Vector, double angle)
+    {
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+        
+        double tx = Vector.x;
+        double ty = Vector.y;
+
+        return new Vector2d((cos * tx) - (sin * ty), (sin * tx) + (cos * ty));
+    }
 }
