@@ -7,14 +7,13 @@
 
 package frc.robot;
 
+import frc.robot.Component.BallIntake;
 import frc.robot.Component.BallThrower;
 import frc.robot.Component.ColorSensor;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
 import frc.robot.Component.Data.WheelData;
-import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
-import frc.robot.Math.Polar;
 import frc.robot.Math.Timer;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -28,6 +27,7 @@ public class Robot extends TimedRobot {
 
   private Swerve _swerve;
   private BallThrower _thrower;
+  private BallIntake _intake;
 
   private PID _directionHoldPID = new PID(3, 0, 0);
 
@@ -54,6 +54,7 @@ public class Robot extends TimedRobot {
     _swerve.InitIMU();
 
     _thrower = new BallThrower(_swerve, 4, 2);
+    _intake = new BallIntake();
   }
 
   
@@ -75,7 +76,9 @@ public class Robot extends TimedRobot {
 
     //Execute Needed Component
     _PneumaticSystem.CheckPressure();
+    
     _thrower.DoThrower();
+    _intake.DoIntake();
     _swerve.DoSwerve();
     //_ColorSensor.GetColor();
   } 
