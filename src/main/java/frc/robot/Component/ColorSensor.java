@@ -12,6 +12,7 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C.Port;
 
 public class ColorSensor 
@@ -64,6 +65,8 @@ public class ColorSensor
 
     private String _lastColor = "";
 
+    private String _requiredColor = "";
+
     public void SetConfidence(double Confidence)
     {
         colorMatch.setConfidenceThreshold(Confidence);
@@ -89,6 +92,47 @@ public class ColorSensor
             return true;
         }
         return false;
+    }
+
+    public boolean CheckRequiredColor()
+    {
+        String gameData = DriverStation.getInstance().getGameSpecificMessage();
+        
+        if(_requiredColor != "")
+        {
+            return true;
+        }
+
+        if(gameData.length() > 0)
+        {
+            switch (gameData.charAt(0))
+            {
+                case 'B' :
+                _requiredColor = "blue";
+                break;
+
+                case 'G' :
+                _requiredColor = "green";
+                break;
+
+                case 'R' :
+                _requiredColor = "red";
+                break;
+
+                case 'Y' :
+                _requiredColor = "yellow";
+                break;
+
+                default :
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public String GetColor()
