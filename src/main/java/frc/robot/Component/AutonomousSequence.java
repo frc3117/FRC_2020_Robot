@@ -45,7 +45,7 @@ public class AutonomousSequence
         double waitTime = 0;
 
         double targetAngle = 0;
-        Vector2d targetPosition = new Vector2d(0, 0);
+        Vector2d targetPosition = Robot.SwerveDrive.GetPostion();
         int targetShiftGear = 0;
 
         Vector2d lookAtTarget = new Vector2d(0, 0);
