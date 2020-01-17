@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
 import frc.robot.Component.BallIntake;
@@ -34,7 +27,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    
     //Initializing the SwerveDrive drivetrain
     WheelData[] data = {
       new WheelData(15, 7, 3, 3, new Vector2d(1, 1), 3.6768434- (3.1415/2.0)),

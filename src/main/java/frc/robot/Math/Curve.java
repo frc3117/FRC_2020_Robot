@@ -7,6 +7,8 @@
 
 package frc.robot.Math;
 
+import java.util.function.Function;
+
 import edu.wpi.first.wpilibj.drive.Vector2d;
 
 public class Curve 
@@ -14,6 +16,18 @@ public class Curve
     public Curve(Vector2d... Points)
     {
         _points = Points.clone();
+    }
+    public Curve(int res, double min, double max, Function<Double, Double> Equation)
+    {
+        _points = new Vector2d[res];
+
+        for(int i = 0; i < res; i++)
+        {
+            double x = Mathf.Lerp(min, max, i / (double)res);
+            double y = Equation.apply(x);
+
+            _points[i] = new Vector2d(x, y);
+        }
     }
 
     private Vector2d[] _points;
