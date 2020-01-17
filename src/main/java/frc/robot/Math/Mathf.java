@@ -39,6 +39,11 @@ public class Mathf
         return angle;
     }
 
+    public static double GetAngle(Vector2d p1, Vector2d p2)
+    {
+        return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+    }
+
     public static Vector2d RotatePoint(Vector2d Vector, double angle)
     {
         double sin = Math.sin(angle);
