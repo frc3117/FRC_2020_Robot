@@ -60,6 +60,8 @@ public class AutonomousSequence
                 waitTime -= 0.02;
             } catch (Exception e) {}
 
+            Timer.Calculate();
+
             if(waitTime <= 0)
             {
                 if(i < _actions.length)
@@ -124,6 +126,8 @@ public class AutonomousSequence
             Robot.SwerveDrive.OverrideVerticalAxis(Robot.PositionHoldPID.Evaluate(targetPosition.y - pos.y, Timer.GetDeltaTime()));
 
             Robot.SwerveDrive.OverrideShift(targetShiftGear);
+
+            Robot.SwerveDrive.DoSwerve();
         }
     }
 }
