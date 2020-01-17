@@ -225,6 +225,11 @@ public class Swerve {
         return _position.GetPosition();
     }
 
+    public void SetPosition(Vector2d Position)
+    {
+        _position.SetPosition(Position);
+    }
+
     int f = 0;
     public void DoSwerve()
     {

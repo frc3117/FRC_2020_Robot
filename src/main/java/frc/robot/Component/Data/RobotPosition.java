@@ -1,7 +1,6 @@
 package frc.robot.Component.Data;
 
 import edu.wpi.first.wpilibj.drive.Vector2d;
-import frc.robot.Math.Mathf;
 
 public class RobotPosition 
 {
@@ -29,6 +28,11 @@ public class RobotPosition
 
         _velocity.x += Acceleration.x * DT;
         _velocity.y += Acceleration.y * DT;
+    }
+
+    public void SetPosition(Vector2d Position)
+    {
+        _pos = Position;
     }
 
     public void Reset()

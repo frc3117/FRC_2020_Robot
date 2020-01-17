@@ -15,8 +15,10 @@ import frc.robot.Math.Timer;
 
 public class AutonomousSequence 
 {
-    public AutonomousSequence(AutonomousSequenceAction... Actions)
+    public AutonomousSequence(Vector2d InitialPosition, AutonomousSequenceAction... Actions)
     {
+        Robot.SwerveDrive.SetPosition(InitialPosition);
+
         _actions = Actions.clone();
     }
 
