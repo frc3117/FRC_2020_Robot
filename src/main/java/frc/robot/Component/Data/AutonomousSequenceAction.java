@@ -34,6 +34,7 @@ public class AutonomousSequenceAction
         Wait,
         RotateToward,
         Rotate,
+        LookAt,
         Translate,
         MoveTo,
         ShiftTo
@@ -57,6 +58,10 @@ public class AutonomousSequenceAction
     public static AutonomousSequenceAction CreateRotate(double Time, double Angle)
     {
         return new AutonomousSequenceAction(Time, Angle, ActionType.Rotate);
+    }
+    public static AutonomousSequenceAction CreateLookAt(double Time, Vector2d Point)
+    {
+        return new AutonomousSequenceAction(Time, Point, ActionType.LookAt);
     }
     public static AutonomousSequenceAction CreateTranslate(double Time, Vector2d Translation)
     {

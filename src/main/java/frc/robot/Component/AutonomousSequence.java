@@ -46,6 +46,9 @@ public class AutonomousSequence
         Vector2d targetPosition = new Vector2d(0, 0);
         int targetShiftGear = 0;
 
+        Vector2d lookAtTarget = new Vector2d(0, 0);
+        boolean isLookAt = false;
+
         while(_isRunning)
         {
             try 
@@ -71,10 +74,20 @@ public class AutonomousSequence
 
                         case RotateToward:
                         targetAngle = currentAction.GetNumber();
+
+                        isLookAt = false;
                         break;
 
                         case Rotate:
-                        targetAngle += currentAction.GetNumber();                   
+                        targetAngle += currentAction.GetNumber();      
+                        
+                        isLookAt = false;
+                        break;
+
+                        case LookAt:
+                        isLookAt = true;
+
+                        lookAtTarget = currentAction.GetVector();
                         break;
 
                         case Translate:
@@ -95,6 +108,13 @@ public class AutonomousSequence
             }
 
             Vector2d pos = Robot.SwerveDrive.GetPostion();
+       
+            if(isLookAt)
+            {
+                Vector2d relative = new Vector2d(lookAtTarget.x - pos.x, lookAtTarget.y - pos.y);
+
+                targetAngle = Math.atan2(relative.y, relative.x);
+            }
 
             Robot.SwerveDrive.OverrideRotationAxis(Robot.DirectionHoldPID.Evaluate(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), targetAngle), Timer.GetDeltaTime()));
 
