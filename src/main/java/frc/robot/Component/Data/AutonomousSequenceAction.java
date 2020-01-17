@@ -80,7 +80,6 @@ public class AutonomousSequenceAction
     {
         return _type;
     }
-
     public double GetTime()
     {
         return _time;

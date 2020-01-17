@@ -6,8 +6,11 @@ import java.lang.Math;
 
 public class Mathf 
 {
-    public final static double DEG2RAD = 0.0174533;
-    public final static double RAD2DEG = 57.2958;
+    public final static double DEG_2_RAD = 0.0174533;
+    public final static double RAD_2_DEG = 57.2958;
+
+    public final static double METER_2_FEET = 3.28084;
+    public final static double FEET_2_METER = 0.3048;
 
     public static double Clamp(double value, double min, double max)
     {
