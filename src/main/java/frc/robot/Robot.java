@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
     SwerveDrive.InitIMU();
 
     Thrower = new BallThrower(SwerveDrive, 4, 2);
-    Intake = new BallIntake();
+    Intake = new BallIntake(0.25, 0, 0, 0);
   }
 
   
@@ -56,6 +56,7 @@ public class Robot extends TimedRobot {
     super.teleopInit();
 
     Thrower.Init();
+    Intake.InitIntake();
     SwerveDrive.RecalibrateIMU();
     Timer.Init();
   }
@@ -64,7 +65,6 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() { 
     //Calculate the first time after use GetDeltaTime()
     Timer.Calculate();
-
 
     //Execute Needed Component
     _PneumaticSystem.CheckPressure();

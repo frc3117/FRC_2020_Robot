@@ -11,15 +11,15 @@ import edu.wpi.first.wpilibj.Compressor;
 
 public class PneumaticSystem 
 {
-    public PneumaticSystem()
+    private static Compressor _compressor;
+    private static boolean _isRuning;
+
+    public static void Init()
     {
         _compressor = new Compressor();
     }
 
-    private Compressor _compressor;
-    private boolean _isRuning;
-
-    public void CheckPressure()
+    public static void CheckPressure()
     {
         if(_isRuning && _compressor.getPressureSwitchValue())
         {
