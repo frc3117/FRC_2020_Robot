@@ -11,7 +11,6 @@ public class RobotPosition
 
     private Vector2d _pos = new Vector2d(0, 0);
     private Vector2d _velocity = new Vector2d(0, 0);
-    private Vector2d _lastAccel = new Vector2d(0, 0);
 
     public Vector2d GetPosition()
     {
@@ -32,8 +31,6 @@ public class RobotPosition
 
         _velocity.x += xAccel * DT;
         _velocity.y += yAccel * DT;
-
-        _lastAccel = new Vector2d(Acceleration.x, Acceleration.y);
     }
 
     public void SetPosition(Vector2d Position)
@@ -45,6 +42,5 @@ public class RobotPosition
     {
         _pos = new Vector2d(0, 0);
         _velocity = new Vector2d(0, 0);
-        _lastAccel = new Vector2d(0, 0);
     }
 }

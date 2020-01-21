@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.drive.Vector2d;
 public class Robot extends TimedRobot {
 
   private final ColorSensor _ColorSensor = new ColorSensor(7);
-  private final PneumaticSystem _PneumaticSystem = new PneumaticSystem();
 
   public static Swerve SwerveDrive;
   public static BallThrower Thrower;
@@ -55,9 +54,11 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     super.teleopInit();
 
+    SwerveDrive.RecalibrateIMU();
     Thrower.Init();
     Intake.InitIntake();
-    SwerveDrive.RecalibrateIMU();
+
+    PneumaticSystem.Init();
     Timer.Init();
   }
 
@@ -67,7 +68,7 @@ public class Robot extends TimedRobot {
     Timer.Calculate();
 
     //Execute Needed Component
-    _PneumaticSystem.CheckPressure();
+    PneumaticSystem.CheckPressure();
     
     Thrower.DoThrower();
     Intake.DoIntake();

@@ -59,4 +59,8 @@ public class LimeLight {
     {
         table.getEntry("pipeline").setNumber(id);
     }
+    public int GetCurrentPipeline()
+    {
+        return (int)table.getEntry("getpipe").getDouble(0);
+    }
 }
