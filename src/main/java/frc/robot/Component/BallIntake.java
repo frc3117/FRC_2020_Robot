@@ -13,7 +13,7 @@ public class BallIntake
         _idleSpeed = IdleSpeed;
 
         _controller = new MotorController(MotorControllerType.TalonSRX, ControlerChannel, false);
-        _encoder = new Encoder(channelA, channelB);
+        //_encoder = new Encoder(channelA, channelB);
     }
 
     private double _idleSpeed;

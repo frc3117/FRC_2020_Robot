@@ -17,10 +17,12 @@ import frc.robot.Math.Timer;
 import com.analog.adis16448.frc.ADIS16448_IMU;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.Vector2d;
@@ -32,6 +34,7 @@ public class Swerve {
 
         _driveMotor = new CANSparkMax[_wheelCount];
         _directionMotor = new TalonSRX[_wheelCount];
+        _driveEncoder = new Encoder[_wheelCount];
         _directionEncoder = new AnalogInput[_wheelCount];
         _shifterValve = new Solenoid[_wheelCount];
 
@@ -48,7 +51,8 @@ public class Swerve {
         {
             _driveMotor[i] = new CANSparkMax(WheelsData[i].DriveChannel, MotorType.kBrushless);
             _directionMotor[i] = new TalonSRX(WheelsData[i].DirectionChannel);
-            _directionEncoder[i] = new AnalogInput(WheelsData[i].EncoderChannel);
+            _driveEncoder[i] = new Encoder(WheelsData[i].DriveEncoderA, WheelsData[i].DriveEncoderB);
+            _directionEncoder[i] = new AnalogInput(WheelsData[i].DirectionEncoderChannel);
             _shifterValve[i] = new Solenoid(WheelsData[i].ShifterChannel);
             _shifterValve[i].set(false);
 
@@ -82,6 +86,7 @@ public class Swerve {
 
     private CANSparkMax[] _driveMotor;
     private TalonSRX[] _directionMotor;
+    private Encoder[] _driveEncoder;
     private AnalogInput[] _directionEncoder;
     private Solenoid[] _shifterValve;
     private Vector2d[] _rotationVector;
@@ -187,6 +192,11 @@ public class Swerve {
         _directionPID[ID].SetGain(Kp, Ki, Kd);
     }
 
+    public boolean GetGear()
+    {
+        return _shiftState;
+    }
+
     public void OverrideShift(int Speed)
     {
         if(Speed == 0)
@@ -230,11 +240,38 @@ public class Swerve {
         _position.SetPosition(Position);
     }
 
+    public Vector2d GetWheelVector(int ID)
+    {
+        double Angle = ((_directionEncoder[ID].getValue() / 4096f) * 2 * 3.1415f) - _angleOffset[ID] - 3.1415;
+
+        if(Angle > 3.1415)
+        {
+            Angle -= 2 * 3.1415;
+        }
+        if(Angle < -3.1415)
+        {
+            Angle += 2 * 3.1415;
+        }
+
+        Vector2d vec = new Polar((_driveEncoder[ID].getRate() / 256.) * 3.1415 * 2, Angle).vector();
+
+        //vec.x *= _flipDriveMultiplicator[ID];
+        //vec.y *= _flipDriveMultiplicator[ID];
+
+        return vec;
+    }
+    public int GetWheelCount()
+    {
+        return _wheelCount;
+    }
+
     int f = 0;
     public void DoSwerve()
     {
         double dt = Timer.GetDeltaTime();
        
+        //System.out.println(_driveEncoder[0].getRate());
+
         if(_isShiftOverriden)
         {
             if(_shiftState != _overridenShiftState)

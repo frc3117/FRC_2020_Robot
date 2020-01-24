@@ -29,10 +29,13 @@ public class AutonomousSequence
 
     public void StartSequence()
     {
-        _thread = new Thread(() -> AutonomousThread());
+        //_thread = new Thread(() -> AutonomousThread());
 
         _isRunning = true;
-        _thread.start();
+
+        AutonomousThread();
+    
+        //_thread.start();
     }
     public void StopSequencec()
     {
@@ -53,9 +56,11 @@ public class AutonomousSequence
 
         while(_isRunning)
         {
+            System.out.println(waitTime);
+
             try 
             {
-                Thread.sleep(20);
+                edu.wpi.first.wpilibj.Timer.delay(0.02);
 
                 waitTime -= 0.02;
             } catch (Exception e) {}
@@ -111,8 +116,8 @@ public class AutonomousSequence
                 }
             }
 
-            Vector2d pos = Robot.SwerveDrive.GetPostion();
-       
+            Vector2d pos = Robot.Odometry.GetPosition();          
+
             if(isLookAt)
             {
                 Vector2d relative = new Vector2d(lookAtTarget.x - pos.x, lookAtTarget.y - pos.y);
@@ -128,6 +133,7 @@ public class AutonomousSequence
             Robot.SwerveDrive.OverrideShift(targetShiftGear);
 
             Robot.SwerveDrive.DoSwerve();
+            Robot.Odometry.DoOdometry();
         }
     }
 }

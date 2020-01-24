@@ -13,11 +13,13 @@ public class WheelData
 {
     public WheelData() {}
 
-    public WheelData(int driveChannel, int directionChannel, int encoderChannel, int shifterChannel, Vector2d wheelPosition, double angleOffset)
+    public WheelData(int driveChannel, int directionChannel, Vector2d driveEncoder, int directionEncoderChannel, int shifterChannel, Vector2d wheelPosition, double angleOffset)
     {
         DriveChannel = driveChannel;
         DirectionChannel = directionChannel;
-        EncoderChannel = encoderChannel;
+        DriveEncoderA = (int)driveEncoder.x;
+        DriveEncoderB = (int)driveEncoder.y;
+        DirectionEncoderChannel = directionEncoderChannel;
         ShifterChannel = shifterChannel;
         WheelPosition = wheelPosition;
         AngleOffset = angleOffset;
@@ -25,7 +27,9 @@ public class WheelData
 
     public int DriveChannel;
     public int DirectionChannel;
-    public int EncoderChannel;
+    public int DriveEncoderA;
+    public int DriveEncoderB;
+    public int DirectionEncoderChannel;
     public int ShifterChannel;
 
     public Vector2d WheelPosition;

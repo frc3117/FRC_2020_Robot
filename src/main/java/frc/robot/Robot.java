@@ -1,10 +1,13 @@
 package frc.robot;
 
+import frc.robot.Component.AutonomousSequence;
 import frc.robot.Component.BallIntake;
 import frc.robot.Component.BallThrower;
 import frc.robot.Component.ColorSensor;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
+import frc.robot.Component.Data.AutonomousSequenceAction;
+import frc.robot.Component.Data.RobotOdometry;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
@@ -21,17 +24,19 @@ public class Robot extends TimedRobot {
   public static BallThrower Thrower;
   public static BallIntake Intake;
 
+  public static RobotOdometry Odometry;
+
   public static PID DirectionHoldPID = new PID(3, 0, 0);
-  public static PID PositionHoldPID = new PID(0, 0, 0);
+  public static PID PositionHoldPID = new PID(0.3, 0, 0);
 
   @Override
   public void robotInit() {
     //Initializing the SwerveDrive drivetrain
     WheelData[] data = {
-      new WheelData(15, 7, 3, 3, new Vector2d(1, 1), 3.6768434- (3.1415/2.0)),
-      new WheelData(14, 8, 0, 0, new Vector2d(1, -1), 4.331834+ (3.1415/2.0)),
-      new WheelData(17, 9, 1, 1, new Vector2d(-1, -1), 5.00063+ (3.1415/2.0)),
-      new WheelData(18, 4, 2, 2, new Vector2d(-1, 1), 4.387056- (3.1415/2.0))
+      new WheelData(15, 7, new Vector2d(0, 1), 3, 3, new Vector2d(1, 1), 3.6768434- (3.1415/2.0)),
+      new WheelData(14, 8, new Vector2d(4, 5), 0, 0, new Vector2d(1, -1), 4.331834+ (3.1415/2.0)),
+      new WheelData(17, 9, new Vector2d(2, 3), 1, 1, new Vector2d(-1, -1), 5.00063+ (3.1415/2.0)),
+      new WheelData(18, 4, new Vector2d(6, 7), 2, 2, new Vector2d(-1, 1), 4.387056- (3.1415/2.0))
     };
 
     SwerveDrive = new Swerve(data, new Joystick(0));
@@ -47,6 +52,8 @@ public class Robot extends TimedRobot {
 
     Thrower = new BallThrower(SwerveDrive, 4, 2);
     Intake = new BallIntake(0.25, 0, 0, 0);
+
+    Odometry = new RobotOdometry(0.05, 1.2192, 6.7056);
   }
 
   
@@ -60,6 +67,21 @@ public class Robot extends TimedRobot {
 
     PneumaticSystem.Init();
     Timer.Init();
+
+    Odometry.SetPosition(new Vector2d(0, 0));
+
+    AutonomousSequence autonomousSequence = new AutonomousSequence(new Vector2d(0, 0), 
+    AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 1)),
+    AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 0)),
+    AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 1)),
+    AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 0)),
+    AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 1)),
+    AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 0)),
+    AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 1)),
+    AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 0))
+    );
+
+    autonomousSequence.StartSequence();
   }
 
   @Override
@@ -71,8 +93,12 @@ public class Robot extends TimedRobot {
     PneumaticSystem.CheckPressure();
     
     Thrower.DoThrower();
-    Intake.DoIntake();
+    //Intake.DoIntake();
     SwerveDrive.DoSwerve();
+
+    Odometry.DoOdometry();
+
+    //System.out.println(Odometry.GetPosition().x + " : " + Odometry.GetPosition().y);
     //_ColorSensor.GetColor();
   } 
 }

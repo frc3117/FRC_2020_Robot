@@ -29,8 +29,8 @@ public class BallThrower
     private Swerve  _swerve;
     private MotorController _elevationController;
     private LimeLight _limeLight = new LimeLight();
-    private PID _directionPID = new PID(0.06, 0.02, 0.002);
-    private PID _elevationPID = new PID(0.035, 0, 0);
+    private PID _directionPID = new PID(0.06, 0.02, 0.000);
+    private PID _elevationPID = new PID(0.035, 0.05, 0);
 
     private boolean _isAutoShoot = false;
 

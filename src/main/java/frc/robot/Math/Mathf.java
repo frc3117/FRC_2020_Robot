@@ -41,7 +41,7 @@ public class Mathf
 
         return angle;
     }
-
+    
     public static double GetAngle(Vector2d p1, Vector2d p2)
     {
         return Math.atan2(p2.y - p1.y, p2.x - p1.x);
@@ -56,5 +56,58 @@ public class Mathf
         double ty = Vector.y;
 
         return new Vector2d((cos * tx) - (sin * ty), (sin * tx) + (cos * ty));
+    }
+
+    public static Vector2d Vector2Scale(Vector2d vec, double value)
+    {
+        vec.x *= value;
+        vec.y *= value;
+
+        return vec;
+    }
+    public static Vector2d Vector2Scale(double value, Vector2d vec)
+    {
+        return Vector2Scale(vec, value);
+    }
+
+    public static Vector2d Vector2Sum(Vector2d v1, Vector2d v2)
+    {
+        v1.x += v2.x;
+        v1.y += v2.y;
+
+        return v1;
+    }
+    public static Vector2d Vector2Sum(Vector2d v1, double val)
+    {
+        v1.x += val;
+        v1.y += val;
+
+        return v1;
+    }
+    public static Vector2d Vector2Sum(double val, Vector2d v1)
+    {
+        return Vector2Sum(v1, val);
+    }
+
+    public static Vector2d Vector2Sub(Vector2d v1, Vector2d v2)
+    {
+        v1.x -= v2.x;
+        v1.y -= v2.y;
+
+        return v1;
+    }
+    public static Vector2d Vector2Sub(Vector2d v1, double val)
+    {
+        v1.x -= val;
+        v1.y -= val;
+
+        return v1;
+    }
+    public static Vector2d Vector2Sub(double val, Vector2d v1)
+    {
+        v1.x = val - v1.x;
+        v1.y = val - v1.y;
+
+        return v1;
     }
 }
