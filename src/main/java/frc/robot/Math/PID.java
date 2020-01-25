@@ -1,11 +1,6 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.Math;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PID {
     
@@ -13,6 +8,11 @@ public class PID {
     public PID(double KP, double KI, double KD)
     {
         SetGain(KP, KI, KD);
+    }
+    public PID(double KP, double KI, double KD, String DebugName)
+    {
+        SetGain(KP, KI, KD);
+        SetDebugMode(DebugName);
     }
 
     public double Kp = 0;
@@ -24,6 +24,42 @@ public class PID {
     private double previousError = 0;
     private double previousAverageError = 0;
     private double integral = 0;
+
+    private boolean _isDebug = false;
+    private String _kpName;
+    private String _kiName;
+    private String _kdName;
+
+    public void SetDebugMode(String Name)
+    {
+        if(!_isDebug)
+        {
+            Reset();
+
+            _isDebug = true;
+
+            _kpName = Name + "_Kp";
+            _kiName = Name + "_Ki";
+            _kdName = Name + "_Kd";
+
+            SmartDashboard.putNumber(_kpName, Kp);
+            SmartDashboard.putNumber(_kpName, Ki);
+            SmartDashboard.putNumber(_kpName, Kd);
+        }
+    }
+    public void StopDebugMode()
+    {
+        if(_isDebug)
+        {
+            Reset();
+
+            _isDebug = false;
+            
+            SmartDashboard.delete(_kpName);
+            SmartDashboard.delete(_kiName);
+            SmartDashboard.delete(_kdName);
+        }
+    }
 
     public void SetGain(double KP, double KI, double KD)
     {
@@ -51,7 +87,14 @@ public class PID {
         previousError = Error;
         previousAverageError = averageError;
 
-        return Kp * Error + Ki * integral + Kd * derivative;
+        if(_isDebug)
+        {
+            return SmartDashboard.getNumber(_kpName, 0) * Error + SmartDashboard.getNumber(_kiName, 0) * integral + SmartDashboard.getNumber(_kdName, 0) * derivative;
+        }
+        else
+        {
+            return Kp * Error + Ki * integral + Kd * derivative;
+        }
     }
 
     public void Reset()
