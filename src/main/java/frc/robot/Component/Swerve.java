@@ -110,6 +110,12 @@ public class Swerve {
     private boolean _shiftButtonLastState = false;
     private boolean _shiftState = false;
 
+    private double _minShiftTime;
+    private double _lastAutomaticShiftTime;
+
+    private double _downshiftThreshold;
+    private double _upshiftThreshold;
+
     private boolean _isShiftOverriden = false;
     private boolean _overridenShiftState = false;
 
@@ -167,6 +173,15 @@ public class Swerve {
             _shiftMode = ShifterMode.Manual;
             break;
         }
+    }
+    public void SetShiftMinTime(double Time)
+    {
+        _minShiftTime = Time;
+    }
+    public void SetShiftThreshold(double Downshift, double Upshift)
+    {
+        _downshiftThreshold = Downshift;
+        _upshiftThreshold = Upshift;
     }
     
     public void InitIMU()
@@ -253,9 +268,6 @@ public class Swerve {
 
         Vector2d vec = new Polar((_driveEncoder[ID].getRate() / 256.) * 3.1415 * 2, Angle).vector();
 
-        //vec.x *= _flipDriveMultiplicator[ID];
-        //vec.y *= _flipDriveMultiplicator[ID];
-
         return vec;
     }
     public int GetWheelCount()
@@ -267,8 +279,6 @@ public class Swerve {
     public void DoSwerve()
     {
         double dt = Timer.GetDeltaTime();
-       
-        //System.out.println(_driveEncoder[0].getRate());
 
         if(_isShiftOverriden)
         {
@@ -287,6 +297,29 @@ public class Swerve {
             switch(_shiftMode)
             {
                 case Automatic:
+                if(Timer.GetCurrentTime() - _lastAutomaticShiftTime >= _minShiftTime)
+                {
+                    if(_shiftState && 0 <= _downshiftThreshold)
+                    {
+                        _lastAutomaticShiftTime = Timer.GetCurrentTime();
+                        _shiftState = false;
+
+                        for(int i = 0; i < _shifterValve.length; i++)
+                        {
+                            _shifterValve[i].set(_shiftState);
+                        }
+                    }
+                    else if (!_shiftState && 0 >= _upshiftThreshold)
+                    {
+                        _lastAutomaticShiftTime = Timer.GetCurrentTime();
+                        _shiftState = true;
+
+                        for(int i = 0; i < _shifterValve.length; i++)
+                        {
+                            _shifterValve[i].set(_shiftState);
+                        }
+                    }
+                }
                 //If (CurrentTime - LastTime) >= WaitTime && Velocity + AngularVelocity >= UpshiftThreshold
                 //If (CurrentTime - LastTime) >= WaitTime && Velocity + AngularVelocity <= DownShiftThreshold
                 break;

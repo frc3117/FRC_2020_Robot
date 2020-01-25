@@ -72,6 +72,10 @@ public class PID {
         Tolerancy = tolerancy;
     }
 
+    public double Evaluate(double Error)
+    {
+        return Evaluate(Error, Timer.GetDeltaTime());
+    }
     public double Evaluate(double Error, double Dt)
     {
         if(Tolerancy > Math.abs(Error))
