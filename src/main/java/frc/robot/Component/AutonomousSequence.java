@@ -7,9 +7,11 @@
 
 package frc.robot.Component;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import frc.robot.Robot;
 import frc.robot.Component.Data.AutonomousSequenceAction;
+import frc.robot.Component.Data.Input;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.Timer;
 
@@ -22,20 +24,27 @@ public class AutonomousSequence
         _actions = Actions.clone();
     }
 
-    private Thread _thread;
-
     private AutonomousSequenceAction[] _actions;
     private boolean _isRunning = false;
 
+    private String _killButton = null;
+
+    public void SetKillButton(String ButtonName)
+    {
+        if(Input.ContainButton(_killButton))
+        {
+            _killButton = ButtonName;
+            return;
+        }
+
+        System.out.println("Button Not Registered");
+    }
+
     public void StartSequence()
     {
-        //_thread = new Thread(() -> AutonomousThread());
-
         _isRunning = true;
 
         AutonomousThread();
-    
-        //_thread.start();
     }
     public void StopSequencec()
     {
@@ -54,9 +63,12 @@ public class AutonomousSequence
         Vector2d lookAtTarget = new Vector2d(0, 0);
         boolean isLookAt = false;
 
-        while(_isRunning)
+        while(_isRunning && DriverStation.getInstance().isEnabled())
         {
-            System.out.println(waitTime);
+            if(_killButton != null && Input.GetButton(_killButton))
+            {
+                break;
+            }
 
             try 
             {

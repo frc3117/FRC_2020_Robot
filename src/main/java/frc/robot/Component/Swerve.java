@@ -17,7 +17,6 @@ import frc.robot.Math.Timer;
 import com.analog.adis16448.frc.ADIS16448_IMU;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -55,7 +54,6 @@ public class Swerve {
             _directionEncoder[i] = new AnalogInput(WheelsData[i].DirectionEncoderChannel);
             _shifterValve[i] = new Solenoid(WheelsData[i].ShifterChannel);
             _shifterValve[i].set(false);
-
 
             _rotationVector[i] = WheelsData[i].GetWheelRotationVector();
             _angleOffset[i] = WheelsData[i].AngleOffset;
