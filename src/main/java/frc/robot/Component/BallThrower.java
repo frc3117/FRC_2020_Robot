@@ -1,13 +1,15 @@
 package frc.robot.Component;
 
+import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.Component.Data.*;
+import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
 import frc.robot.Math.Mathf;
 
 public class BallThrower 
 {
-    public BallThrower(Swerve swerve, int AllignButton, int ShootButton)
+    public BallThrower(Swerve swerve, int AllignButton, int ShootButton, double IdleRPM, double ShootRPM)
     {
         if(!Input.ContainButton("Allign"))
         {
@@ -21,16 +23,30 @@ public class BallThrower
         _swerve = swerve;
         _elevationController = new MotorController(MotorController.MotorControllerType.TalonSRX, 6, false);
 
-        //_directionPID.SetTolerancy(1);
+        _inertiaWheelControler = new MotorController[]
+        {
+            new MotorController(MotorControllerType.TalonSRX, 0, false),
+            new MotorController(MotorControllerType.TalonSRX, 0, false)
+        };
+        _inertiaWheelEncoder = new Encoder(0, 0);
 
         _limeLight.SetDriveMode();
+
+        _idleRPM = IdleRPM;
+        _shootRPM = ShootRPM;
     }
 
     private Swerve  _swerve;
     private MotorController _elevationController;
+    private MotorController[] _inertiaWheelControler;
+    private Encoder _inertiaWheelEncoder;
     private LimeLight _limeLight = new LimeLight();
     private PID _directionPID = new PID(0.06, 0.02, 0.000);
     private PID _elevationPID = new PID(0.035, 0.05, 0);
+    private PID _inertiaWheelPID = new PID(0, 0, 0);
+
+    private double _idleRPM;
+    private double _shootRPM;
 
     private boolean _isAutoShoot = false;
 
@@ -88,14 +104,30 @@ public class BallThrower
                 _isReady = true;
             }
 
-            if(_isReady && (_isAutoShoot || Input.GetButton("Shoot")))
+            if(_isAutoShoot || Input.GetButton("Shoot"))
             {
-                //StartShooting
+                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_shootRPM - (_inertiaWheelEncoder.getRate() / 34.1333333333)), -1, 0);
 
-                _lastShotTime = Timer.GetCurrentTime();
+                for (MotorController motorController : _inertiaWheelControler) 
+                {
+                    motorController.Set(val);
+                }
 
-                Thread thread = new Thread(() -> ShooterThread());
-                thread.start();
+                if(_isReady)
+                {
+                    //Feed Ball
+
+                    _lastShotTime = Timer.GetCurrentTime();
+                }
+            }
+            else
+            {
+                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - (_inertiaWheelEncoder.getRate() / 34.1333333333)), -1, 0);
+
+                for (MotorController motorController : _inertiaWheelControler) 
+                {
+                    motorController.Set(val);
+                }
             }
         }
         else
@@ -103,11 +135,14 @@ public class BallThrower
             _elevationController.Set(0);
             _directionPID.Reset();
             _elevationPID.Reset();
+
+            double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - (_inertiaWheelEncoder.getRate() / 34.1333333333)), -1, 0);
+
+            for (MotorController motorController : _inertiaWheelControler) 
+            {
+                motorController.Set(val);
+            }
         }
-    }
-    private void ShooterThread()
-    {
-        
     }
 
     public void SetTimeBetwenShot(double time)

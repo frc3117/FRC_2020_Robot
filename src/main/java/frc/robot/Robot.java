@@ -50,8 +50,8 @@ public class Robot extends TimedRobot {
     SwerveDrive.SetDeadzone(0.2);
     SwerveDrive.InitIMU();
 
-    Thrower = new BallThrower(SwerveDrive, 4, 2);
-    Intake = new BallIntake(500, 3000, 0, 0, 0, 0, 0);
+    Thrower = new BallThrower(SwerveDrive, 4, 2, 500, 3000);
+    Intake = new BallIntake(0, 0, 0);
 
     Odometry = new RobotOdometry(0.05, 1.2192, 6.7056);
   }
