@@ -21,9 +21,11 @@ public class PID {
 
     public double Tolerancy = 0;
 
-    private double previousError = 0;
-    private double previousAverageError = 0;
-    private double integral = 0;
+    private double _feedFoward;
+
+    private double _previousError = 0;
+    private double _previousAverageError = 0;
+    private double _integral = 0;
 
     private boolean _isDebug = false;
     private String _kpName;
@@ -72,6 +74,11 @@ public class PID {
         Tolerancy = tolerancy;
     }
 
+    public void SetFeedForward(double FeedForward)
+    {
+        _feedFoward = FeedForward;
+    }
+
     public double Evaluate(double Error)
     {
         return Evaluate(Error, Timer.GetDeltaTime());
@@ -83,27 +90,27 @@ public class PID {
             Error = 0;
         }
 
-        integral += Error * Dt;
+        _integral += Error * Dt;
 
-        double averageError = (Error + previousError) / 2;
-        double derivative = (averageError - previousAverageError) / Dt;
+        double averageError = (Error + _previousError) / 2;
+        double derivative = (averageError - _previousAverageError) / Dt;
 
-        previousError = Error;
-        previousAverageError = averageError;
+        _previousError = Error;
+        _previousAverageError = averageError;
 
         if(_isDebug)
         {
-            return SmartDashboard.getNumber(_kpName, 0) * Error + SmartDashboard.getNumber(_kiName, 0) * integral + SmartDashboard.getNumber(_kdName, 0) * derivative;
+            return SmartDashboard.getNumber(_kpName, 0) * Error + SmartDashboard.getNumber(_kiName, 0) * _integral + SmartDashboard.getNumber(_kdName, 0) * derivative + _feedFoward;
         }
         else
         {
-            return Kp * Error + Ki * integral + Kd * derivative;
+            return Kp * Error + Ki * _integral + Kd * derivative + _feedFoward;
         }
     }
 
     public void Reset()
     {
-        previousError = 0;
-        integral = 0;
+        _previousError = 0;
+        _integral = 0;
     }
 }

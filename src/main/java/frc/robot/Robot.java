@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.drive.Vector2d;
 
 public class Robot extends TimedRobot {
 
-  private final ColorSensor _ColorSensor = new ColorSensor(7);
+  private final ColorSensor _ColorSensor = new ColorSensor(0, 7);
 
   public static Swerve SwerveDrive;
   public static BallThrower Thrower;
@@ -99,6 +99,6 @@ public class Robot extends TimedRobot {
     Odometry.DoOdometry();
 
     //System.out.println(Odometry.GetPosition().x + " : " + Odometry.GetPosition().y);
-    //_ColorSensor.GetColor();
+    //_ColorSensor.DoColorSensor();;
   } 
 }

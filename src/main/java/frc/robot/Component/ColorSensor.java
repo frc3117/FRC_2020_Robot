@@ -7,6 +7,8 @@
 
 package frc.robot.Component;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -17,8 +19,10 @@ import edu.wpi.first.wpilibj.I2C.Port;
 
 public class ColorSensor 
 {
-    public ColorSensor(int HalfTurnCount)
+    public ColorSensor(int TalonChannel ,int HalfTurnCount)
     {
+        _motor = new TalonSRX(TalonChannel);
+
         _halftTurnCount = HalfTurnCount;
 
         redColor = ColorMatch.makeColor(0.561, 0.232, 0.114);
@@ -33,8 +37,10 @@ public class ColorSensor
         colorMatch.addColorMatch(yellowColor);  
     }
 
-    public ColorSensor(int HalfTurnCount, Color Red, Color Green, Color Blue, Color Yellow)
+    public ColorSensor(int TalonChannel, int HalfTurnCount, Color Red, Color Green, Color Blue, Color Yellow)
     {
+        _motor = new TalonSRX(TalonChannel);
+
         _halftTurnCount = HalfTurnCount;
 
         redColor = Red;
@@ -49,6 +55,9 @@ public class ColorSensor
         colorMatch.addColorMatch(yellowColor); 
     }
 
+    private TalonSRX _motor;
+    private double _motorSpeed = 0.3;
+
     private final ColorSensorV3 colorSensorV3 = new ColorSensorV3(Port.kOnboard);
     private ColorMatch colorMatch = new ColorMatch();
   
@@ -62,11 +71,15 @@ public class ColorSensor
     private boolean _isWatchingTurn = false;
     private String _watchColor = "none";
     private int _watchColorCount = 0;
-
     private String _lastColor = "";
 
+    private boolean _isAllignColor = false;
     private String _requiredColor = "";
 
+    public void SetMotorSpeed(double Speed)
+    {
+        _motorSpeed = Speed;
+    }
     public void SetConfidence(double Confidence)
     {
         colorMatch.setConfidenceThreshold(Confidence);
@@ -83,6 +96,17 @@ public class ColorSensor
     {
         _isWatchingTurn = false;
     }
+    
+    public void StartAllignOnColor()
+    {
+        CheckRequiredColor();
+
+        _isAllignColor = true;
+    }
+    public void StopAllignOnColor()
+    {
+        _isAllignColor = false;
+    }
 
     public boolean IsTurnDone()
     {
@@ -94,7 +118,7 @@ public class ColorSensor
         return false;
     }
 
-    public boolean CheckRequiredColor()
+    private boolean CheckRequiredColor()
     {
         String gameData = DriverStation.getInstance().getGameSpecificMessage();
         
@@ -135,7 +159,7 @@ public class ColorSensor
         return true;
     }
 
-    public String GetColor()
+    private String GetColor()
     {
         ColorMatchResult result = colorMatch.matchClosestColor(colorSensorV3.getColor());
 
@@ -162,9 +186,6 @@ public class ColorSensor
             color = "none";
         }
 
-        if(_isWatchingTurn)
-            watchTurn(color);
-
         return color;
     }
 
@@ -178,5 +199,37 @@ public class ColorSensor
         }
 
         _lastColor = Color;
+    }
+
+    public void DoColorSensor()
+    {
+        String Color = GetColor();
+
+        if(_isWatchingTurn)
+        {
+            watchTurn(Color);
+
+            if(IsTurnDone())
+            {
+                _motor.set(ControlMode.PercentOutput, 0);
+                StopRegisterTurn();
+            }
+            else
+            {
+                _motor.set(ControlMode.PercentOutput, _motorSpeed);
+            }
+        }
+        else if (_isAllignColor)
+        {
+            if(Color == _requiredColor)
+            {
+                _motor.set(ControlMode.PercentOutput, 0);
+                StopRegisterTurn();
+            }
+            else
+            {
+                _motor.set(ControlMode.PercentOutput, _motorSpeed);
+            }
+        }
     }
 }
