@@ -4,8 +4,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.Math.PID;
-import frc.robot.Math.Timer;
 
 public class MotorController 
 {
@@ -27,7 +27,7 @@ public class MotorController
         _pid = new PID(0, 0, 0);
         _usePID = false;
     }
-    public MotorController(MotorControllerType type, int Channel, boolean IsBrushless, double Kp, double Ki, double Kd)
+    public MotorController(MotorControllerType type, int Channel, boolean IsBrushless, int EncoderChannelA, int EncoderChannelB, double Kp, double Ki, double Kd)
     {
         _controllerType = type;
 
@@ -41,6 +41,8 @@ public class MotorController
             _talonSRX = new WPI_TalonSRX(Channel);
             break;
         }
+
+        _encoder = new Encoder(EncoderChannelA, EncoderChannelB);
 
         _pid = new PID(Kp, Ki, Kd);
         _usePID = true;
@@ -57,6 +59,9 @@ public class MotorController
 
     private boolean _usePID;
 
+    private Encoder _encoder;
+    private int _encoderResolution = 2048;
+
     private CANSparkMax _sparkMax;
     private WPI_TalonSRX _talonSRX;
 
@@ -68,6 +73,19 @@ public class MotorController
     {
         _usePID = state;
     }
+    public void SetDebugPID(String Name)
+    {
+        _pid.SetDebugMode(Name);
+    }
+    public void StopDebugPID()
+    {
+        _pid.StopDebugMode();
+    }
+
+    public void SetEncoderResolution(int Resolution)
+    {
+        _encoderResolution = Resolution;
+    }
 
     public void Set(double Value)
     {
@@ -76,7 +94,7 @@ public class MotorController
             case SparkMax:
             if(_usePID)
             {
-                _sparkMax.set(_pid.Evaluate(Value - _sparkMax.get(), Timer.GetDeltaTime()));
+                _sparkMax.set(_pid.Evaluate(Value - (_encoder.getRate() / _encoderResolution)));
             }
             else
             {
@@ -87,7 +105,7 @@ public class MotorController
             case TalonSRX:
             if(_usePID)
             {
-                _talonSRX.set(_pid.Evaluate(Value - _talonSRX.get(), Timer.GetDeltaTime()));
+                _talonSRX.set(_pid.Evaluate(Value - (_encoder.getRate() / _encoderResolution)));
             }
             else
             {
@@ -95,5 +113,9 @@ public class MotorController
             }
             break;
         }
+    }
+    public double GetEncoderVelocity()
+    {
+        return _encoder.getRate() / _encoderResolution;
     }
 }
