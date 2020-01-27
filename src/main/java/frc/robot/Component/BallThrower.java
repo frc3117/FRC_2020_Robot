@@ -55,10 +55,7 @@ public class BallThrower
 
     private boolean _alignButtonLastState = false;
 
-    private double _timeBetwenShot = 0.5;
     private double _errorTolerency = 5;
-
-    private double _lastShotTime = 0;
 
     public void Init()
     {
@@ -99,7 +96,7 @@ public class BallThrower
               _elevationController.Set(Mathf.Clamp(elevationAxis, -1, 1));
             }
 
-            if((!_isAutoShoot || currentData.GetAngleX() + currentData.GetAngleY() <= _errorTolerency) && Timer.GetCurrentTime() - _lastShotTime >= _timeBetwenShot)
+            if((!_isAutoShoot || currentData.GetAngleX() + currentData.GetAngleY() <= _errorTolerency))
             {
                 _isReady = true;
             }
@@ -116,8 +113,6 @@ public class BallThrower
                 if(_isReady)
                 {
                     //Feed Ball
-
-                    _lastShotTime = Timer.GetCurrentTime();
                 }
             }
             else
@@ -145,10 +140,6 @@ public class BallThrower
         }
     }
 
-    public void SetTimeBetwenShot(double time)
-    {
-        _timeBetwenShot = time; 
-    }
     public void SetErrorTolerency(double tolerency)
     {
         _errorTolerency = tolerency;

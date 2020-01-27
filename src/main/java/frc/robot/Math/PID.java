@@ -45,8 +45,8 @@ public class PID {
             _kdName = Name + "_Kd";
 
             SmartDashboard.putNumber(_kpName, Kp);
-            SmartDashboard.putNumber(_kpName, Ki);
-            SmartDashboard.putNumber(_kpName, Kd);
+            SmartDashboard.putNumber(_kiName, Ki);
+            SmartDashboard.putNumber(_kdName, Kd);
         }
     }
     public void StopDebugMode()

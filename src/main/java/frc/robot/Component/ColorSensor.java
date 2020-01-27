@@ -224,7 +224,7 @@ public class ColorSensor
             if(Color == _requiredColor)
             {
                 _motor.set(ControlMode.PercentOutput, 0);
-                StopRegisterTurn();
+                StopAllignOnColor();
             }
             else
             {
