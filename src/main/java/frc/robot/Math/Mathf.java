@@ -58,8 +58,10 @@ public class Mathf
         return new Vector2d((cos * tx) - (sin * ty), (sin * tx) + (cos * ty));
     }
 
-    public static Vector2d Vector2Scale(Vector2d vec, double value)
+    public static Vector2d Vector2Scale(Vector2d v1, double value)
     {
+        Vector2d vec = new Vector2d(v1.x, v1.y);
+
         vec.x *= value;
         vec.y *= value;
 
@@ -72,17 +74,21 @@ public class Mathf
 
     public static Vector2d Vector2Sum(Vector2d v1, Vector2d v2)
     {
-        v1.x += v2.x;
-        v1.y += v2.y;
+        Vector2d vec = new Vector2d(v1.x, v1.y);
 
-        return v1;
+        vec.x += v2.x;
+        vec.y += v2.y;
+
+        return vec;
     }
     public static Vector2d Vector2Sum(Vector2d v1, double val)
     {
-        v1.x += val;
-        v1.y += val;
+        Vector2d vec = new Vector2d(v1.x, v1.y);
 
-        return v1;
+        vec.x += val;
+        vec.y += val;
+
+        return vec;
     }
     public static Vector2d Vector2Sum(double val, Vector2d v1)
     {
@@ -91,23 +97,29 @@ public class Mathf
 
     public static Vector2d Vector2Sub(Vector2d v1, Vector2d v2)
     {
-        v1.x -= v2.x;
-        v1.y -= v2.y;
+        Vector2d vec = new Vector2d(v1.x, v1.y);
 
-        return v1;
+        vec.x -= v2.x;
+        vec.y -= v2.y;
+
+        return vec;
     }
     public static Vector2d Vector2Sub(Vector2d v1, double val)
     {
-        v1.x -= val;
-        v1.y -= val;
+        Vector2d vec = new Vector2d(v1.x, v1.y);
 
-        return v1;
+        vec.x -= val;
+        vec.y -= val;
+
+        return vec;
     }
     public static Vector2d Vector2Sub(double val, Vector2d v1)
     {
-        v1.x = val - v1.x;
-        v1.y = val - v1.y;
+        Vector2d vec = new Vector2d(val, val);
 
-        return v1;
+        vec.x -= v1.x;
+        vec.y -= v1.y;
+
+        return vec;
     }
 }

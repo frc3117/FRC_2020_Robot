@@ -36,10 +36,9 @@ public class Swerve {
         _driveEncoder = new Encoder[_wheelCount];
         _directionEncoder = new AnalogInput[_wheelCount];
         _shifterValve = new Solenoid[_wheelCount];
-
         _rotationVector = new Vector2d[_wheelCount];
+        _wheelPosition = new Vector2d[_wheelCount];
         _directionPID = new PID[_wheelCount];
-
         _angleOffset = new double[_wheelCount];
 
         _flipAngleOffset = new double[_wheelCount];
@@ -56,6 +55,7 @@ public class Swerve {
             _shifterValve[i].set(false);
 
             _rotationVector[i] = WheelsData[i].GetWheelRotationVector();
+            _wheelPosition[i] = WheelsData[i].WheelPosition;
             _angleOffset[i] = WheelsData[i].AngleOffset;
 
             _flipAngleOffset[i] = 0;
@@ -90,6 +90,8 @@ public class Swerve {
     private Vector2d[] _rotationVector;
     private Joystick _input;
 
+    private Vector2d[] _wheelPosition;
+
     private ADIS16448_IMU _IMU;
 
     private double[] _angleOffset;
@@ -104,6 +106,9 @@ public class Swerve {
     private ShifterMode _shiftMode = ShifterMode.Manual;
     private double _speedRatio = 0.5;
     private double _roationSpeedRatio = 0.5;
+
+    private double _pointExponent = 0;
+    private double _pointDistance = 0;
 
     private double _headingOffset;
 
@@ -162,7 +167,16 @@ public class Swerve {
             _mode = DrivingMode.Tank;
             break;
         }
+    }   
+    public void SetPointDriveExponent(double Exponent)
+    {
+        _pointExponent = Exponent;
     }
+    public void SetPointDriveDistance(double Distance)
+    {
+        _pointDistance = Distance;
+    }
+
     public void SetShifterMode(ShifterMode Mode)
     {
         _shiftMode = Mode;
@@ -424,7 +438,26 @@ public class Swerve {
             break;
 
             case Point:
+            Vector2d point = GetPoint(GetAxisDeadzone(0), GetAxisDeadzone(1));
 
+            Polar[] wheelPol = new Polar[_wheelCount];
+
+            double average = 0;
+            for(int i = 0; i < _wheelCount; i++)
+            {
+                wheelPol[i] = Polar.fromVector(Mathf.Vector2Sub(point, _wheelPosition[i]));
+                average += wheelPol[i].radius;
+            }
+            average /= (double)_wheelCount;
+
+            for(int i = 0; i < _wheelCount; i++)
+            {
+                wheelPol[i].radius /= average;
+                wheelPol[i].radius *=  GetAxisDeadzone(3) - GetAxisDeadzone(2);
+
+                _driveMotor[i].set(Mathf.Clamp(wheelPol[i].radius, -1, 1) * _flipDriveMultiplicator[i]);
+                _directionMotor[i].set(ControlMode.PercentOutput, Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, wheelPol[i].vector()), dt), -1, 1));
+            }
             break;
 
             case Tank:
@@ -489,5 +522,9 @@ public class Swerve {
         }
 
         return angle;
+    }
+    private Vector2d GetPoint(double xAxis, double yAxis)
+    {
+        return new Vector2d(Math.pow(xAxis, _pointExponent) * _pointDistance, Math.pow(yAxis, _pointExponent) * _pointDistance);
     }
 }
