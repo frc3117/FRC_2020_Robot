@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
 
     SwerveDrive.RecalibrateIMU();
     Thrower.Init();
-    Intake.InitIntake();
+    Intake.Init();
 
     PneumaticSystem.Init();
     Timer.Init();
@@ -93,9 +93,9 @@ public class Robot extends TimedRobot {
     PneumaticSystem.CheckPressure();
     
     Thrower.DoThrower();
-    //Intake.DoIntake();
-    SwerveDrive.DoSwerve();
+    Intake.DoIntake();
 
+    SwerveDrive.DoSwerve();
     Odometry.DoOdometry();
 
     //System.out.println(Odometry.GetPosition().x + " : " + Odometry.GetPosition().y);

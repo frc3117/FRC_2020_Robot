@@ -105,6 +105,8 @@ public class Swerve {
     private double _speedRatio = 0.5;
     private double _roationSpeedRatio = 0.5;
 
+    private double _headingOffset;
+
     private RobotPosition _position = new RobotPosition(new Vector2d(0, 0));
 
     private boolean _shiftButtonLastState = false;
@@ -194,6 +196,8 @@ public class Swerve {
     {
         _IMU.reset();
         _IMU.calibrate();
+
+        _headingOffset = (_IMU.getGyroAngleZ() / 180) * 3.1415;
     }
 
     public void SetSpeed(double Speed)
@@ -241,7 +245,7 @@ public class Swerve {
 
     public double GetHeading()
     {
-        return (_IMU.getGyroAngleZ() / 180) * 3.1415;
+        return (_IMU.getGyroAngleZ() / 180) * 3.1415 - _headingOffset;
     }
     public Vector2d GetPostion()
     {

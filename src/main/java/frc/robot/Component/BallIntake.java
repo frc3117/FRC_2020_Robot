@@ -21,7 +21,7 @@ public class BallIntake
     private Solenoid _leftSolenoid;
     private Solenoid _rightSolenoid;
 
-    public void InitIntake()
+    public void Init()
     {
         _isStarted = false;
     }
