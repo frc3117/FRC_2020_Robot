@@ -65,6 +65,7 @@ public class AutonomousSequence
 
         while(_isRunning && DriverStation.getInstance().isEnabled())
         {
+            //Button to kill the sequence
             if(_killButton != null && Input.GetButton(_killButton))
             {
                 break;
@@ -72,6 +73,7 @@ public class AutonomousSequence
 
             try 
             {
+                //Wait so time betwen "frame"
                 edu.wpi.first.wpilibj.Timer.delay(0.02);
 
                 waitTime -= 0.02;
@@ -79,6 +81,7 @@ public class AutonomousSequence
 
             Timer.Calculate();
 
+            //Call the next action if the wait time is over
             if(waitTime <= 0)
             {
                 if(i < _actions.length)
@@ -137,6 +140,7 @@ public class AutonomousSequence
                 targetAngle = Math.atan2(relative.y, relative.x);
             }
 
+            //Override the robot commands to match the currents target
             Robot.SwerveDrive.OverrideRotationAxis(Robot.DirectionHoldPID.Evaluate(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), targetAngle), Timer.GetDeltaTime()));
 
             Robot.SwerveDrive.OverrideHorizontalAxis(Robot.PositionHoldPID.Evaluate(targetPosition.x - pos.x, Timer.GetDeltaTime()));

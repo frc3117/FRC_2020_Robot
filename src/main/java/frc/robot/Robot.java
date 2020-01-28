@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
   
   @Override
   public void teleopInit() {
+    //Initialize all the robot component before a match
     ColorSensor.Init();
 
     SwerveDrive.RecalibrateIMU();

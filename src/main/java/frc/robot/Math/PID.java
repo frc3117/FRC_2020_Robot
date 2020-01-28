@@ -19,7 +19,7 @@ public class PID {
     public double Ki = 0;
     public double Kd = 0;
 
-    public double Tolerancy = 0;
+    private double Tolerancy = 0;
 
     private double _feedFoward;
 
@@ -34,6 +34,7 @@ public class PID {
 
     public void SetDebugMode(String Name)
     {
+        //Make the pid gain appear in the SmartDashboard
         if(!_isDebug)
         {
             Reset();

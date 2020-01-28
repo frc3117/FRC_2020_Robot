@@ -21,6 +21,7 @@ public class PneumaticSystem
 
     public static void CheckPressure()
     {
+        //Only start the compressor if we neeed air
         if(_isRuning && _compressor.getPressureSwitchValue())
         {
             _compressor.stop();

@@ -293,6 +293,7 @@ public class Swerve {
     {
         double dt = Timer.GetDeltaTime();
 
+        //Override the shift state of the robot for a peculiar task
         if(_isShiftOverriden)
         {
             if(_shiftState != _overridenShiftState)
@@ -310,6 +311,7 @@ public class Swerve {
             switch(_shiftMode)
             {
                 case Automatic:
+                //Autoshift only if the delta time is reach and the robot velocity reach the threshold
                 if(Timer.GetCurrentTime() - _lastAutomaticShiftTime >= _minShiftTime)
                 {
                     Vector2d velocityVector = new Vector2d(0, 0);
@@ -372,6 +374,7 @@ public class Swerve {
             case Local:
             case World:
 
+            //Adding a rate limiter to the translation joystick to make the driving smoother
             double horizontal = GetAxisDeadzone(0);
             if(Math.signum(horizontal - _currentHorizontal) <= _maxRateLimiter * Timer.GetDeltaTime())
             {
@@ -391,8 +394,11 @@ public class Swerve {
                 _currentVertical += (Math.signum(vertical - _currentVertical) * -1) * _maxRateLimiter * Timer.GetDeltaTime();
             }
 
+            //Translation vector is equal to the translation joystick axis
             Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : _currentHorizontal * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : _currentVertical) * _speedRatio);
             Polar translationPolar = Polar.fromVector(translation);
+
+            //Remove the angle of the gyroscope to the azymuth to make the driving relative to the world
             translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 : 0;
 
             double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : GetAxisDeadzone(3) - GetAxisDeadzone(2);
@@ -404,6 +410,9 @@ public class Swerve {
                 Polar rotationPolar = Polar.fromVector(scaledRotationVector);
 
                 Polar Sum = translationPolar.add(rotationPolar); //Putting the translation and the rotation together
+
+                //Radius = Wheel Speed
+                //Azymuth = Wheel Heading
 
                 double wheelSpeed = Sum.radius;
 
@@ -421,7 +430,7 @@ public class Swerve {
             case Tank:
             for(int i = 0; i < _wheelCount; i++)
             {
-                //Allwais Allign Wheel Forward
+                //Always Allign Wheel Forward
                 _directionMotor[i].set(ControlMode.PercentOutput, Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, new Vector2d(0, 1)), dt), -1, 1));
 
                 if(i + 1 <= _wheelCount / 2)
@@ -436,8 +445,10 @@ public class Swerve {
             break;
         }
 
+        //Evaluate the robot position from the accelerometers
         _position.Evaluate(Mathf.RotatePoint(new Vector2d(_IMU.getAccelInstantX(), _IMU.getAccelInstantY()), GetHeading()), Timer.GetDeltaTime());
 
+        //Reset the overriden state to false a the end of the "frame"
         _isRotationAxisOverriden = false;
         _isVerticalAxisOverride = false;
         _isHorizontalAxisOverride = false;

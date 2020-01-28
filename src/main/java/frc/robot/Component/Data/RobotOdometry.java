@@ -36,14 +36,18 @@ public class RobotOdometry
 
         for(int i = 0; i < count; i++)
         {
+            //Get the vector of the wheel
             Vector2d vec = Robot.SwerveDrive.GetWheelVector(i);
 
             sumVec.x += vec.x;
             sumVec.y += vec.y;
         }
 
+        //True = High gear
+        //False = Low gear
         boolean isHigh = Robot.SwerveDrive.GetGear();
 
+        //Make average of all the vector and convert it to distance
         sumVec.x /= (isHigh ? _highSpeedGain : _lowSpeedGain) / Timer.GetDeltaTime();
         sumVec.y /= (isHigh ? _highSpeedGain : _lowSpeedGain) / Timer.GetDeltaTime();
 
