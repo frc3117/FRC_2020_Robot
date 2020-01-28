@@ -109,6 +109,10 @@ public class Swerve {
 
     private RobotPosition _position = new RobotPosition(new Vector2d(0, 0));
 
+    private double _maxRateLimiter = 0;
+    private double _currentHorizontal = 0;
+    private double _currentVertical = 0;
+
     private boolean _shiftButtonLastState = false;
     private boolean _shiftState = false;
 
@@ -214,6 +218,11 @@ public class Swerve {
         return _shiftState;
     }
 
+    public void SetRateLimiter(double MaxSpeed)
+    {
+        _maxRateLimiter = MaxSpeed;
+    }
+
     public void OverrideShift(int Speed)
     {
         if(Speed == 0)
@@ -303,7 +312,16 @@ public class Swerve {
                 case Automatic:
                 if(Timer.GetCurrentTime() - _lastAutomaticShiftTime >= _minShiftTime)
                 {
-                    if(_shiftState && 0 <= _downshiftThreshold)
+                    Vector2d velocityVector = new Vector2d(0, 0);
+
+                    for(int i = 0; i < _wheelCount; i++)
+                    {
+                        velocityVector = Mathf.Vector2Sum(velocityVector, GetWheelVector(i));
+                    }
+                    double Mag = velocityVector.magnitude();
+                    double AngVel = (_IMU.getGyroInstantZ() / 180) + 3.1415;
+
+                    if(_shiftState && Mag + AngVel <= _downshiftThreshold)
                     {
                         _lastAutomaticShiftTime = Timer.GetCurrentTime();
                         _shiftState = false;
@@ -313,7 +331,7 @@ public class Swerve {
                             _shifterValve[i].set(_shiftState);
                         }
                     }
-                    else if (!_shiftState && 0 >= _upshiftThreshold)
+                    else if (!_shiftState && Mag + AngVel >= _upshiftThreshold)
                     {
                         _lastAutomaticShiftTime = Timer.GetCurrentTime();
                         _shiftState = true;
@@ -350,7 +368,27 @@ public class Swerve {
         {
             case Local:
             case World:
-            Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : GetAxisDeadzone(0) * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : GetAxisDeadzone(1)) * _speedRatio);
+
+            double horizontal = GetAxisDeadzone(0);
+            if(Math.signum(horizontal - _currentHorizontal) <= _maxRateLimiter * Timer.GetDeltaTime())
+            {
+                _currentHorizontal = horizontal;
+            }
+            else
+            {
+                _currentHorizontal += (Math.signum(horizontal - _currentHorizontal) * -1) * _maxRateLimiter * Timer.GetDeltaTime();
+            }
+            double vertical = GetAxisDeadzone(1);
+            if(Math.signum(vertical - _currentVertical) <= _maxRateLimiter * Timer.GetDeltaTime())
+            {
+                _currentVertical = vertical;
+            }
+            else
+            {
+                _currentVertical += (Math.signum(vertical - _currentVertical) * -1) * _maxRateLimiter * Timer.GetDeltaTime();
+            }
+
+            Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : _currentHorizontal * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : _currentVertical) * _speedRatio);
             Polar translationPolar = Polar.fromVector(translation);
             translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 : 0;
 
