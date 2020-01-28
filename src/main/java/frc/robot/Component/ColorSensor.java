@@ -76,6 +76,17 @@ public class ColorSensor
     private boolean _isAllignColor = false;
     private String _requiredColor = "";
 
+    public void Init()
+    {
+        _isWatchingTurn = false;
+        _watchColor = "none";
+        _watchColorCount = 0;
+        _lastColor = "";
+
+        _isAllignColor = false;
+        _requiredColor = "";
+    }
+
     public void SetMotorSpeed(double Speed)
     {
         _motorSpeed = Speed;
@@ -99,7 +110,8 @@ public class ColorSensor
     
     public void StartAllignOnColor()
     {
-        CheckRequiredColor();
+        if(_requiredColor == "")
+            CheckRequiredColor();
 
         _isAllignColor = true;
     }
