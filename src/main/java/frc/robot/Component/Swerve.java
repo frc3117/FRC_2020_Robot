@@ -340,6 +340,9 @@ public class Swerve {
                         {
                             _shifterValve[i].set(_shiftState);
                         }
+
+                        _currentVertical *= 0.2;
+                        _currentHorizontal *= 0.2;
                     }
                 }
                 //If (CurrentTime - LastTime) >= WaitTime && Velocity + AngularVelocity >= UpshiftThreshold
