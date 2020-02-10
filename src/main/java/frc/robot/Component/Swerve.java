@@ -1,14 +1,9 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.Component;
 
+import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.RobotPosition;
 import frc.robot.Component.Data.WheelData;
+import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
 import frc.robot.Math.Polar;
@@ -17,8 +12,6 @@ import frc.robot.Math.Timer;
 import com.analog.adis16448.frc.ADIS16448_IMU;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Encoder;
@@ -31,7 +24,7 @@ public class Swerve {
     {
         _wheelCount = WheelsData.length;
 
-        _driveMotor = new CANSparkMax[_wheelCount];
+        _driveMotor = new MotorController[_wheelCount];
         _directionMotor = new TalonSRX[_wheelCount];
         _driveEncoder = new Encoder[_wheelCount];
         _directionEncoder = new AnalogInput[_wheelCount];
@@ -47,7 +40,7 @@ public class Swerve {
         //Initializing all component of the swerve swerve system
         for(int i  = 0; i < _wheelCount; i++)
         {
-            _driveMotor[i] = new CANSparkMax(WheelsData[i].DriveChannel, MotorType.kBrushless);
+            _driveMotor[i] = new MotorController(MotorControllerType.TalonFX, WheelsData[i].DriveChannel, true);//new CANSparkMax(WheelsData[i].DriveChannel, MotorType.kBrushless);
             _directionMotor[i] = new TalonSRX(WheelsData[i].DirectionChannel);
             _driveEncoder[i] = new Encoder(WheelsData[i].DriveEncoderA, WheelsData[i].DriveEncoderB);
             _directionEncoder[i] = new AnalogInput(WheelsData[i].DirectionEncoderChannel);
@@ -82,7 +75,7 @@ public class Swerve {
 
     private int _wheelCount;
 
-    private CANSparkMax[] _driveMotor;
+    private MotorController[] _driveMotor;
     private TalonSRX[] _directionMotor;
     private Encoder[] _driveEncoder;
     private AnalogInput[] _directionEncoder;
@@ -104,8 +97,8 @@ public class Swerve {
     private double _deadzone = 0;
     private DrivingMode _mode = DrivingMode.Local;
     private ShifterMode _shiftMode = ShifterMode.Manual;
-    private double _speedRatio = 0.5;
-    private double _roationSpeedRatio = 0.5;
+    private double _speedRatio = 1;
+    private double _roationSpeedRatio = 1;
 
     private double _pointExponent = 0;
     private double _pointDistance = 0;
@@ -115,8 +108,10 @@ public class Swerve {
     private RobotPosition _position = new RobotPosition(new Vector2d(0, 0));
 
     private double _maxRateLimiter = 0;
+    private double _maxRateLimiterRotation = 0;
     private double _currentHorizontal = 0;
     private double _currentVertical = 0;
+    private double _currentRotation = 0;
 
     private boolean _shiftButtonLastState = false;
     private boolean _shiftState = false;
@@ -225,6 +220,7 @@ public class Swerve {
     public void SetPIDGain(int ID, double Kp, double Ki, double Kd)
     {
         _directionPID[ID].SetGain(Kp, Ki, Kd);
+        _directionPID[ID].SetDebugMode("Swerve");
     }
 
     public boolean GetGear()
@@ -235,6 +231,10 @@ public class Swerve {
     public void SetRateLimiter(double MaxSpeed)
     {
         _maxRateLimiter = MaxSpeed;
+    }
+    public void SetRotationRateLimiter(double MaxSpeed)
+    {
+        _maxRateLimiterRotation = MaxSpeed;
     }
 
     public void OverrideShift(int Speed)
@@ -305,6 +305,12 @@ public class Swerve {
     int f = 0;
     public void DoSwerve()
     {
+        System.out.println("(0): " + ((_directionEncoder[0].getValue() / 4096f) * 2 * 3.1415f));
+        System.out.println("(1): " + ((_directionEncoder[1].getValue() / 4096f) * 2 * 3.1415f));
+
+        System.out.println("(2): " + ((_directionEncoder[2].getValue() / 4096f) * 2 * 3.1415f));
+        System.out.println("(3): " + ((_directionEncoder[3].getValue() / 4096f) * 2 * 3.1415f));
+
         double dt = Timer.GetDeltaTime();
 
         //Override the shift state of the robot for a peculiar task
@@ -335,7 +341,7 @@ public class Swerve {
                         velocityVector = Mathf.Vector2Sum(velocityVector, GetWheelVector(i));
                     }
                     double Mag = velocityVector.magnitude();
-                    double AngVel = (_IMU.getGyroInstantZ() / 180) + 3.1415;
+                    double AngVel = 0;//(_IMU.getGyroInstantZ() / 180) + 3.1415;
 
                     if(_shiftState && Mag + AngVel <= _downshiftThreshold)
                     {
@@ -390,47 +396,70 @@ public class Swerve {
 
             //Adding a rate limiter to the translation joystick to make the driving smoother
             double horizontal = GetAxisDeadzone(0);
-            if(Math.signum(horizontal - _currentHorizontal) <= _maxRateLimiter * Timer.GetDeltaTime())
+            if(Math.abs(horizontal - _currentHorizontal) <= _maxRateLimiter * Timer.GetDeltaTime())
             {
                 _currentHorizontal = horizontal;
             }
             else
             {
-                _currentHorizontal += (Math.signum(horizontal - _currentHorizontal) * -1) * _maxRateLimiter * Timer.GetDeltaTime();
+                _currentHorizontal += (Math.signum(horizontal - _currentHorizontal)) * _maxRateLimiter * Timer.GetDeltaTime();
             }
             double vertical = GetAxisDeadzone(1);
-            if(Math.signum(vertical - _currentVertical) <= _maxRateLimiter * Timer.GetDeltaTime())
+            if(Math.abs(vertical - _currentVertical) <= _maxRateLimiter * Timer.GetDeltaTime())
             {
                 _currentVertical = vertical;
             }
             else
             {
-                _currentVertical += (Math.signum(vertical - _currentVertical) * -1) * _maxRateLimiter * Timer.GetDeltaTime();
+                _currentVertical += (Math.signum(vertical - _currentVertical)) * _maxRateLimiter * Timer.GetDeltaTime();
+            }
+            double rotation = GetAxisDeadzone(3) - GetAxisDeadzone(2);
+            if(Math.abs(rotation - _currentRotation) <= _maxRateLimiterRotation * Timer.GetDeltaTime())
+            {
+                _currentRotation = rotation;
+            }
+            else
+            {
+                _currentRotation += (Math.signum(rotation - _currentRotation)) * _maxRateLimiterRotation * Timer.GetDeltaTime();
+            }
+            _currentRotation = rotation;
+
+            double x = _currentHorizontal;
+            double y = _currentVertical;
+            double z = _currentRotation;
+
+            double mag = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+
+            if(mag > 1)
+            {
+                horizontal = _currentHorizontal;// / mag;
+                vertical = _currentVertical;// / mag;
+                rotation =  _currentRotation;// mag;
             }
 
             //Translation vector is equal to the translation joystick axis
-            Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : _currentHorizontal * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : _currentVertical) * _speedRatio);
+            Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : horizontal * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : vertical) * _speedRatio);
             Polar translationPolar = Polar.fromVector(translation);
 
             //Remove the angle of the gyroscope to the azymuth to make the driving relative to the world
             translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 : 0;
 
-            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : GetAxisDeadzone(3) - GetAxisDeadzone(2);
+            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : rotation;
 
             for(int i = 0; i < _wheelCount; i++)
             {
                 //Each wheel have a predetermined rotation vector based on wheel position
                 Vector2d scaledRotationVector = new Vector2d(_rotationVector[i].x * rotationAxis * _roationSpeedRatio, _rotationVector[i].y * rotationAxis * _roationSpeedRatio);               
-                Polar rotationPolar = Polar.fromVector(scaledRotationVector);
 
-                Polar Sum = translationPolar.add(rotationPolar); //Putting the translation and the rotation together
+                Vector2d SumVec = Mathf.Vector2Sum(scaledRotationVector, translationPolar.vector());
+                Polar Sum = Polar.fromVector(SumVec);
 
                 //Radius = Wheel Speed
                 //Azymuth = Wheel Heading
 
                 double wheelSpeed = Sum.radius;
 
-                _driveMotor[i].set(Mathf.Clamp(wheelSpeed, -1, 1) * _flipDriveMultiplicator[i]);
+                _driveMotor[i].Set(Mathf.Clamp(wheelSpeed, -1, 1) * _flipDriveMultiplicator[i]);
                 _directionMotor[i].set(ControlMode.PercentOutput, Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, Sum.vector()), dt), -1, 1));
             }
 
@@ -455,7 +484,7 @@ public class Swerve {
                 wheelPol[i].radius /= average;
                 wheelPol[i].radius *=  GetAxisDeadzone(3) - GetAxisDeadzone(2);
 
-                _driveMotor[i].set(Mathf.Clamp(wheelPol[i].radius, -1, 1) * _flipDriveMultiplicator[i]);
+                _driveMotor[i].Set(Mathf.Clamp(wheelPol[i].radius, -1, 1) * _flipDriveMultiplicator[i]);
                 _directionMotor[i].set(ControlMode.PercentOutput, Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, wheelPol[i].vector()), dt), -1, 1));
             }
             break;

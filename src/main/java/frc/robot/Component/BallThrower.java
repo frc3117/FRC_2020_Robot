@@ -1,10 +1,10 @@
 package frc.robot.Component;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Component.Data.*;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Math.PID;
-import frc.robot.Math.Timer;
 import frc.robot.Math.Mathf;
 
 public class BallThrower 
@@ -25,10 +25,11 @@ public class BallThrower
 
         _inertiaWheelControler = new MotorController[]
         {
-            new MotorController(MotorControllerType.TalonSRX, 0, false),
-            new MotorController(MotorControllerType.TalonSRX, 0, false)
+            new MotorController(MotorControllerType.TalonSRX, 3, false),
+            new MotorController(MotorControllerType.TalonSRX, 5, false),
+            new MotorController(MotorControllerType.TalonSRX, 10, false),
         };
-        _inertiaWheelEncoder = new Encoder(0, 0);
+        _inertiaWheelEncoder = new Encoder(9, 8);
 
         _limeLight.SetDriveMode();
 
@@ -37,13 +38,14 @@ public class BallThrower
     }
 
     private Swerve  _swerve;
+    private MotorController _feederController = new MotorController(MotorControllerType.TalonSRX, 2, false);
     private MotorController _elevationController;
     private MotorController[] _inertiaWheelControler;
     private Encoder _inertiaWheelEncoder;
     private LimeLight _limeLight = new LimeLight();
     private PID _directionPID = new PID(0.06, 0.02, 0.000);
     private PID _elevationPID = new PID(0.035, 0.05, 0);
-    private PID _inertiaWheelPID = new PID(0, 0, 0);
+    private PID _inertiaWheelPID = new PID(0, 0, 0, "Speed");
 
     private double _idleRPM;
     private double _shootRPM;
@@ -82,9 +84,9 @@ public class BallThrower
         }
         _alignButtonLastState = allignButton;
 
-        if(_isAllign)
+        if(_isAllign || true)
         {
-            LimeLightData currentData = _limeLight.GetCurrent();
+            /*LimeLightData currentData = _limeLight.GetCurrent();
             
             //Only try to align if there is a target in the line of sight
             if(currentData.IsTarget())
@@ -99,30 +101,43 @@ public class BallThrower
             if((!_isAutoShoot || currentData.GetAngleX() + currentData.GetAngleY() <= _errorTolerency))
             {
                 _isReady = true;
-            }
+            }*/
 
             if(_isAutoShoot || Input.GetButton("Shoot"))
             {
-                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_shootRPM - (_inertiaWheelEncoder.getRate() / 34.1333333333)), -1, 0);
+                double RPM = ((_inertiaWheelEncoder.getRate() / 2048) * 60);
+                SmartDashboard.putNumber("Velocity", RPM);
+
+                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_shootRPM - RPM), 0.1, 1);
 
                 for (MotorController motorController : _inertiaWheelControler) 
                 {
                     motorController.Set(val);
                 }
 
-                if(_isReady)
+                if(RPM >= _shootRPM - 200)//if(_isReady)
                 {
                     //Feed Ball
+                    _feederController.Set(1);
+                }
+                else
+                {
+                    _feederController.Set(0);
                 }
             }
             else
             {
-                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - (_inertiaWheelEncoder.getRate() / 34.1333333333)), -1, 0);
+                double RPM = ((_inertiaWheelEncoder.getRate() / 2048) * 60);
+                SmartDashboard.putNumber("Velocity", RPM);                
+
+                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - RPM), 0, 1);
 
                 for (MotorController motorController : _inertiaWheelControler) 
                 {
                     motorController.Set(val);
                 }
+
+                _feederController.Set(0);
             }
         }
         else

@@ -1,5 +1,7 @@
 package frc.robot.Component.Data;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -22,6 +24,10 @@ public class MotorController
             case TalonSRX:
             _talonSRX = new WPI_TalonSRX(Channel);
             break;
+
+            case TalonFX:
+            _talonFX = new TalonFX(Channel);
+            break;
         }
 
         _pid = new PID(0, 0, 0);
@@ -40,6 +46,10 @@ public class MotorController
             case TalonSRX:
             _talonSRX = new WPI_TalonSRX(Channel);
             break;
+
+            case TalonFX:
+            _talonFX = new TalonFX(Channel);
+            break;
         }
 
         _encoder = new Encoder(EncoderChannelA, EncoderChannelB);
@@ -51,7 +61,8 @@ public class MotorController
     public enum MotorControllerType
     {
         SparkMax,
-        TalonSRX
+        TalonSRX,
+        TalonFX
     }
 
     private MotorControllerType _controllerType;
@@ -64,6 +75,7 @@ public class MotorController
 
     private CANSparkMax _sparkMax;
     private WPI_TalonSRX _talonSRX;
+    private TalonFX _talonFX;
 
     public void SetPID(double Kp, double Ki, double Kd)
     {
@@ -110,6 +122,17 @@ public class MotorController
             else
             {
                 _talonSRX.set(Value);
+            }
+            break;
+
+            case TalonFX:
+            if(_usePID)
+            {
+                _talonFX.set(TalonFXControlMode.PercentOutput, _pid.Evaluate(Value - (_encoder.getRate() / _encoderResolution)));
+            }
+            else
+            {
+                _talonFX.set(TalonFXControlMode.PercentOutput, Value);
             }
             break;
         }

@@ -7,12 +7,17 @@ import frc.robot.Component.ColorSensor;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
 import frc.robot.Component.Data.AutonomousSequenceAction;
+import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.RobotOdometry;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
 
+import java.sql.Time;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 
@@ -29,14 +34,16 @@ public class Robot extends TimedRobot {
   public static PID DirectionHoldPID = new PID(3, 0, 0);
   public static PID PositionHoldPID = new PID(0.3, 0, 0);
 
+  public Servo servo = new Servo(0);
+
   @Override
   public void robotInit() {
     //Initializing the SwerveDrive drivetrain
     WheelData[] data = {
-      new WheelData(15, 7, new Vector2d(0, 1), 3, 3, new Vector2d(1, 1), 3.6768434- (3.1415/2.0)),
-      new WheelData(14, 8, new Vector2d(4, 5), 0, 0, new Vector2d(1, -1), 4.331834+ (3.1415/2.0)),
-      new WheelData(17, 9, new Vector2d(2, 3), 1, 1, new Vector2d(-1, -1), 5.00063+ (3.1415/2.0)),
-      new WheelData(18, 4, new Vector2d(6, 7), 2, 2, new Vector2d(-1, 1), 4.387056- (3.1415/2.0))
+      new WheelData(20, 7, new Vector2d(0, 1), 0, 3, new Vector2d(-10, -11), 0.6964067- (3.1415/2.0)),
+      new WheelData(21, 8, new Vector2d(4, 5), 1, 0, new Vector2d(10, -11), 4.163101- (3.1415/2.0)),
+      new WheelData(22, 9, new Vector2d(2, 3), 2, 1, new Vector2d(10, 11), 0.8344609- (3.1415/2.0)),
+      new WheelData(23, 4, new Vector2d(6, 7), 3, 2, new Vector2d(-10, 11), 3.1476357- (3.1415/2.0))
     };
 
     SwerveDrive = new Swerve(data, new Joystick(0));
@@ -47,22 +54,30 @@ public class Robot extends TimedRobot {
     SwerveDrive.SetPIDGain(2, 1, 0, 0);
     SwerveDrive.SetPIDGain(3, 1, 0, 0);
 
+    SwerveDrive.SetRateLimiter(100000);
+    SwerveDrive.SetRotationRateLimiter(100000);
+
     SwerveDrive.SetDeadzone(0.2);
     SwerveDrive.InitIMU();
 
-    Thrower = new BallThrower(SwerveDrive, 4, 2, 500, 3000);
-    Intake = new BallIntake(0, 0, 0);
+    Thrower = new BallThrower(SwerveDrive, 4, 2, 500, 2700);
+    Intake = new BallIntake(6, 6, 7, 4, 4, 1000);
 
     Odometry = new RobotOdometry(0.05, 1.2192, 6.7056);
+
+    Input.CreateButton("ServoUp", 0, 6);
+    Input.CreateButton("ServoDown", 0, 7);
   }
 
   
   @Override
-  public void teleopInit() {
+  public void teleopInit() 
+  {
     //Initialize all the robot component before a match
     ColorSensor.Init();
 
     SwerveDrive.RecalibrateIMU();
+
     Thrower.Init();
     Intake.Init();
 
@@ -82,7 +97,7 @@ public class Robot extends TimedRobot {
     AutonomousSequenceAction.CreateMoveTo(5, new Vector2d(0, 0))
     );
 
-    autonomousSequence.StartSequence();
+    //autonomousSequence.StartSequence();
   }
 
   @Override
@@ -91,13 +106,23 @@ public class Robot extends TimedRobot {
     Timer.Calculate();
 
     //Execute Needed Component
-    PneumaticSystem.CheckPressure();
+    //PneumaticSystem.CheckPressure();
     
     Thrower.DoThrower();
     Intake.DoIntake();
 
     SwerveDrive.DoSwerve();
-    Odometry.DoOdometry();
+    //Odometry.DoOdometry();
+
+    double val = servo.get();
+    if(Input.GetButton("ServoUp"))
+    {
+      servo.set(val + 0.2 * Timer.GetDeltaTime());
+    }
+    else if(Input.GetButton("ServoDown"))
+    {
+      servo.set(val + -0.2 * Timer.GetDeltaTime());
+    }
 
     //System.out.println(Odometry.GetPosition().x + " : " + Odometry.GetPosition().y);
     //ColorSensor.DoColorSensor();;
