@@ -45,7 +45,7 @@ public class BallThrower
     private LimeLight _limeLight = new LimeLight();
     private PID _directionPID = new PID(0.06, 0.02, 0.000);
     private PID _elevationPID = new PID(0.035, 0.05, 0);
-    private PID _inertiaWheelPID = new PID(0, 0, 0, "Speed");
+    private PID _inertiaWheelPID = new PID(0.007, 0, 0, "Speed");
 
     private double _idleRPM;
     private double _shootRPM;
