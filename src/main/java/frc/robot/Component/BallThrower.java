@@ -2,6 +2,7 @@ package frc.robot.Component;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.Component.Data.*;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Math.PID;
@@ -9,7 +10,7 @@ import frc.robot.Math.Mathf;
 
 public class BallThrower 
 {
-    public BallThrower(Swerve swerve, int AllignButton, int ShootButton, double IdleRPM, double ShootRPM)
+    public BallThrower(int AllignButton, int ShootButton, double IdleRPM, double ShootRPM)
     {
         if(!Input.ContainButton("Allign"))
         {
@@ -20,7 +21,6 @@ public class BallThrower
             Input.CreateButton("Shoot", 0, ShootButton);
         }
 
-        _swerve = swerve;
         _elevationController = new MotorController(MotorController.MotorControllerType.TalonSRX, 6, false);
 
         _inertiaWheelControler = new MotorController[]
@@ -37,7 +37,6 @@ public class BallThrower
         _shootRPM = ShootRPM;
     }
 
-    private Swerve  _swerve;
     private MotorController _feederController = new MotorController(MotorControllerType.TalonSRX, 2, false);
     private MotorController _elevationController;
     private MotorController[] _inertiaWheelControler;
@@ -84,27 +83,12 @@ public class BallThrower
         }
         _alignButtonLastState = allignButton;
 
-        if(_isAllign || true)
+        if(_isAllign)
         {
-            /*LimeLightData currentData = _limeLight.GetCurrent();
-            
-            //Only try to align if there is a target in the line of sight
-            if(currentData.IsTarget())
-            {
-                double rotationAxis = _directionPID.Evaluate(currentData.GetAngleX(), Timer.GetDeltaTime());
-                double elevationAxis = _elevationPID.Evaluate(currentData.GetAngleY(), Timer.GetDeltaTime()) * -1;
-
-              _swerve.OverrideRotationAxis(Mathf.Clamp(rotationAxis, -1, 1));
-              _elevationController.Set(Mathf.Clamp(elevationAxis, -1, 1));
-            }
-
-            if((!_isAutoShoot || currentData.GetAngleX() + currentData.GetAngleY() <= _errorTolerency))
-            {
-                _isReady = true;
-            }*/
-
             if(_isAutoShoot || Input.GetButton("Shoot"))
             {
+                Robot.Intake.OverrideConveyorBelt();
+
                 double RPM = ((_inertiaWheelEncoder.getRate() / 2048) * 60);
                 SmartDashboard.putNumber("Velocity", RPM);
 
@@ -115,7 +99,7 @@ public class BallThrower
                     motorController.Set(val);
                 }
 
-                if(RPM >= _shootRPM - 200)//if(_isReady)
+                if(RPM >= _shootRPM - 200)
                 {
                     //Feed Ball
                     _feederController.Set(1);
