@@ -432,9 +432,9 @@ public class Swerve {
 
             if(mag > 1)
             {
-                horizontal = _currentHorizontal;// / mag;
-                vertical = _currentVertical;// / mag;
-                rotation =  _currentRotation;// mag;
+                horizontal = _currentHorizontal / mag;
+                vertical = _currentVertical / mag;
+                rotation =  _currentRotation / mag;
             }
 
             //Translation vector is equal to the translation joystick axis
