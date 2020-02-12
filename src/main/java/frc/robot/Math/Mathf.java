@@ -122,4 +122,11 @@ public class Mathf
 
         return vec;
     }
+
+    public static Vector2d Normalize(Vector2d v)
+    {
+        double mag = v.magnitude();
+
+        return new Vector2d(v.x / mag, v.y / mag);
+    }
 }
