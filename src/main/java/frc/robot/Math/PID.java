@@ -32,6 +32,10 @@ public class PID {
     private String _kiName;
     private String _kdName;
 
+    /**
+     * Enable the debug mode
+     * @param Name The name to show it as in the SmartDashboard
+     */
     public void SetDebugMode(String Name)
     {
         //Make the pid gain appear in the SmartDashboard
@@ -50,6 +54,9 @@ public class PID {
             SmartDashboard.putNumber(_kdName, Kd);
         }
     }
+    /**
+     * Disable the debug mode
+     */
     public void StopDebugMode()
     {
         if(_isDebug)
@@ -64,26 +71,51 @@ public class PID {
         }
     }
 
+    /**
+     * Set the pid gain
+     * @param Kp The proportional gain
+     * @param Ki The integral gain
+     * @param Kd The derivative gain
+     */
     public void SetGain(double KP, double KI, double KD)
     {
         Kp = KP;
         Ki = KI;
         Kd = KD;
     }
+    /**
+     * Set the tolerancy to consider the error as 0
+     * @param tolerancy The tolerancy
+     */
     public void SetTolerancy(double tolerancy)
     {
         Tolerancy = tolerancy;
     }
 
+    /**
+     * Set the current feed foward value
+     * @param FeedForward The current feed foward value
+     */
     public void SetFeedForward(double FeedForward)
     {
         _feedFoward = FeedForward;
     }
 
+    /**
+     * Evaluate the current pid
+     * @param Error The error of the system
+     * @return The value to put in the system
+     */
     public double Evaluate(double Error)
     {
         return Evaluate(Error, Timer.GetDeltaTime());
     }
+    /**
+     * Evaluate the current pid
+     * @param Error The error of the system
+     * @param Dt The delta time between the last evaluation and the current time
+     * @return The value to put in the system
+     */
     public double Evaluate(double Error, double Dt)
     {
         if(Tolerancy > Math.abs(Error))
@@ -109,6 +141,9 @@ public class PID {
         }
     }
 
+    /**
+     * Reset the integral and the last error
+     */
     public void Reset()
     {
         _previousError = 0;

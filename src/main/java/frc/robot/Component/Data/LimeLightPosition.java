@@ -5,6 +5,9 @@ import frc.robot.Robot;
 import frc.robot.Component.LimeLight;
 import frc.robot.Math.Polar;
 
+/**
+ * A position estimator based on the limelight
+ */
 public class LimeLightPosition 
 {
     public LimeLightPosition(Vector2d InitPos)
