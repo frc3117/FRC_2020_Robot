@@ -22,8 +22,6 @@ public class BallThrower
             Input.CreateButton("Shoot", 0, ShootButton);
         }
 
-        _elevationController = new MotorController(MotorController.MotorControllerType.TalonSRX, 6, false);
-
         _inertiaWheelControler = new MotorController[]
         {
             new MotorController(MotorControllerType.TalonSRX, 3, false),
@@ -42,12 +40,10 @@ public class BallThrower
     public static final double TargetHeight = 0;
 
     private MotorController _feederController = new MotorController(MotorControllerType.TalonSRX, 2, false);
-    private MotorController _elevationController;
     private MotorController[] _inertiaWheelControler;
     private Encoder _inertiaWheelEncoder;
     private LimeLight _limeLight = new LimeLight();
     private PID _directionPID = new PID(0.06, 0.02, 0.000);
-    private PID _elevationPID = new PID(0.035, 0.05, 0);
     private PID _inertiaWheelPID = new PID(0.007, 0, 0, "Speed");
 
     private Servo _camServo;
@@ -92,10 +88,16 @@ public class BallThrower
 
         if(_isAllign)
         {
-            double camAngle = _camServo.getAngle() * Mathf.DEG_2_RAD;
+            LimeLightData current = _limeLight.GetCurrent();
+
+            double camAngle = (_camServo.getAngle() + current.GetAngleY()) * Mathf.DEG_2_RAD;  
             double distance = (1 / (Math.tan(camAngle))) * (TargetHeight - CamHeight); //Multiple way of doing it
 
             double throwerTarget = 0; //Need to find the equation
+
+            //Allign to the target
+            _camServo.setAngle(camAngle * Mathf.RAD_2_DEG);
+            Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX()));
 
             if(_isAutoShoot || Input.GetButton("Shoot"))
             {
@@ -136,9 +138,7 @@ public class BallThrower
         }
         else
         {
-            _elevationController.Set(0);
             _directionPID.Reset();
-            _elevationPID.Reset();
 
             double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - (_inertiaWheelEncoder.getRate() / 34.1333333333)), -1, 0);
 

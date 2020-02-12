@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
 
     SwerveDrive = new Swerve(data, new Joystick(0));
     Odometry = new RobotOdometry(0.05, 1.2192, 6.7056);
-    
+
     SwerveDrive.SetCurrentMode(Swerve.DrivingMode.World);
 
     SwerveDrive.SetPIDGain(0, 1, 0, 0);
@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
     SwerveDrive.SetDeadzone(0.2);
     SwerveDrive.InitIMU();
 
-    Thrower = new BallThrower(4, 2, 500, 5000);
+    Thrower = new BallThrower(4, 2, 500, 3500);
     Intake = new BallIntake(6, 6, 7, 4, 4, 1000);
   }
   
