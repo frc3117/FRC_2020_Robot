@@ -26,7 +26,6 @@ public class LimeLightPosition
 
         return newPos;
     }
-
     public Vector2d GetCurrent()
     {
         return _currentPos;

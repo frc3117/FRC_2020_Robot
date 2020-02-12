@@ -1,6 +1,7 @@
 package frc.robot.Component;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.Component.Data.*;
@@ -37,6 +38,9 @@ public class BallThrower
         _shootRPM = ShootRPM;
     }
 
+    public static final double CamHeight = 0;
+    public static final double TargetHeight = 0;
+
     private MotorController _feederController = new MotorController(MotorControllerType.TalonSRX, 2, false);
     private MotorController _elevationController;
     private MotorController[] _inertiaWheelControler;
@@ -45,6 +49,9 @@ public class BallThrower
     private PID _directionPID = new PID(0.06, 0.02, 0.000);
     private PID _elevationPID = new PID(0.035, 0.05, 0);
     private PID _inertiaWheelPID = new PID(0.007, 0, 0, "Speed");
+
+    private Servo _camServo;
+    private Servo _throwerServo;
 
     private double _idleRPM;
     private double _shootRPM;
@@ -85,6 +92,11 @@ public class BallThrower
 
         if(_isAllign)
         {
+            double camAngle = _camServo.getAngle() * Mathf.DEG_2_RAD;
+            double distance = (1 / (Math.tan(camAngle))) * (TargetHeight - CamHeight); //Multiple way of doing it
+
+            double throwerTarget = 0; //Need to find the equation
+
             if(_isAutoShoot || Input.GetButton("Shoot"))
             {
                 Robot.Intake.OverrideConveyorBelt();
