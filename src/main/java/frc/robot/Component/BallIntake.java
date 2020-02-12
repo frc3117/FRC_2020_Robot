@@ -25,12 +25,10 @@ public class BallIntake
 
     private double _targetSpeed;
     private boolean _isStarted = false;
-    private boolean _isConveyerBeltOverriden = false;
 
     private Encoder _motorEncoder;
     private PID _motorPID = new PID(0.001, 0, 0);
     private MotorController _controller;
-    private MotorController _conveyorBelt = new MotorController(MotorController.MotorControllerType.TalonSRX, 11, false);
 
     private DoubleSolenoid _solenoid;
 
@@ -65,11 +63,6 @@ public class BallIntake
         }
     }
 
-    public void OverrideConveyorBelt()
-    {
-        _isConveyerBeltOverriden = true;
-    }
-
     public void DoIntake()
     {
         boolean current = Input.GetButton(("ToggleIntake"));
@@ -84,15 +77,9 @@ public class BallIntake
             
             double currentSpeed = (_motorEncoder.getRate() / 2048) * 60;
             _controller.Set(_motorPID.Evaluate(_targetSpeed - currentSpeed));
-
-            _conveyorBelt.Set(0.2);
         }
         else
         {
-            _controller.Set(0);
-            _conveyorBelt.Set(_isConveyerBeltOverriden ? 0.2 : 0);
         }    
-        
-        _isConveyerBeltOverriden = false;
     }
 }

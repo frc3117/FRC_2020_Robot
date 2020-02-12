@@ -99,8 +99,6 @@ public class BallThrower
 
             if(_isAutoShoot || Input.GetButton("Shoot"))
             {
-                Robot.Intake.OverrideConveyorBelt();
-
                 double RPM = ((_inertiaWheelEncoder.getRate() / 2048) * 60);
                 SmartDashboard.putNumber("Velocity", RPM);
 
