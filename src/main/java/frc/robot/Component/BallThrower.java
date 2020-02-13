@@ -8,6 +8,7 @@ import frc.robot.Robot;
 import frc.robot.Component.Data.*;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Math.PID;
+import frc.robot.Math.Curve;
 import frc.robot.Math.Mathf;
 
 public class BallThrower 
@@ -50,7 +51,9 @@ public class BallThrower
     private PID _directionPID = new PID(0.06, 0.02, 0.000);
     private PID _inertiaWheelPID = new PID(0.007, 0, 0, "Speed");
 
-    private Servo _throwerServo;
+    private Curve _throwerDistanceCurve = new Curve();
+
+    private Servo _throwerServo; // 1=Up 0.5=Stop 0=Down
 
     private double _idleRPM;
     private double _shootRPM;
@@ -58,6 +61,7 @@ public class BallThrower
     private boolean _isAutoShoot = false;
 
     private boolean _isAllign = false;
+    private boolean _isAllignOverriden = false;
     private boolean _isReady = false;
 
     private boolean _isLimitSwitch = false;
@@ -66,10 +70,8 @@ public class BallThrower
 
     private double _errorTolerency = 5;
 
-    private double angle;
-
-    private DigitalInput _limitSwitch1 = new DigitalInput(4);
-    private DigitalInput _limitSwitch2 = new DigitalInput(5);
+    private DigitalInput _limitSwitch1 = new DigitalInput(5);
+    private DigitalInput _limitSwitch2 = new DigitalInput(6);
 
     public void Init()
     {
@@ -77,7 +79,9 @@ public class BallThrower
         _isAllign = false;
         _isReady = false;
 
-        _limeLight.SetRecognitionMode();
+        _isLimitSwitch = false;
+
+        //_limeLight.SetRecognitionMode();
     }
 
     public double GetDistance()
@@ -87,57 +91,97 @@ public class BallThrower
 
         return (1 / (Math.tan(camAngle))) * (TargetHeight - CamHeight);
     }
+    
+    public void OverrideAlign()
+    {
+        _isAllignOverriden = true;
+    }
 
     public void DoThrower()
     {
         if(!_isLimitSwitch)
         {
-            if(_limitSwitch1.get() || _limitSwitch2.get())
+            if(!_limitSwitch1.get())
             {
                 _isLimitSwitch = true;
-                _throwerServo.setPosition(0.5);
+                _throwerServo.set(0.5);
             }
             else
             {
-                _throwerServo.setPosition(0.45);
+                _throwerServo.set(0);
             }
+
+            return;
         }
 
-        boolean allignButton = Input.GetButton("Align");
-        if(allignButton && !_alignButtonLastState)
+        if(!_isAllignOverriden)
         {
-            _isAllign = !_isAllign;
+            boolean allignButton = Input.GetButton("Align");
+            if(allignButton && !_alignButtonLastState)
+            {
+                _isAllign = !_isAllign;
 
-            if(_isAllign)
-            {
-                _limeLight.SetRecognitionMode();
+                if(_isAllign)
+                {
+                    _limeLight.SetRecognitionMode();
+                }
+                else
+                {
+                    _limeLight.SetDriveMode();
+                }
             }
-            else
-            {
-                _limeLight.SetDriveMode();
-            }
+            _alignButtonLastState = allignButton;
         }
-        _alignButtonLastState = allignButton;
+        else
+        {
+            _alignButtonLastState = false;
+        }
 
-        if(_isAllign)
+        if(_isAllign || _isAllignOverriden)
         {
             LimeLightData current = _limeLight.GetCurrent();
 
             if(current.IsTarget())
             {
                 double distance = GetDistance(); //Multiple way of doing it
-                double throwerTarget = 0; //Need to find the equatio
+                double throwerTarget = current.GetAngleY() - _throwerDistanceCurve.Evaluate(distance); //Need to find the equatio
 
                 //Allign to the target
-                if(Math.signum(current.GetAngleY()) == 1)
+                if(Math.abs(throwerTarget) <= 1)
                 {
-                    //_camServo.setAngle(_camServo.getAngle() - 0.1);
+                    double min;
+                    double max;
+
+                    if(!_limitSwitch1.get())
+                    {
+                        max = 0.5;
+                        min = 0;
+                    }
+                    else if (!_limitSwitch2.get())
+                    {
+                        max = 1;
+                        min = 0.5;
+                    }
+                    else
+                    {
+                        max = 1;
+                        min = 0;
+                    }
+
+                    _throwerServo.set(Mathf.Clamp(Math.signum(throwerTarget), min, max));
+                    _isReady = false;
                 }
                 else
                 {
-                    //_camServo.setAngle(_camServo.getAngle() + 0.1);
+                    _throwerServo.set(0.5);
+                    _isReady = true;
                 }
                 Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX()));
+            }
+            else
+            {
+                _isReady = false;
+                //Try Sweeping for detection?
             }
 
             if(_isAutoShoot || Input.GetButton("Shoot"))
@@ -152,7 +196,7 @@ public class BallThrower
                     motorController.Set(val);
                 }
 
-                if(RPM >= _shootRPM - 200)
+                if(RPM >= _shootRPM - 200 && _isReady)
                 {
                     //Feed Ball
                     _feederController.Set(1);
@@ -188,6 +232,8 @@ public class BallThrower
                 motorController.Set(val);
             }
         }
+
+        _isAllignOverriden = true;
     }
 
     public void SetErrorTolerency(double tolerency)
