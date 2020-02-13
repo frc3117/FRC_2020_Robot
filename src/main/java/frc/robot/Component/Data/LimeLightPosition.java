@@ -23,7 +23,7 @@ public class LimeLightPosition
         LimeLightData data = _limeLight.GetCurrent();
 
         double Theta = Robot.SwerveDrive.GetHeading();
-        double Distance = 0; //Need Equation To Solve It
+        double Distance = Robot.Thrower.GetDistance();
 
         Vector2d newPos = new Polar(Distance, Theta - data.GetAngleX()).vector();
 

@@ -4,6 +4,7 @@ import frc.robot.Component.BallIntake;
 import frc.robot.Component.BallThrower;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
+import frc.robot.Component.Data.LimeLightPosition;
 import frc.robot.Component.Data.RobotOdometry;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Math.PID;
@@ -22,6 +23,8 @@ public class Robot extends TimedRobot {
 
   public static PID DirectionHoldPID = new PID(3, 0, 0);
   public static PID PositionHoldPID = new PID(0.3, 0, 0);
+
+  public static LimeLightPosition Position;
 
   @Override
   public void robotInit() {
@@ -49,8 +52,8 @@ public class Robot extends TimedRobot {
     SwerveDrive.SetDeadzone(0.2);
     SwerveDrive.InitIMU();
 
-    Thrower = new BallThrower(4, 2, 500, 3500);
-    Intake = new BallIntake(6, 6, 7, 4, 4, 1000);
+    Thrower = new BallThrower(1, 2, 500, 3500);
+    //Intake = new BallIntake(6, 6, 7, 2, 3, 1000);
   }
   
   @Override
@@ -65,12 +68,14 @@ public class Robot extends TimedRobot {
     SwerveDrive.RecalibrateIMU();
 
     Thrower.Init();
-    Intake.Init();
+    //Intake.Init();
     
     PneumaticSystem.Init();
     Timer.Init();
     
     Odometry.SetPosition(new Vector2d(0, 0));
+
+    //System.out.println(Position.GetCurrent().x + " " + Position.GetCurrent().x);
   }
 
   @Override
@@ -82,9 +87,9 @@ public class Robot extends TimedRobot {
     PneumaticSystem.CheckPressure();
     
     Thrower.DoThrower();
-    Intake.DoIntake();
+    //Intake.DoIntake();
 
     SwerveDrive.DoSwerve();
-    Odometry.DoOdometry();
+    //Odometry.DoOdometry();
   } 
 }
