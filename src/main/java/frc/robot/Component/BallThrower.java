@@ -1,15 +1,19 @@
 package frc.robot.Component;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.Component.Data.*;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Math.PID;
+import frc.robot.Math.Curve;
 import frc.robot.Math.Mathf;
 
 public class BallThrower 
 {
-    public BallThrower(Swerve swerve, int AllignButton, int ShootButton, double IdleRPM, double ShootRPM)
+    public BallThrower(int AllignButton, int ShootButton, double IdleRPM, double ShootRPM)
     {
         if(!Input.ContainButton("Allign"))
         {
@@ -20,9 +24,6 @@ public class BallThrower
             Input.CreateButton("Shoot", 0, ShootButton);
         }
 
-        _swerve = swerve;
-        _elevationController = new MotorController(MotorController.MotorControllerType.TalonSRX, 6, false);
-
         _inertiaWheelControler = new MotorController[]
         {
             new MotorController(MotorControllerType.TalonSRX, 3, false),
@@ -31,21 +32,38 @@ public class BallThrower
         };
         _inertiaWheelEncoder = new Encoder(9, 8);
 
+        _throwerServo = new Servo(1);
+
         _limeLight.SetDriveMode();
 
         _idleRPM = IdleRPM;
         _shootRPM = ShootRPM;
     }
 
-    private Swerve  _swerve;
+    public static final double CamHeight = .67056;
+    public static final double CamAngle = 26;
+    public static final double TargetHeight = 2.254;
+
+    private MotorController _conveyorBelt = new MotorController(MotorControllerType.TalonFX, 11, false);
     private MotorController _feederController = new MotorController(MotorControllerType.TalonSRX, 2, false);
-    private MotorController _elevationController;
     private MotorController[] _inertiaWheelControler;
     private Encoder _inertiaWheelEncoder;
     private LimeLight _limeLight = new LimeLight();
-    private PID _directionPID = new PID(0.06, 0.02, 0.000);
-    private PID _elevationPID = new PID(0.035, 0.05, 0);
+    private PID _directionPID = new PID(0.03, 0.01, 0.000);
     private PID _inertiaWheelPID = new PID(0.007, 0, 0, "Speed");
+
+    private Curve _throwerDistanceCurve = new Curve(
+        new Vector2d(-20.15, 50),
+        new Vector2d(-18.5, 60),
+        new Vector2d(-17.72, 70),
+        new Vector2d(-16.32, 80),
+        new Vector2d(-14.6, 90),
+        new Vector2d(-13.6, 60),
+        new Vector2d(-12, 20),
+        new Vector2d(-7.6, 0)      
+    );
+
+    private Servo _throwerServo;
 
     private double _idleRPM;
     private double _shootRPM;
@@ -53,6 +71,7 @@ public class BallThrower
     private boolean _isAutoShoot = false;
 
     private boolean _isAllign = false;
+    private boolean _isAllignOverriden = false;
     private boolean _isReady = false;
 
     private boolean _alignButtonLastState = false;
@@ -66,71 +85,90 @@ public class BallThrower
         _isReady = false;
     }
 
+    public double GetDistance()
+    {
+        LimeLightData current = _limeLight.GetCurrent();
+        double Angle = (CamAngle + current.GetAngleY()) * Mathf.DEG_2_RAD;
+
+        return (1 / Math.tan(Angle)) * (TargetHeight - CamHeight);
+    }
+    
+    public void StartOverrideAlign()
+    {
+        _alignButtonLastState = false;
+
+        _isAllignOverriden = true;
+        _limeLight.SetRecognitionMode();
+    }
+    public void StopOverrideAlign()
+    {
+        _isAllignOverriden = false;
+        _limeLight.SetDriveMode();
+    }
+
     public void DoThrower()
     {
-        boolean allignButton = Input.GetButton("Align");
-        if(allignButton && !_alignButtonLastState)
+        if(!_isAllignOverriden)
         {
-            _isAllign = !_isAllign;
+            boolean allignButton = Input.GetButton("Align");
+            if(allignButton && !_alignButtonLastState)
+            {
+                _isAllign = !_isAllign;
 
-            if(_isAllign)
-            {
-                _limeLight.SetRecognitionMode();
+                if(_isAllign)
+                {
+                    _limeLight.SetRecognitionMode();
+                }
+                else
+                {
+                    _limeLight.SetDriveMode();
+                }
             }
-            else
-            {
-                _limeLight.SetDriveMode();
-            }
+            _alignButtonLastState = allignButton;
         }
-        _alignButtonLastState = allignButton;
 
-        if(_isAllign || true)
+        if(_isAllign || _isAllignOverriden)
         {
-            /*LimeLightData currentData = _limeLight.GetCurrent();
-            
-            //Only try to align if there is a target in the line of sight
-            if(currentData.IsTarget())
+            LimeLightData current = _limeLight.GetCurrent();
+            if(current.IsTarget())
             {
-                double rotationAxis = _directionPID.Evaluate(currentData.GetAngleX(), Timer.GetDeltaTime());
-                double elevationAxis = _elevationPID.Evaluate(currentData.GetAngleY(), Timer.GetDeltaTime()) * -1;
+                double throwerTarget = _throwerDistanceCurve.Evaluate(current.GetAngleY());
 
-              _swerve.OverrideRotationAxis(Mathf.Clamp(rotationAxis, -1, 1));
-              _elevationController.Set(Mathf.Clamp(elevationAxis, -1, 1));
+                System.out.println(throwerTarget);
+
+                _throwerServo.setAngle(throwerTarget);
+                Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX() - 1.5));
             }
-
-            if((!_isAutoShoot || currentData.GetAngleX() + currentData.GetAngleY() <= _errorTolerency))
-            {
-                _isReady = true;
-            }*/
 
             if(_isAutoShoot || Input.GetButton("Shoot"))
             {
-                double RPM = ((_inertiaWheelEncoder.getRate() / 2048) * 60);
-                SmartDashboard.putNumber("Velocity", RPM);
+                double RPM = ((_inertiaWheelEncoder.getRate() / 2048) * 60) * -1;
+                double RPM_Offset = SmartDashboard.getNumber("RPM_Offset", 0);
 
-                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_shootRPM - RPM), 0.1, 1);
+                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate((_shootRPM + RPM_Offset) - RPM), 0.1, 1);
 
                 for (MotorController motorController : _inertiaWheelControler) 
                 {
                     motorController.Set(val);
                 }
 
-                if(RPM >= _shootRPM - 200)//if(_isReady)
+                if(RPM >= _shootRPM - 200 && current.GetAngleY() <= _errorTolerency)
                 {
                     //Feed Ball
                     _feederController.Set(1);
+                    _conveyorBelt.Set(0.3);
                 }
                 else
                 {
                     _feederController.Set(0);
+                    _conveyorBelt.Set(0);
                 }
             }
             else
             {
-                double RPM = ((_inertiaWheelEncoder.getRate() / 2048) * 60);
-                SmartDashboard.putNumber("Velocity", RPM);                
+                double RPM = ((_inertiaWheelEncoder.getRate() / 2048) * 60) * -1;              
 
-                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - RPM), 0, 1);
+                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - RPM), 0.1, 1);
 
                 for (MotorController motorController : _inertiaWheelControler) 
                 {
@@ -138,13 +176,13 @@ public class BallThrower
                 }
 
                 _feederController.Set(0);
+                _conveyorBelt.Set(0);
             }
         }
         else
         {
-            _elevationController.Set(0);
             _directionPID.Reset();
-            _elevationPID.Reset();
+            _conveyorBelt.Set(0);
 
             double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - (_inertiaWheelEncoder.getRate() / 34.1333333333)), -1, 0);
 

@@ -9,6 +9,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.Math.PID;
 
+/**
+ * The universal motor controller
+ */
 public class MotorController 
 {
     public MotorController(MotorControllerType type, int Channel, boolean IsBrushless)
@@ -77,28 +80,53 @@ public class MotorController
     private WPI_TalonSRX _talonSRX;
     private TalonFX _talonFX;
 
+    /**
+     * Set the pid gain of the motor controller
+     * @param Kp The proportional gain
+     * @param Ki The integral gain
+     * @param Kd The derivative gain
+     */
     public void SetPID(double Kp, double Ki, double Kd)
     {
         _pid.SetGain(Kp, Ki, Kd);
     }
+    /**
+     * If the pid is used
+     * @param state The new state of the pid usage
+     */
     public void UsePID(boolean state)
     {
         _usePID = state;
     }
+    /**
+     * Set the pid in debug mode
+     * @param Name The name to show it as in the SmartDashboard
+     */
     public void SetDebugPID(String Name)
     {
         _pid.SetDebugMode(Name);
     }
+    /**
+     * Stop the pid debug mode
+     */
     public void StopDebugPID()
     {
         _pid.StopDebugMode();
     }
 
+    /**
+     * Set the resolution of the encoder
+     * @param Resolution The resolution of the encoder
+     */
     public void SetEncoderResolution(int Resolution)
     {
         _encoderResolution = Resolution;
     }
 
+    /**
+     * Set the value to send to the motor contoller
+     * @param Value The value to send to the motor controller
+     */
     public void Set(double Value)
     {
         switch(_controllerType)
@@ -137,6 +165,10 @@ public class MotorController
             break;
         }
     }
+    /**
+     * Get the instantaneous velocity of the encoder
+     * @return The instantaneous velocity of the encoder
+     */
     public double GetEncoderVelocity()
     {
         return _encoder.getRate() / _encoderResolution;

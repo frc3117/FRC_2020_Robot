@@ -11,6 +11,9 @@ import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.Joystick;
 
+/**
+ * The input manager
+ */
 public class Input 
 {
     private Input(int ID,  int input,  String inputName, boolean invert) {
@@ -35,24 +38,54 @@ public class Input
     private int _inputNegative = 9999;
     private boolean _isInputNegativeInverted;
 
+    /**
+     * Register an axis
+     * @param Name The name of the axis to register
+     * @param JoystickID The joystick id from where the axis come from
+     * @param InputID The axis id of the axix
+     * @param invert If the value will be multiply by -1
+     */
     public static void CreateAxis(String Name, int JoystickID, int InputID, boolean invert) 
     {
         new Input(JoystickID, InputID, "Axis/" + Name, invert);
     }
+    /**
+     * Register a button
+     * @param Name The name of the button to register
+     * @param JoystickID The joystick id from where the button come from
+     * @param InputID The button id of the button
+     */
     public static void CreateButton(String Name, int JoystickID, int InputID) 
     {
         new Input(JoystickID, InputID, "Button/" + Name, false);
     }
 
+    /**
+     * Check if a axis is registred
+     * @param Name The name of the axis to check
+     * @return If the axis is registred
+     */
     public static boolean ContainAxis(String Name)
     {
         return _inputs.containsKey("Axis/" + Name);
     }
+    /**
+     * Check if a button is registred
+     * @param Name The name of the button to check
+     * @return If the button is registred
+     */
     public static boolean ContainButton(String Name)
     {
         return _inputs.containsKey("Button/" + Name);
     }
 
+    /**
+     * Set a negative axis to a existing axis
+     * @param Name The name of the axis to add a negative to
+     * @param JoystickID The id of the joystick where the negative come from
+     * @param InputID The axis id of the negative axis
+     * @param invert If the value will be multiply by -1
+     */
     public static void SetAxisNegative(String Name, int JoystickID, int InputID, boolean invert)
     {
         if(!_joysticks.containsKey(JoystickID))
@@ -68,11 +101,19 @@ public class Input
         current._isInputNegativeInverted = invert;
     }
 
+    /**
+     * Unregister all the axis and buttons
+     */
     public static void Reset() {
         _inputs.clear();
         _joysticks.clear();
     }
 
+    /**
+     * Get the current value of an axis
+     * @param Name The name of the axis to get the value from
+     * @return The current value of the axis
+     */
     public static double GetAxis(String Name) {
         Input current = _inputs.get("Axis/" + Name);
         double negative = 0;
@@ -85,6 +126,11 @@ public class Input
         return (_joysticks.get(current._joystickID).getRawAxis(current._input) * (current._isInputInverted ? -1 : 1)) - negative;
     }
 
+    /**
+     * Get the current state of a button 
+     * @param Name The name of the button to get the state from
+     * @return The current state of the button
+     */
     public static boolean GetButton(String Name) {
          Input current = _inputs.get("Button/" + Name);
 
