@@ -52,8 +52,8 @@ public class Robot extends TimedRobot {
     SwerveDrive.SetDeadzone(0.2);
     SwerveDrive.InitIMU();
 
-    Thrower = new BallThrower(1, 2, 500, 3500);
-    //Intake = new BallIntake(6, 6, 7, 2, 3, 1000);
+    Thrower = new BallThrower(1, 2, 500, 3250);
+    Intake = new BallIntake(6, 6, 7, 2, 3, -225);
   }
   
   @Override
@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
     SwerveDrive.RecalibrateIMU();
 
     Thrower.Init();
-    //Intake.Init();
+    Intake.Init();
     
     PneumaticSystem.Init();
     Timer.Init();
@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
     PneumaticSystem.CheckPressure();
     
     Thrower.DoThrower();
-    //Intake.DoIntake();
+    Intake.DoIntake();
 
     SwerveDrive.DoSwerve();
     //Odometry.DoOdometry();

@@ -59,7 +59,7 @@ public class Mathf
      */
     public static Vector2d Lerp(Vector2d p1, Vector2d p2, double x)
     {
-        return new Vector2d(x, ((p2.y - p2.y) * ((x - p1.x) / (p2.x - p1.x))) + p1.y);
+        return new Vector2d(x, (p1.y + ((p2.y - p1.y)/(p2.x - p1.x)) * (x - p1.x)));
     }
 
     /**

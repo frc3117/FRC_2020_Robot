@@ -3,6 +3,7 @@ package frc.robot.Component;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
@@ -27,7 +28,7 @@ public class BallIntake
     private boolean _isStarted = false;
 
     private Encoder _motorEncoder;
-    private PID _motorPID = new PID(0.001, 0, 0);
+    private PID _motorPID = new PID(0.001, 0, 0, "Feeder");
     private MotorController _controller;
 
     private DoubleSolenoid _solenoid;
@@ -74,12 +75,14 @@ public class BallIntake
 
         if(_isStarted)
         {        
-            
             double currentSpeed = (_motorEncoder.getRate() / 2048) * 60;
             _controller.Set(_motorPID.Evaluate(_targetSpeed - currentSpeed));
+
+            SmartDashboard.putNumber("Encoder", currentSpeed);
         }
         else
         {
+            _controller.Set(0);
         }    
     }
 }

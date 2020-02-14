@@ -32,7 +32,7 @@ public class Curve
 
         for(int i = 0; i < _points.length - 1; i++)
         {
-            if(_points[i].x <= x)
+            if(_points[i].x >= x)
             {
                 return Mathf.Lerp(_points[i], _points[i + 1], x).y;
             }
