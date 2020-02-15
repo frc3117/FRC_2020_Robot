@@ -10,6 +10,10 @@ import frc.robot.Component.Data.WheelData;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
 
+import java.sql.Time;
+
+import javax.swing.text.Position;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.Vector2d;
@@ -24,7 +28,9 @@ public class Robot extends TimedRobot {
   public static PID DirectionHoldPID = new PID(3, 0, 0);
   public static PID PositionHoldPID = new PID(0.3, 0, 0);
 
-  public static LimeLightPosition Position;
+  public static LimeLightPosition Position = new LimeLightPosition(new Vector2d(0, 0));
+
+  private boolean _isInit = false;
 
   @Override
   public void robotInit() {
@@ -37,7 +43,6 @@ public class Robot extends TimedRobot {
     };
 
     SwerveDrive = new Swerve(data, new Joystick(0));
-    Odometry = new RobotOdometry(0.05, 1.2192, 6.7056);
 
     SwerveDrive.SetCurrentMode(Swerve.DrivingMode.World);
 
@@ -53,13 +58,94 @@ public class Robot extends TimedRobot {
     SwerveDrive.InitIMU();
 
     Thrower = new BallThrower(1, 2, 500, 3250);
-    Intake = new BallIntake(6, 6, 7, 2, 3, -225);
+    Intake = new BallIntake(6, 6, 7, 2, 3, -1200);
   }
   
   @Override
-  public void teleopInit() 
+  public void autonomousInit() 
   {
     Init();
+
+    currentStep = 0;
+    _autonomousEnterTime = Timer.GetCurrentTime();
+  }
+
+  private double _autonomousEnterTime;
+  private double _shootBallEnterTime;
+
+  int currentStep = 0;
+  String[] Step = {"CrossLine", "ShootBall"};
+  @Override
+  public void autonomousPeriodic() 
+  {
+    if(currentStep == Step.length)
+    {
+      Thrower.DoThrower();
+      Intake.DoIntake();
+  
+      SwerveDrive.DoSwerve();
+      return;
+    }
+
+    //Calculate the first time after use GetDeltaTime()
+    Timer.Calculate();
+
+    String current = Step[currentStep];
+
+    Vector2d pos;
+
+    switch(current)
+    {
+      case "CrossLine":
+      if((Timer.GetCurrentTime() - _autonomousEnterTime <= 2))
+      {
+        SwerveDrive.OverrideVerticalAxis(0.8);
+        //Thrower.StartOverrideAlign();
+
+        SwerveDrive.OverrideRotationAxis(0.8);
+      }
+      else
+      {
+        currentStep++;
+        _shootBallEnterTime = Timer.GetCurrentTime();
+      }
+      break;
+
+      case "ShootBall":
+      if(Timer.GetCurrentTime() - _shootBallEnterTime <= 2.5)
+      {
+        Thrower.StartOverrideAlign();
+      }
+      if(Timer.GetCurrentTime() - _shootBallEnterTime <= 10)
+      {
+        Thrower.SetAutoShoot(true);
+      }
+      else
+      {
+        Thrower.SetAutoShoot(false);
+        Thrower.StopOverrideAlign();
+        currentStep++;
+      }
+      break;
+    }
+
+    Thrower.DoThrower();
+    Intake.DoIntake();
+
+    SwerveDrive.DoSwerve();
+  }
+
+  @Override
+  public void teleopInit() 
+  {
+    if(!_isInit)
+    {
+      Init();
+    }
+
+    Thrower.SetAutoShoot(false);
+    Thrower.StopOverrideAlign();
+    _isInit = false; //Put it to false so it init next time you enable the robot
   }
 
   public void Init()
@@ -72,8 +158,8 @@ public class Robot extends TimedRobot {
     
     PneumaticSystem.Init();
     Timer.Init();
-    
-    Odometry.SetPosition(new Vector2d(0, 0));
+
+    _isInit = true;
 
     //System.out.println(Position.GetCurrent().x + " " + Position.GetCurrent().x);
   }
@@ -90,6 +176,5 @@ public class Robot extends TimedRobot {
     Intake.DoIntake();
 
     SwerveDrive.DoSwerve();
-    //Odometry.DoOdometry();
   } 
 }

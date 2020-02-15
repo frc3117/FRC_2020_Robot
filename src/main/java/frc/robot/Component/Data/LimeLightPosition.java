@@ -18,6 +18,11 @@ public class LimeLightPosition
     private Vector2d _currentPos;
     private LimeLight _limeLight = new LimeLight();
 
+    public boolean IsTarget()
+    {
+        return _limeLight.GetCurrent().IsTarget();
+    }
+
     public Vector2d Evaluate()
     {
         LimeLightData data = _limeLight.GetCurrent();

@@ -97,8 +97,8 @@ public class Swerve {
     private double _deadzone = 0;
     private DrivingMode _mode = DrivingMode.Local;
     private ShifterMode _shiftMode = ShifterMode.Manual;
-    private double _speedRatio = 1;
-    private double _roationSpeedRatio = 1;
+    private double _speedRatio = 0.5;
+    private double _roationSpeedRatio = 0.5;
 
     private double _pointExponent = 0;
     private double _pointDistance = 0;
@@ -438,13 +438,13 @@ public class Swerve {
             }
 
             //Translation vector is equal to the translation joystick axis
-            Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : horizontal * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : vertical) * _speedRatio);
+            Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : _currentHorizontal * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : _currentVertical) * _speedRatio);
             Polar translationPolar = Polar.fromVector(translation);
 
             //Remove the angle of the gyroscope to the azymuth to make the driving relative to the world
             translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 : 0;
 
-            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : rotation;
+            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : _currentRotation;
 
             for(int i = 0; i < _wheelCount; i++)
             {
