@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.Vector2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Swerve {
     public Swerve(WheelData[] WheelsData, Joystick Input)
@@ -372,6 +373,7 @@ public class Swerve {
                 break;
 
                 case Manual:
+                
                 if(_shiftButtonLastState == false && _input.getRawButton(3))
                 {
                     _shiftState = !_shiftState;
@@ -381,6 +383,8 @@ public class Swerve {
                         _shifterValve[i].set(_shiftState);
                     }
                 }
+
+                SmartDashboard.putBoolean("Gear", _shiftState);
 
                 _shiftButtonLastState = _input.getRawButton(3);
                 break;

@@ -1,7 +1,9 @@
 package frc.robot.Component;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
@@ -51,6 +53,8 @@ public class BallThrower
     private LimeLight _limeLight = new LimeLight();
     private PID _directionPID = new PID(0.03, 0.01, 0.000);
     private PID _inertiaWheelPID = new PID(0.007, 0, 0, "Speed");
+
+    private Joystick joystick = new Joystick(0);
 
     private Curve _throwerDistanceCurve = new Curve(
         new Vector2d(-20.15, 50),
@@ -129,12 +133,17 @@ public class BallThrower
 
         if(_isAllign || _isAllignOverriden)
         {
+            joystick.setRumble(RumbleType.kLeftRumble, 0.5);
+            joystick.setRumble(RumbleType.kRightRumble, 0.5);
+
+            SmartDashboard.putBoolean("IsAlign", true);
+
             LimeLightData current = _limeLight.GetCurrent();
             if(current.IsTarget())
             {
                 double throwerTarget = _throwerDistanceCurve.Evaluate(current.GetAngleY());
 
-                System.out.println(throwerTarget);
+                SmartDashboard.putNumber("ThrowerAngle", throwerTarget);
 
                 _throwerServo.setAngle(throwerTarget);
                 Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX() - 1.5));
@@ -154,7 +163,7 @@ public class BallThrower
                     motorController.Set(val);
                 }
 
-                if(RPM >= _shootRPM - 100 && current.GetAngleY() <= _errorTolerency)
+                if(RPM >= _shootRPM - 200 && current.GetAngleY() <= _errorTolerency)
                 {
                     //Feed Ball
                     _feederController.Set(1);
@@ -185,6 +194,11 @@ public class BallThrower
         }
         else
         {
+            joystick.setRumble(RumbleType.kLeftRumble, 0);
+            joystick.setRumble(RumbleType.kRightRumble, 0);
+
+            SmartDashboard.putBoolean("IsAlign", false);
+
             _directionPID.Reset();
             _conveyorBelt.Set(0);
 

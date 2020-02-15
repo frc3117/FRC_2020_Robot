@@ -112,11 +112,11 @@ public class Robot extends TimedRobot {
       break;
 
       case "ShootBall":
-      if(Timer.GetCurrentTime() - _shootBallEnterTime <= 2.5)
+      if(Timer.GetCurrentTime() - _shootBallEnterTime <= 5)
       {
         Thrower.StartOverrideAlign();
       }
-      if(Timer.GetCurrentTime() - _shootBallEnterTime <= 10)
+      if(Timer.GetCurrentTime() - _shootBallEnterTime <= 12.5)
       {
         Thrower.SetAutoShoot(true);
       }

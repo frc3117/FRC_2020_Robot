@@ -22,6 +22,8 @@ public class BallIntake
 
         _targetSpeed = TargetRPM;
         Input.CreateButton("ToggleIntake", 0, 4);
+        Input.CreateButton("StartFeeder", 0, 6);
+        Input.CreateButton("ReverseFeeder", 0, 5);
     }
 
     private double _targetSpeed;
@@ -81,10 +83,14 @@ public class BallIntake
         {        
             double currentSpeed = (_motorEncoder.getRate() / 2048) * 60;
 
-            System.out.println(Mathf.Clamp(_motorPID.Evaluate(_targetSpeed - currentSpeed), -1, 0));
-            _controller.Set(Mathf.Clamp(_motorPID.Evaluate(_targetSpeed - currentSpeed), -1, 0));
+            if(Input.GetButton("StartFeeder"))
+                _controller.Set(Mathf.Clamp(_motorPID.Evaluate(_targetSpeed - currentSpeed), -1, 0));
+            else if(Input.GetButton("ReverseFeeder"))
+                _controller.Set(Mathf.Clamp(_motorPID.Evaluate((_targetSpeed * -1) - currentSpeed), 0, 1));
+            else
+                _controller.Set(0);
 
-            SmartDashboard.putNumber("Encoder", currentSpeed);
+            SmartDashboard.putNumber("FeederSpeed", currentSpeed);
         }
         else
         {
