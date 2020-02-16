@@ -321,7 +321,7 @@ public class Swerve {
             {
                 for(int i = 0; i < _wheelCount; i++)
                 {
-                    _shifterValve[i].set(_shiftState);   
+                    _shifterValve[i].set(_overridenShiftState);   
                 }
 
                 _shiftState = _overridenShiftState;

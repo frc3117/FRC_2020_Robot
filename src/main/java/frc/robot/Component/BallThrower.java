@@ -38,6 +38,8 @@ public class BallThrower
 
         _limeLight.SetDriveMode();
 
+        SmartDashboard.putNumber("RPM_Offset", 200);
+
         _idleRPM = IdleRPM;
         _shootRPM = ShootRPM;
     }
@@ -110,6 +112,7 @@ public class BallThrower
         _limeLight.SetDriveMode();
     }
 
+    int frame = 0;
     public void DoThrower()
     {
         if(!_isAllignOverriden)
@@ -135,6 +138,8 @@ public class BallThrower
         {
             joystick.setRumble(RumbleType.kLeftRumble, 0.5);
             joystick.setRumble(RumbleType.kRightRumble, 0.5);
+
+            Robot.SwerveDrive.OverrideShift(1);
 
             SmartDashboard.putBoolean("IsAlign", true);
 
@@ -163,7 +168,7 @@ public class BallThrower
                     motorController.Set(val);
                 }
 
-                if(RPM >= _shootRPM - 200 && current.GetAngleY() <= _errorTolerency)
+                if(RPM >= _shootRPM - SmartDashboard.getNumber("RPM_Offset", 200) && current.GetAngleY() <= _errorTolerency)
                 {
                     //Feed Ball
                     _feederController.Set(1);
@@ -201,8 +206,13 @@ public class BallThrower
 
             _directionPID.Reset();
             _conveyorBelt.Set(0);
+            _feederController.Set(0);
 
-            double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - (_inertiaWheelEncoder.getRate() / 34.1333333333)), -1, 0);
+            double RPM = (_inertiaWheelEncoder.getRate() / 2048) * 60 * -1;
+
+            double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - RPM), 0.1, 1);
+
+            SmartDashboard.putNumber("Velocity", RPM);
 
             for (MotorController motorController : _inertiaWheelControler) 
             {
