@@ -242,4 +242,33 @@ public class Mathf
 
         return new Vector2d(v.x / mag, v.y / mag);
     }
+
+    /**
+     * Evaluate the secant of x (1 / cos(x))
+     * @param x The value of x to evaluate
+     * @return The secant of x
+     */
+    public static double Sec(double x)
+    {
+        return 1 / Math.cos(x);
+    }
+
+    /**
+     * Evaluate the cosecant of x (1 / sin(x))
+     * @param x The value to evaluate
+     * @return The cosecant of x
+     */
+    public static double csc(double x)
+    {
+        return 1 / Math.sin(x);
+    }
+
+    /**Evaluate the cotangent of x (1 / tan(x))
+     * @param x The value of x to evaluate
+     * @return The Cotangent of x
+     */
+    public static double Cot(double x)
+    {
+        return 1 / Math.tan(x);
+    }
 }
