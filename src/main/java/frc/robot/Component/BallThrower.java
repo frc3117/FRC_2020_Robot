@@ -161,14 +161,18 @@ public class BallThrower
 
                 SmartDashboard.putNumber("Velocity", RPM);
 
-                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate((_shootRPM + RPM_Offset) - RPM), 0.1, 1);
+                double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_shootRPM - RPM), 0.1, 1);
 
                 for (MotorController motorController : _inertiaWheelControler) 
                 {
                     motorController.Set(val);
                 }
 
-                if(RPM >= _shootRPM - SmartDashboard.getNumber("RPM_Offset", 200) && current.GetAngleY() <= _errorTolerency)
+                _isReady = true;
+                _isReady &= Math.abs(current.GetAngleX()) <= _errorTolerency;
+                _isReady &= RPM >= _shootRPM - RPM_Offset;
+
+                if(_isReady)
                 {
                     //Feed Ball
                     _feederController.Set(1);
@@ -177,6 +181,7 @@ public class BallThrower
                 else
                 {
                     _feederController.Set(0);
+                    _conveyorBelt.Set(0);
                 }
             }
             else
