@@ -43,7 +43,6 @@ public class Swerve {
         {
             _driveMotor[i] = new MotorController(MotorControllerType.TalonFX, WheelsData[i].DriveChannel, true);//new CANSparkMax(WheelsData[i].DriveChannel, MotorType.kBrushless);
             _directionMotor[i] = new TalonSRX(WheelsData[i].DirectionChannel);
-            //_driveEncoder[i] = new Encoder(WheelsData[i].DriveEncoderA, WheelsData[i].DriveEncoderB);
             _directionEncoder[i] = new AnalogInput(WheelsData[i].DirectionEncoderChannel);
             _shifterValve[i] = new Solenoid(WheelsData[i].ShifterChannel);
             _shifterValve[i].set(false);
