@@ -7,6 +7,7 @@ public class RateLimiter
 {
     public RateLimiter(double Velocity, double InitValue)
     {
+        _velocity = Velocity;
         _current = InitValue;
     }
 
