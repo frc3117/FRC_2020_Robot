@@ -2,6 +2,9 @@ package frc.robot.Math;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * The universal pid class
+ */
 public class PID {
     
     public PID() {}
