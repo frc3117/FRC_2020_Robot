@@ -116,7 +116,7 @@ public class Robot extends TimedRobot {
       {
         Thrower.StartOverrideAlign();
       }
-      if(Timer.GetCurrentTime() - _shootBallEnterTime <= 12.5)
+      else if(Timer.GetCurrentTime() - _shootBallEnterTime <= 12.5)
       {
         Thrower.SetAutoShoot(true);
       }
