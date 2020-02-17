@@ -1,9 +1,11 @@
 package frc.robot.Component.Data;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -36,7 +38,7 @@ public class MotorController
         _pid = new PID(0, 0, 0);
         _usePID = false;
     }
-    public MotorController(MotorControllerType type, int Channel, boolean IsBrushless, int EncoderChannelA, int EncoderChannelB, double Kp, double Ki, double Kd)
+    public MotorController(MotorControllerType type, int Channel, boolean IsBrushless, int EncoderChannelA, final int EncoderChannelB, final double Kp, final double Ki, final double Kd)
     {
         _controllerType = type;
 
@@ -172,5 +174,27 @@ public class MotorController
     public double GetEncoderVelocity()
     {
         return _encoder.getRate() / _encoderResolution;
+    }
+
+    /**
+     * Set the brake state of the current motor controller
+     * @param state The brake state
+     */
+    public void SetBrake(boolean state)
+    {
+        switch(_controllerType)
+        {
+            case SparkMax:
+            _sparkMax.setIdleMode(state ? IdleMode.kBrake : IdleMode.kCoast);
+            return;
+
+            case TalonSRX:
+            _talonSRX.setNeutralMode(state ? NeutralMode.Brake : NeutralMode.Coast);
+            break;
+
+            case TalonFX:
+            _talonFX.setNeutralMode(state ? NeutralMode.Brake : NeutralMode.Coast);
+            break;
+        }
     }
 }
