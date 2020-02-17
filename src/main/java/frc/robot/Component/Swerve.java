@@ -210,7 +210,7 @@ public class Swerve {
         _IMU.reset();
         _IMU.calibrate();
 
-        _headingOffset = (_IMU.getGyroAngleZ() / 180) * 3.1415;
+        _headingOffset = (_IMU.getGyroAngleZ() / 180) * 3.1415 + 3.1415;
     }
 
     public void SetSpeed(double Speed)
