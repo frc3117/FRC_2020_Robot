@@ -3,11 +3,7 @@ package frc.robot.Math;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
-<<<<<<< HEAD
- * The pid controller class
-=======
  * The universal pid class
->>>>>>> 2ab847d75dad2862c6c47912e76433a927309e60
  */
 public class PID {
     
