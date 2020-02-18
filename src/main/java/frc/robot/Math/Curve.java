@@ -7,37 +7,52 @@
 
 package frc.robot.Math;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.drive.Vector2d;
 
 public class Curve 
 {
     public Curve(Vector2d... Points)
     {
-        _points = Points.clone();
+        _points = new ArrayList<Vector2d>();
+        Collections.addAll(_points, Points);
+        Collections.sort(_points, new Vector2dSort());
     }
 
-    private Vector2d[] _points;
+    private List<Vector2d> _points;
 
     public double Evaluate(double x)
     {
-        if(_points.length == 0)
+        if(_points.size() == 0)
         {
             return 0;
         }
 
-        if(x <= _points[0].x)
+        if(x <= _points.get(0).x)
         {
-            return _points[0].y;
+            return _points.get(0).y;
         }
 
-        for(int i = 0; i < _points.length - 1; i++)
+        for(int i = 0; i < _points.size() - 1; i++)
         {
-            if(_points[i].x >= x)
+            if(_points.get(i).x >= x)
             {
-                return Mathf.Lerp(_points[i], _points[i + 1], x).y;
+                return Mathf.Lerp(_points.get(i), _points.get(i + 1), x).y;
             }
         }
 
-        return _points[_points.length - 1].y;
+        return _points.get(_points.size() - 1).y;
+    }
+
+    class Vector2dSort implements Comparator<Vector2d>
+    {
+        public int compare(Vector2d v1, Vector2d v2)
+        {
+            return (int)Math.signum(v1.x - v2.x);
+        }
     }
 }

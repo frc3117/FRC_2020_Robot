@@ -41,7 +41,7 @@ public class Swerve {
         //Initializing all component of the swerve swerve system
         for(int i  = 0; i < _wheelCount; i++)
         {
-            _driveMotor[i] = new MotorController(MotorControllerType.TalonFX, WheelsData[i].DriveChannel, true);//new CANSparkMax(WheelsData[i].DriveChannel, MotorType.kBrushless);
+            _driveMotor[i] = new MotorController(MotorControllerType.TalonFX, WheelsData[i].DriveChannel, true);
             _directionMotor[i] = new TalonSRX(WheelsData[i].DirectionChannel);
             _directionEncoder[i] = new AnalogInput(WheelsData[i].DirectionEncoderChannel);
             _shifterValve[i] = new Solenoid(WheelsData[i].ShifterChannel);
@@ -210,7 +210,7 @@ public class Swerve {
         _IMU.reset();
         _IMU.calibrate();
 
-        _headingOffset = (_IMU.getGyroAngleZ() / 180) * 3.1415;
+        _headingOffset = (_IMU.getGyroAngleZ() / 180) * 3.1415 + 3.1415;
     }
 
     public void SetSpeed(double Speed)
@@ -341,9 +341,8 @@ public class Swerve {
                         velocityVector = Mathf.Vector2Sum(velocityVector, GetWheelVector(i));
                     }
                     double Mag = velocityVector.magnitude();
-                    double AngVel = 0;//(_IMU.getGyroInstantZ() / 180) + 3.1415;
 
-                    if(_shiftState && Mag + AngVel <= _downshiftThreshold)
+                    if(_shiftState && Mag<= _downshiftThreshold)
                     {
                         _lastAutomaticShiftTime = Timer.GetCurrentTime();
                         _shiftState = false;
@@ -353,7 +352,7 @@ public class Swerve {
                             _shifterValve[i].set(_shiftState);
                         }
                     }
-                    else if (!_shiftState && Mag + AngVel >= _upshiftThreshold)
+                    else if (!_shiftState && Mag>= _upshiftThreshold)
                     {
                         _lastAutomaticShiftTime = Timer.GetCurrentTime();
                         _shiftState = true;
@@ -367,8 +366,8 @@ public class Swerve {
                         _currentHorizontal *= 0.2;
                     }
                 }
-                //If (CurrentTime - LastTime) >= WaitTime && Velocity + AngularVelocity >= UpshiftThreshold
-                //If (CurrentTime - LastTime) >= WaitTime && Velocity + AngularVelocity <= DownShiftThreshold
+
+                SmartDashboard.putBoolean("Gear", _shiftState);
                 break;
 
                 case Manual:
@@ -445,7 +444,7 @@ public class Swerve {
             Polar translationPolar = Polar.fromVector(translation);
 
             //Remove the angle of the gyroscope to the azymuth to make the driving relative to the world
-            translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 : 0;
+            translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 + 3.1415: 0;
 
             double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : _currentRotation;
 

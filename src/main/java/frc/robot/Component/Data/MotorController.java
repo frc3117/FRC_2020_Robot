@@ -177,6 +177,46 @@ public class MotorController
     }
 
     /**
+     * Get the current voltage of the motor controller
+     * @return The voltage of the motor controller
+     */
+    public double GetVoltage()
+    {
+        switch(_controllerType)
+        {
+            case SparkMax:
+            return _sparkMax.getBusVoltage();
+
+            case TalonSRX:
+            return _talonSRX.getBusVoltage();
+
+            case TalonFX:
+            return _talonFX.getBusVoltage();
+        }
+        return 0;
+    }
+
+    /**
+     * Get the current temperature of the motor
+     * @return The temperature of the motor
+     */
+    public double GetTemperature()
+    {
+        switch(_controllerType)
+        {
+            case SparkMax:
+            return _sparkMax.getMotorTemperature();
+
+            case TalonSRX:
+            return _talonSRX.getTemperature();
+
+            case TalonFX:
+            return _talonFX.getTemperature();
+        }
+        return 0;
+    }
+
+    /**
      * Set the brake state of the current motor controller
      * @param state The brake state
      */
@@ -194,6 +234,28 @@ public class MotorController
 
             case TalonFX:
             _talonFX.setNeutralMode(state ? NeutralMode.Brake : NeutralMode.Coast);
+            break;
+        }
+    }
+
+    /**
+    * Set the inverted state of the motor controller
+    * @param state The inverted state of the motor controller
+    */
+    public void SetInverted(boolean state)
+    {
+        switch(_controllerType)
+        {
+            case SparkMax:
+            _sparkMax.setInverted(state);
+            break;
+
+            case TalonSRX:
+            _talonSRX.setInverted(state);
+            break;
+
+            case TalonFX:
+            _talonFX.setInverted(state);
             break;
         }
     }
