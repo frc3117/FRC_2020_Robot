@@ -30,9 +30,9 @@ public class LimeLightPosition
         double Theta = Robot.SwerveDrive.GetHeading();
         double Distance = Robot.Thrower.GetDistance();
 
-        Vector2d newPos = new Polar(Distance, Theta - data.GetAngleX()).vector();
+        _currentPos = new Polar(Distance, Theta - data.GetAngleX()).vector();
 
-        return newPos;
+        return _currentPos;
     }
     public Vector2d GetCurrent()
     {

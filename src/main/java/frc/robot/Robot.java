@@ -75,6 +75,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() 
   {
+    //Calculate the first time after use GetDeltaTime()
+    Timer.Calculate();
+
     if(currentStep == Step.length)
     {
       Thrower.DoThrower();
@@ -83,9 +86,6 @@ public class Robot extends TimedRobot {
       SwerveDrive.DoSwerve();
       return;
     }
-
-    //Calculate the first time after use GetDeltaTime()
-    Timer.Calculate();
 
     String current = Step[currentStep];
 
@@ -97,9 +97,7 @@ public class Robot extends TimedRobot {
       if((Timer.GetCurrentTime() - _autonomousEnterTime <= 2))
       {
         SwerveDrive.OverrideVerticalAxis(0.8);
-        //Thrower.StartOverrideAlign();
-
-        SwerveDrive.OverrideRotationAxis(0.8);
+        Thrower.StartOverrideAlign();
       }
       else
       {
@@ -109,11 +107,7 @@ public class Robot extends TimedRobot {
       break;
 
       case "ShootBall":
-      if(Timer.GetCurrentTime() - _shootBallEnterTime <= 5)
-      {
-        Thrower.StartOverrideAlign();
-      }
-      else if(Timer.GetCurrentTime() - _shootBallEnterTime <= 12.5)
+      if(Timer.GetCurrentTime() - _shootBallEnterTime >= 2.5 && Timer.GetCurrentTime() - _shootBallEnterTime <= 7)
       {
         Thrower.SetAutoShoot(true);
       }
