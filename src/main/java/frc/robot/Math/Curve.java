@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.Math;
 
 import java.util.ArrayList;
@@ -14,6 +7,9 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj.drive.Vector2d;
 
+/**
+ * The linear interpolation curve class
+ */
 public class Curve 
 {
     public Curve(Vector2d... Points)
@@ -25,6 +21,11 @@ public class Curve
 
     private List<Vector2d> _points;
 
+    /**
+     * Evaluate the current value of x by linear interpolation
+     * @param x The current value of x
+     * @return The interpolated value
+     */
     public double Evaluate(double x)
     {
         if(_points.size() == 0)

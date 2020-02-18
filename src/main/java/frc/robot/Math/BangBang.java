@@ -1,6 +1,8 @@
 package frc.robot.Math;
 
-
+/**
+ * The bang bang controller class
+ */
 public class BangBang 
 {
     public BangBang(double PositiveResult, double NegativeResult)

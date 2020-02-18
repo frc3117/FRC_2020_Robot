@@ -3,10 +3,17 @@ package frc.robot.Component;
 import edu.wpi.first.networktables.*;
 import frc.robot.Component.Data.LimeLightData;
 
+/**
+ * The limelight vision class
+ */
 public class LimeLight {
 
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
+    /**
+     * Get the current data from the limelight
+     * @return
+     */
     public LimeLightData GetCurrent()
     {        
         NetworkTableEntry tx = table.getEntry("tx"); //X Angle (degree)
@@ -17,12 +24,18 @@ public class LimeLight {
         return new LimeLightData(tx.getDouble(0), ty.getDouble(0), ta.getDouble(0), tv.getDouble(0));
     }
 
+    /**
+     * Set the limelight in drive mode
+     */
     public void SetDriveMode()
     {
         table.getEntry("camMode").setNumber(1);
 
         TurnOffLight();
     }
+    /**
+     * Set the limelight in recognition mode
+     */
     public void SetRecognitionMode()
     {
         table.getEntry("camMode").setNumber(0);
@@ -46,19 +59,33 @@ public class LimeLight {
     // (2) Force Blink
     // (3) Turn On
 
+    /**
+     * Turn on the light on the limelight
+     */
     public void TurnOnLight()
     {
         table.getEntry("ledMode").setNumber(3);
     }
+    /**
+     * Turn off the light on the limelight
+     */
     public void TurnOffLight()
     {
         table.getEntry("ledMode").setNumber(1);
     }
 
+    /**
+     * Set the current pipeline to run on the limelight
+     * @param id The pipeline to set on the limelight
+     */
     public void SetPipeline(int id)
     {
         table.getEntry("pipeline").setNumber(id);
     }
+    /**
+     * Get the current pipeline running on the limelight
+     * @return
+     */
     public int GetCurrentPipeline()
     {
         return (int)table.getEntry("getpipe").getDouble(0);

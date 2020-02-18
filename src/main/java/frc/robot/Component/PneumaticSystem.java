@@ -1,24 +1,26 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.Component;
 
 import edu.wpi.first.wpilibj.Compressor;
 
+/**
+ * The pneumatic system manager class
+ */
 public class PneumaticSystem 
 {
     private static Compressor _compressor;
     private static boolean _isRuning;
 
+    /**
+     * Initialize the pneumatic system
+     */
     public static void Init()
     {
         _compressor = new Compressor();
     }
 
+    /**
+     * Check the presure on the pneumatic system and start the compresspr if needed
+     */
     public static void CheckPressure()
     {
         //Only start the compressor if we neeed air
