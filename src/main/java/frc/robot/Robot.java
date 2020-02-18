@@ -4,17 +4,13 @@ import frc.robot.Component.BallIntake;
 import frc.robot.Component.BallThrower;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
+import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.LimeLightPosition;
 import frc.robot.Component.Data.RobotOdometry;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
 
-import java.sql.Time;
-
-import javax.swing.text.Position;
-
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 
@@ -42,7 +38,7 @@ public class Robot extends TimedRobot {
       new WheelData(23, 4, new Vector2d(6, 7), 3, 2, new Vector2d(-10, 11), 3.1476357- (3.1415/2.0))
     };
 
-    SwerveDrive = new Swerve(data, new Joystick(0));
+    SwerveDrive = new Swerve(data);
 
     SwerveDrive.SetCurrentMode(Swerve.DrivingMode.World);
 
@@ -54,11 +50,12 @@ public class Robot extends TimedRobot {
     SwerveDrive.SetRateLimiter(100000);
     SwerveDrive.SetRotationRateLimiter(100000);
 
-    SwerveDrive.SetDeadzone(0.2);
     SwerveDrive.InitIMU();
 
-    Thrower = new BallThrower(1, 2, 500, 3250);
+    Thrower = new BallThrower(500, 3250);
     Intake = new BallIntake(6, 6, 7, 2, 3, -1200);
+
+    InputManager.Init();
   }
   
   @Override

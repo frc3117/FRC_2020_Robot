@@ -33,4 +33,14 @@ public class TakeBackHalf
 
         return _output;
     }
+
+    /**
+     * Reset the take back half controller
+     */
+    public void Reset()
+    {
+        _lastError = 0;
+        _output = 0;
+        _tbh = 0;
+    }
 }

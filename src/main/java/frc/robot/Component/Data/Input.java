@@ -25,10 +25,12 @@ public class Input
         _input = input;
         _isInputNegativeInverted = invert;
 
+        _deadzone.put(inputName, 0.);
         _inputs.put(inputName, this);
     }
 
     private static HashMap<String, Input> _inputs = new HashMap<String, Input>();
+    private static HashMap<String, Double> _deadzone = new HashMap<String, Double>();
     private static HashMap<Integer, Joystick> _joysticks = new HashMap<Integer, Joystick>();
 
     private int _joystickID;
@@ -80,7 +82,7 @@ public class Input
     }
 
     /**
-     * Set a negative axis to a existing axis
+     * Set a negative axis to an existing axis
      * @param Name The name of the axis to add a negative to
      * @param JoystickID The id of the joystick where the negative come from
      * @param InputID The axis id of the negative axis
@@ -99,6 +101,16 @@ public class Input
         current._inputNegative = InputID;
 
         current._isInputNegativeInverted = invert;
+    }
+
+    /**
+     * Set the axis deadzone to an existing axis
+     * @param Name The name of the axis
+     * @param Deadzone The deadzone to set
+     */
+    public static void SetAxisDeadzone(String Name, double Deadzone)
+    {
+        _deadzone.put("Axis/" + Name, Deadzone);
     }
 
     /**
@@ -123,7 +135,14 @@ public class Input
             negative = _joysticks.get(current._joystickIDNegative).getRawAxis(current._inputNegative) * (current._isInputNegativeInverted ? -1 : 1);
         }
 
-        return (_joysticks.get(current._joystickID).getRawAxis(current._input) * (current._isInputInverted ? -1 : 1)) - negative;
+        double val = (_joysticks.get(current._joystickID).getRawAxis(current._input) * (current._isInputInverted ? -1 : 1)) - negative;
+
+        if(Math.abs(val) <= _deadzone.get("Axis/" + Name))
+        {
+            return 0;
+        }
+
+        return val;
     }
 
     /**

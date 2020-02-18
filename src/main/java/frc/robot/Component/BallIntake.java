@@ -21,9 +21,6 @@ public class BallIntake
         _solenoid = new DoubleSolenoid(SolenoidChannelA, SolenoidChannelB);
 
         _targetSpeed = TargetRPM;
-        Input.CreateButton("ToggleIntake", 0, 4);
-        Input.CreateButton("StartFeeder", 0, 6);
-        Input.CreateButton("ReverseFeeder", 0, 5);
     }
 
     private double _targetSpeed;

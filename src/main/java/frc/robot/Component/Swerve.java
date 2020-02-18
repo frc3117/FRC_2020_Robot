@@ -1,5 +1,6 @@
 package frc.robot.Component;
 
+import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.RobotPosition;
 import frc.robot.Component.Data.WheelData;
@@ -21,7 +22,7 @@ import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Swerve {
-    public Swerve(WheelData[] WheelsData, Joystick Input)
+    public Swerve(WheelData[] WheelsData)
     {
         _wheelCount = WheelsData.length;
 
@@ -56,8 +57,6 @@ public class Swerve {
 
             _directionPID[i] = new PID();
         }
-
-        _input = Input;
     }
 
     public enum DrivingMode
@@ -81,7 +80,6 @@ public class Swerve {
     private AnalogInput[] _directionEncoder;
     private Solenoid[] _shifterValve;
     private Vector2d[] _rotationVector;
-    private Joystick _input;
 
     private Vector2d[] _wheelPosition;
 
@@ -94,7 +92,6 @@ public class Swerve {
 
     private PID[] _directionPID;
 
-    private double _deadzone = 0;
     private DrivingMode _mode = DrivingMode.Local;
     private ShifterMode _shiftMode = ShifterMode.Manual;
     private double _speedRatio = 0.5;
@@ -134,10 +131,6 @@ public class Swerve {
     private double _verticalAxisOverride = 0;
     private boolean _isVerticalAxisOverride = false;
 
-    public void SetDeadzone(double Deadzone)
-    {
-        _deadzone = Deadzone;
-    }
     public void SetCurrentMode(DrivingMode Mode)
     {
         _mode = Mode;
@@ -372,7 +365,7 @@ public class Swerve {
 
                 case Manual:
                 
-                if(_shiftButtonLastState == false && _input.getRawButton(3))
+                if(_shiftButtonLastState == false && Input.GetButton("GearShift"))
                 {
                     _shiftState = !_shiftState;
 
@@ -384,7 +377,7 @@ public class Swerve {
 
                 SmartDashboard.putBoolean("Gear", _shiftState);
 
-                _shiftButtonLastState = _input.getRawButton(3);
+                _shiftButtonLastState = Input.GetButton("GearShift");
                 break;
             }
         }
@@ -397,7 +390,7 @@ public class Swerve {
             case World:
 
             //Adding a rate limiter to the translation joystick to make the driving smoother
-            double horizontal = GetAxisDeadzone(0);
+            double horizontal = Input.GetAxis("Horizontal");
             if(Math.abs(horizontal - _currentHorizontal) <= _maxRateLimiter * Timer.GetDeltaTime())
             {
                 _currentHorizontal = horizontal;
@@ -406,7 +399,7 @@ public class Swerve {
             {
                 _currentHorizontal += (Math.signum(horizontal - _currentHorizontal)) * _maxRateLimiter * Timer.GetDeltaTime();
             }
-            double vertical = GetAxisDeadzone(1);
+            double vertical = Input.GetAxis("Vertical");
             if(Math.abs(vertical - _currentVertical) <= _maxRateLimiter * Timer.GetDeltaTime())
             {
                 _currentVertical = vertical;
@@ -415,7 +408,7 @@ public class Swerve {
             {
                 _currentVertical += (Math.signum(vertical - _currentVertical)) * _maxRateLimiter * Timer.GetDeltaTime();
             }
-            double rotation = GetAxisDeadzone(3) - GetAxisDeadzone(2);
+            double rotation = Input.GetAxis("Rotation");
             if(Math.abs(rotation - _currentRotation) <= _maxRateLimiterRotation * Timer.GetDeltaTime())
             {
                 _currentRotation = rotation;
@@ -469,7 +462,7 @@ public class Swerve {
             break;
 
             case Point:
-            Vector2d point = GetPoint(GetAxisDeadzone(0), GetAxisDeadzone(1));
+            Vector2d point = GetPoint(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
             Polar[] wheelPol = new Polar[_wheelCount];
 
@@ -484,7 +477,7 @@ public class Swerve {
             for(int i = 0; i < _wheelCount; i++)
             {
                 wheelPol[i].radius /= average;
-                wheelPol[i].radius *=  GetAxisDeadzone(3) - GetAxisDeadzone(2);
+                wheelPol[i].radius *=  Input.GetAxis("Rotation");
 
                 _driveMotor[i].Set(Mathf.Clamp(wheelPol[i].radius, -1, 1) * _flipDriveMultiplicator[i]);
                 _directionMotor[i].set(ControlMode.PercentOutput, Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, wheelPol[i].vector()), dt), -1, 1));
@@ -518,17 +511,6 @@ public class Swerve {
         _isHorizontalAxisOverride = false;
     }
 
-    private double GetAxisDeadzone(int channel)
-    {
-        double axis = _input.getRawAxis(channel);
-
-        if(Math.abs(axis) <= _deadzone)
-        {
-            return 0;
-        }
-
-        return axis;
-    }
     private double GetDeltaAngle(int ID, Vector2d Target)
     {
         double Source = ((_directionEncoder[ID].getValue() / 4096f) * 2 * 3.1415f) - _angleOffset[ID] - 3.1415;

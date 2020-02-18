@@ -15,17 +15,8 @@ import frc.robot.Math.Mathf;
 
 public class BallThrower 
 {
-    public BallThrower(int AllignButton, int ShootButton, double IdleRPM, double ShootRPM)
+    public BallThrower(double IdleRPM, double ShootRPM)
     {
-        if(!Input.ContainButton("Allign"))
-        {
-            Input.CreateButton("Align", 0, AllignButton);
-        }
-        if(!Input.ContainButton("Shoot"))
-        {
-            Input.CreateButton("Shoot", 0, ShootButton);
-        }
-
         _inertiaWheelControler = new MotorController[]
         {
             new MotorController(MotorControllerType.TalonSRX, 3, false),
