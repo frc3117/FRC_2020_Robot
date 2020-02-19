@@ -182,7 +182,6 @@ public class BallThrower
                 SmartDashboard.putNumber("Velocity", RPM);
 
                 double val = Mathf.Clamp(_inertiaWheelPID.Evaluate(_idleRPM - RPM), 0.1, 1);
-
                 
                 for (MotorController motorController : _inertiaWheelControler) 
                 {

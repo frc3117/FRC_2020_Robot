@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
   {
     //Calculate the first time after use GetDeltaTime()
     Timer.Calculate();
+    InputManager.DoInputManager();
 
     if(currentStep == Step.length)
     {

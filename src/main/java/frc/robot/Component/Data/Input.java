@@ -7,7 +7,9 @@
 
 package frc.robot.Component.Data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -154,5 +156,51 @@ public class Input
          Input current = _inputs.get("Button/" + Name);
 
         return _joysticks.get(current._joystickID).getRawButton(current._input);
+    }
+
+    /**
+     * Get all the registred axis
+     * @return All the registred axis
+     */
+    public static String[] GetAllAxis()
+    {
+        List<String> keys = new ArrayList<String>();
+        
+        for (String key : _inputs.keySet())
+        {
+            if(key.contains("Axis/"))
+            {
+                keys.add(key);
+            }
+        }
+
+        return keys.toArray(new String[keys.size()]);
+    }
+    /**
+     * Get all the registred button
+     * @return All the registred button
+     */
+    public static String[] GetAllButton()
+    {
+        List<String> keys = new ArrayList<String>();
+        
+        for (String key : _inputs.keySet())
+        {
+            if(key.contains("Button/"))
+            {
+                keys.add(key);
+            }
+        }
+
+        return keys.toArray(new String[keys.size()]);
+    }
+
+    /**
+     * Get all the registred input
+     * @return All the registred input
+     */
+    public String[] GetAllInput()
+    {
+        return _inputs.keySet().toArray(new String[_inputs.size()]);
     }
 }
