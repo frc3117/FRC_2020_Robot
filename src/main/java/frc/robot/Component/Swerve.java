@@ -417,7 +417,6 @@ public class Swerve {
             {
                 _currentRotation += (Math.signum(rotation - _currentRotation)) * _maxRateLimiterRotation * Timer.GetDeltaTime();
             }
-            _currentRotation = rotation;
 
             double x = _currentHorizontal;
             double y = _currentVertical;
