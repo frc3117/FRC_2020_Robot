@@ -71,8 +71,6 @@ public class BallThrower
     private boolean _isAllignOverriden = false;
     private boolean _isReady = false;
 
-    private boolean _alignButtonLastState = false;
-
     private double _errorTolerency = 5;
 
     public void Init()
@@ -92,8 +90,6 @@ public class BallThrower
     
     public void StartOverrideAlign()
     {
-        _alignButtonLastState = false;
-
         _isAllignOverriden = true;
         _limeLight.SetRecognitionMode();
     }
@@ -108,8 +104,7 @@ public class BallThrower
     {
         if(!_isAllignOverriden)
         {
-            boolean allignButton = Input.GetButton("Align");
-            if(allignButton && !_alignButtonLastState)
+            if(InputManager.GetButtonDown("Align"))
             {
                 _isAllign = !_isAllign;
 
@@ -122,7 +117,6 @@ public class BallThrower
                     _limeLight.SetDriveMode();
                 }
             }
-            _alignButtonLastState = allignButton;
         }
 
         if(_isAllign || _isAllignOverriden)

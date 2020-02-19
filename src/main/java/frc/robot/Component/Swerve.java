@@ -1,6 +1,7 @@
 package frc.robot.Component;
 
 import frc.robot.Component.Data.Input;
+import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.RobotPosition;
 import frc.robot.Component.Data.WheelData;
@@ -16,7 +17,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -110,7 +110,6 @@ public class Swerve {
     private double _currentVertical = 0;
     private double _currentRotation = 0;
 
-    private boolean _shiftButtonLastState = false;
     private boolean _shiftState = false;
 
     private double _minShiftTime;
@@ -365,7 +364,7 @@ public class Swerve {
 
                 case Manual:
                 
-                if(_shiftButtonLastState == false && Input.GetButton("GearShift"))
+                if(InputManager.GetButtonDown("GearShift"))
                 {
                     _shiftState = !_shiftState;
 
@@ -377,7 +376,6 @@ public class Swerve {
 
                 SmartDashboard.putBoolean("Gear", _shiftState);
 
-                _shiftButtonLastState = Input.GetButton("GearShift");
                 break;
             }
         }

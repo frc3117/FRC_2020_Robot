@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Component.Data.Input;
+import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Math.Mathf;
@@ -31,8 +32,6 @@ public class BallIntake
     private MotorController _controller;
 
     private DoubleSolenoid _solenoid;
-
-    private boolean _lastInput = false;
 
     public void Init()
     {
@@ -69,12 +68,10 @@ public class BallIntake
 
     public void DoIntake()
     {
-        boolean current = Input.GetButton(("ToggleIntake"));
-        if(current && !_lastInput)
+        if(InputManager.GetButtonDown("ToggleIntake"))
         {
-          ToggleIntake();
+            ToggleIntake();
         }
-        _lastInput = current;
 
         if(_isStarted)
         {        
