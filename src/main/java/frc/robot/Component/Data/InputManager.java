@@ -38,6 +38,8 @@ public class InputManager
         Input.CreateButton("Align", 0, 1);
         Input.CreateButton("Shoot", 0, 2);
 
+        //Climber
+        Input.CreateButton("ToggleClimber", 0, 12);
 
         _allButton = Input.GetAllButton();
         for (String key : _allButton)
@@ -47,6 +49,9 @@ public class InputManager
         }
     }
 
+    /**
+     * Compute the current input manager
+     */
     public static void DoInputManager()
     {
         for (String key : _allButton)
