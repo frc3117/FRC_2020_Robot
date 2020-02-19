@@ -81,10 +81,10 @@ public class Robot extends TimedRobot {
 
     if(currentStep == Step.length)
     {
-      Thrower.DoThrower();
-      Intake.DoIntake();
+      Thrower.DoSystem();
+      Intake.DoSystem();
   
-      SwerveDrive.DoSwerve();
+      SwerveDrive.DoSystem();;
       return;
     }
 
@@ -121,10 +121,10 @@ public class Robot extends TimedRobot {
       break;
     }
 
-    Thrower.DoThrower();
-    Intake.DoIntake();
+    Thrower.DoSystem();
+    Intake.DoSystem();
 
-    SwerveDrive.DoSwerve();
+    SwerveDrive.DoSystem();
   }
 
   @Override
@@ -164,9 +164,9 @@ public class Robot extends TimedRobot {
     //Execute Needed Component
     PneumaticSystem.CheckPressure();
     
-    Thrower.DoThrower();
-    Intake.DoIntake();
+    Thrower.DoSystem();
+    Intake.DoSystem();
 
-    SwerveDrive.DoSwerve();
+    SwerveDrive.DoSystem();
   } 
 }

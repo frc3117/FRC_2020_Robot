@@ -6,6 +6,7 @@ import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.RobotPosition;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
+import frc.robot.Interface.System;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
 import frc.robot.Math.Polar;
@@ -21,7 +22,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Swerve {
+public class Swerve implements System {
     public Swerve(WheelData[] WheelsData)
     {
         _wheelCount = WheelsData.length;
@@ -129,6 +130,11 @@ public class Swerve {
 
     private double _verticalAxisOverride = 0;
     private boolean _isVerticalAxisOverride = false;
+
+    public void Init()
+    {
+        
+    }
 
     public void SetCurrentMode(DrivingMode Mode)
     {
@@ -295,7 +301,7 @@ public class Swerve {
     }
 
     int f = 0;
-    public void DoSwerve()
+    public void DoSystem()
     {/*
         System.out.println("(0): " + ((_directionEncoder[0].getValue() / 4096f) * 2 * 3.1415f));
         System.out.println("(1): " + ((_directionEncoder[1].getValue() / 4096f) * 2 * 3.1415f));

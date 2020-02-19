@@ -9,11 +9,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.Component.Data.*;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
+import frc.robot.Interface.System;
 import frc.robot.Math.PID;
 import frc.robot.Math.Curve;
 import frc.robot.Math.Mathf;
 
-public class BallThrower 
+public class BallThrower implements System
 {
     public BallThrower(double IdleRPM, double ShootRPM)
     {
@@ -100,7 +101,7 @@ public class BallThrower
     }
 
     int frame = 0;
-    public void DoThrower()
+    public void DoSystem()
     {
         if(!_isAllignOverriden)
         {

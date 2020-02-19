@@ -8,10 +8,11 @@ import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
+import frc.robot.Interface.System;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
 
-public class BallIntake 
+public class BallIntake implements System
 {
     public BallIntake(int ControlerChannel, int SolenoidChannelA, int SolenoidChannelB, int EncoderA, int EncoderB, int TargetRPM)
     {
@@ -66,7 +67,7 @@ public class BallIntake
         return _isStarted;
     }
 
-    public void DoIntake()
+    public void DoSystem()
     {
         if(InputManager.GetButtonDown("ToggleIntake"))
         {
