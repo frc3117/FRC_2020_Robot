@@ -35,6 +35,13 @@ public class PID {
     private String _kiName;
     private String _kdName;
 
+    private double _min;
+    private double _max;
+    private boolean _useMinMax;
+
+    private RateLimiter _rateLimiter;
+    private boolean _useRateLimiter;
+
     /**
      * Enable the debug mode
      * @param Name The name to show it as in the SmartDashboard
@@ -72,6 +79,58 @@ public class PID {
             SmartDashboard.delete(_kiName);
             SmartDashboard.delete(_kdName);
         }
+    }
+
+    /**
+     * Set the min and the max value of the pid
+     * @param Min The min value of the pid
+     * @param Max The max value of the pid
+     */
+    public void SetMinMax(double Min, double Max)
+    {
+        _min = Min;
+        _max = Max;
+
+        _useMinMax = true;
+    }
+    /**
+     * Stop using the min and the max of the pid
+     */
+    public void RemoveMinMax()
+    {
+        _useMinMax = false;
+    }
+
+    /**
+     * Set the rate limiter of the pid
+     * @param Velocity The velocity of the rate limiter
+     */
+    public void SetRateLimiter(double Velocity)
+    {
+        _rateLimiter.SetVelocity(Velocity);
+
+        _useRateLimiter = true;
+    }
+    /**
+     * Set the rate limiter of the pid
+     * @param Velocity The velocity of the rate limiter
+     * @param Current The current value of the rate limiter
+     */
+    public void SetRateLimiter(double Velocity, double Current)
+    {
+        _rateLimiter.SetVelocity(Velocity);
+        _rateLimiter.SetCurrent(Current);
+
+        _useRateLimiter = true;
+    }
+    /**
+     * Stop using the rate limiter of the pid
+     */
+    public void RemoveRateLimiter()
+    {
+        _rateLimiter.Reset();
+
+        _useRateLimiter = false;
     }
 
     /**
@@ -134,14 +193,27 @@ public class PID {
         _previousError = Error;
         _previousAverageError = averageError;
 
+        double target;
+
         if(_isDebug)
         {
-            return SmartDashboard.getNumber(_kpName, 0) * Error + SmartDashboard.getNumber(_kiName, 0) * _integral + SmartDashboard.getNumber(_kdName, 0) * derivative + _feedFoward;
+            target = SmartDashboard.getNumber(_kpName, 0) * Error + SmartDashboard.getNumber(_kiName, 0) * _integral + SmartDashboard.getNumber(_kdName, 0) * derivative + _feedFoward;
         }
         else
         {
-            return Kp * Error + Ki * _integral + Kd * derivative + _feedFoward;
+            target = Kp * Error + Ki * _integral + Kd * derivative + _feedFoward;
         }
+
+        if(_useMinMax)
+        {
+            target = Mathf.Clamp(target, _min, _max);
+        }
+        if(_useRateLimiter)
+        {
+            target = _rateLimiter.Evaluate(target, Dt);
+        }
+
+        return target;
     }
 
     /**
