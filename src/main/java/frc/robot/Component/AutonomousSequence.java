@@ -141,7 +141,7 @@ public class AutonomousSequence
 
             Robot.SwerveDrive.OverrideShift(targetShiftGear);
 
-            Robot.SwerveDrive.DoSystem();;
+            Robot.SwerveDrive.DoSystem();
             Robot.Odometry.DoOdometry();
         }
     }
