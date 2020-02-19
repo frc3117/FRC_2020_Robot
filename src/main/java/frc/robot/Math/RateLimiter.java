@@ -15,6 +15,15 @@ public class RateLimiter
     private double _current;
 
     /**
+     * Set the new velocity of the rate limiter
+     * @param Velocity The new velocity of the rate limiter
+     */
+    public void SetVelocity(double Velocity)
+    {
+        _velocity = Velocity;
+    }
+
+    /**
      * Evaluate the current value of the rate limiter
      * @param TargetValueThe target value of the rate limiter
      * @return The evaluate current value of the rate limiter
@@ -44,11 +53,28 @@ public class RateLimiter
     }
 
     /**
+     * Override the current value of the rate limiter
+     * @param Value The new value of the rate limiter
+     */
+    public void SetCurrent(double Value)
+    {
+        _current = Value;
+    }
+
+    /**
      * Get the current value of the rate limiter
      * @return The current value of the rate limiter
      */
     public double GetCurrent()
     {
         return _current;
+    }
+
+    /**
+     * Reset the current rate limiter
+     */
+    public void Reset()
+    {
+        _current = 0;
     }
 }

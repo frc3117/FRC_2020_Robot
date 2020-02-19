@@ -10,11 +10,10 @@ import frc.robot.Interface.System;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
 import frc.robot.Math.Polar;
+import frc.robot.Math.RateLimiter;
 import frc.robot.Math.Timer;
 
 import com.analog.adis16448.frc.ADIS16448_IMU;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Encoder;
@@ -28,7 +27,7 @@ public class Swerve implements System {
         _wheelCount = WheelsData.length;
 
         _driveMotor = new MotorController[_wheelCount];
-        _directionMotor = new TalonSRX[_wheelCount];
+        _directionMotor = new MotorController[_wheelCount];
         _driveEncoder = new Encoder[_wheelCount];
         _directionEncoder = new AnalogInput[_wheelCount];
         _shifterValve = new Solenoid[_wheelCount];
@@ -40,11 +39,15 @@ public class Swerve implements System {
         _flipAngleOffset = new double[_wheelCount];
         _flipDriveMultiplicator = new double[_wheelCount];
 
+        _horizontalRateLimiter = new RateLimiter(10000, 0);
+        _verticaRateLimiter = new RateLimiter(10000, 0);
+        _rotationRateLimiter = new RateLimiter(10000, 0);
+
         //Initializing all component of the swerve swerve system
         for(int i  = 0; i < _wheelCount; i++)
         {
             _driveMotor[i] = new MotorController(MotorControllerType.TalonFX, WheelsData[i].DriveChannel, true);
-            _directionMotor[i] = new TalonSRX(WheelsData[i].DirectionChannel);
+            _directionMotor[i] = new MotorController(MotorControllerType.TalonSRX , WheelsData[i].DirectionChannel, false);
             _directionEncoder[i] = new AnalogInput(WheelsData[i].DirectionEncoderChannel);
             _shifterValve[i] = new Solenoid(WheelsData[i].ShifterChannel);
             _shifterValve[i].set(false);
@@ -76,7 +79,7 @@ public class Swerve implements System {
     private int _wheelCount;
 
     private MotorController[] _driveMotor;
-    private TalonSRX[] _directionMotor;
+    private MotorController[] _directionMotor;
     private Encoder[] _driveEncoder;
     private AnalogInput[] _directionEncoder;
     private Solenoid[] _shifterValve;
@@ -105,11 +108,9 @@ public class Swerve implements System {
 
     private RobotPosition _position = new RobotPosition(new Vector2d(0, 0));
 
-    private double _maxRateLimiter = 0;
-    private double _maxRateLimiterRotation = 0;
-    private double _currentHorizontal = 0;
-    private double _currentVertical = 0;
-    private double _currentRotation = 0;
+    private RateLimiter _horizontalRateLimiter;
+    private RateLimiter _verticaRateLimiter;
+    private RateLimiter _rotationRateLimiter;
 
     private boolean _shiftState = false;
 
@@ -228,11 +229,12 @@ public class Swerve implements System {
 
     public void SetRateLimiter(double MaxSpeed)
     {
-        _maxRateLimiter = MaxSpeed;
+        _horizontalRateLimiter.SetVelocity(MaxSpeed);
+        _verticaRateLimiter.SetVelocity(MaxSpeed);
     }
     public void SetRotationRateLimiter(double MaxSpeed)
     {
-        _maxRateLimiterRotation = MaxSpeed;
+        _rotationRateLimiter.SetVelocity(MaxSpeed);
     }
 
     public void OverrideShift(int Speed)
@@ -360,8 +362,8 @@ public class Swerve implements System {
                             _shifterValve[i].set(_shiftState);
                         }
 
-                        _currentVertical *= 0.2;
-                        _currentHorizontal *= 0.2;
+                        _horizontalRateLimiter.SetCurrent(_horizontalRateLimiter.GetCurrent() * 0.2);
+                        _verticaRateLimiter.SetCurrent(_verticaRateLimiter.GetCurrent() * 0.2);
                     }
                 }
 
@@ -395,54 +397,30 @@ public class Swerve implements System {
 
             //Adding a rate limiter to the translation joystick to make the driving smoother
             double horizontal = Input.GetAxis("Horizontal");
-            if(Math.abs(horizontal - _currentHorizontal) <= _maxRateLimiter * Timer.GetDeltaTime())
-            {
-                _currentHorizontal = horizontal;
-            }
-            else
-            {
-                _currentHorizontal += (Math.signum(horizontal - _currentHorizontal)) * _maxRateLimiter * Timer.GetDeltaTime();
-            }
             double vertical = Input.GetAxis("Vertical");
-            if(Math.abs(vertical - _currentVertical) <= _maxRateLimiter * Timer.GetDeltaTime())
-            {
-                _currentVertical = vertical;
-            }
-            else
-            {
-                _currentVertical += (Math.signum(vertical - _currentVertical)) * _maxRateLimiter * Timer.GetDeltaTime();
-            }
             double rotation = Input.GetAxis("Rotation");
-            if(Math.abs(rotation - _currentRotation) <= _maxRateLimiterRotation * Timer.GetDeltaTime())
-            {
-                _currentRotation = rotation;
-            }
-            else
-            {
-                _currentRotation += (Math.signum(rotation - _currentRotation)) * _maxRateLimiterRotation * Timer.GetDeltaTime();
-            }
 
-            double x = _currentHorizontal;
-            double y = _currentVertical;
-            double z = _currentRotation;
+            double x = _horizontalRateLimiter.Evaluate(horizontal);
+            double y = _verticaRateLimiter.Evaluate(vertical);
+            double z = _rotationRateLimiter.Evaluate(rotation);
 
             double mag = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 
             if(mag > 1)
             {
-                horizontal = _currentHorizontal / mag;
-                vertical = _currentVertical / mag;
-                rotation =  _currentRotation / mag;
+                horizontal = _horizontalRateLimiter.GetCurrent() / mag;
+                vertical = _verticaRateLimiter.GetCurrent() / mag;
+                rotation =  _rotationRateLimiter.GetCurrent() / mag;
             }
 
             //Translation vector is equal to the translation joystick axis
-            Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : _currentHorizontal * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : _currentVertical) * _speedRatio);
+            Vector2d translation = new Vector2d(_isHorizontalAxisOverride ? _horizontalAxisOverride : _horizontalRateLimiter.GetCurrent() * _speedRatio * -1, (_isVerticalAxisOverride ? _verticalAxisOverride : _verticaRateLimiter.GetCurrent()) * _speedRatio);
             Polar translationPolar = Polar.fromVector(translation);
 
             //Remove the angle of the gyroscope to the azymuth to make the driving relative to the world
             translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 + 3.1415: 0;
 
-            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : _currentRotation;
+            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : _rotationRateLimiter.GetCurrent();
 
             for(int i = 0; i < _wheelCount; i++)
             {
@@ -458,7 +436,7 @@ public class Swerve implements System {
                 double wheelSpeed = Sum.radius;
 
                 _driveMotor[i].Set(Mathf.Clamp(wheelSpeed, -1, 1) * _flipDriveMultiplicator[i]);
-                _directionMotor[i].set(ControlMode.PercentOutput, Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, Sum.vector()), dt), -1, 1));
+                _directionMotor[i].Set(Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, Sum.vector()), dt), -1, 1));
             }
 
             f++;
@@ -483,7 +461,7 @@ public class Swerve implements System {
                 wheelPol[i].radius *=  Input.GetAxis("Rotation");
 
                 _driveMotor[i].Set(Mathf.Clamp(wheelPol[i].radius, -1, 1) * _flipDriveMultiplicator[i]);
-                _directionMotor[i].set(ControlMode.PercentOutput, Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, wheelPol[i].vector()), dt), -1, 1));
+                _directionMotor[i].Set(Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, wheelPol[i].vector()), dt), -1, 1));
             }
             break;
 
@@ -491,7 +469,7 @@ public class Swerve implements System {
             for(int i = 0; i < _wheelCount; i++)
             {
                 //Always Allign Wheel Forward
-                _directionMotor[i].set(ControlMode.PercentOutput, Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, new Vector2d(0, 1)), dt), -1, 1));
+                _directionMotor[i].Set(Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, new Vector2d(0, 1)), dt), -1, 1));
 
                 if(i + 1 <= _wheelCount / 2)
                 {
