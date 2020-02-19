@@ -163,7 +163,7 @@ public class Input
         {
             if(key.contains("Axis/"))
             {
-                keys.add(key);
+                keys.add(key.split("/", 2)[1]);
             }
         }
 
@@ -181,7 +181,7 @@ public class Input
         {
             if(key.contains("Button/"))
             {
-                keys.add(key);
+                keys.add(key.split("/", 2)[1]);
             }
         }
 
