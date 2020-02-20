@@ -132,6 +132,10 @@ public class Swerve implements System {
     private double _verticalAxisOverride = 0;
     private boolean _isVerticalAxisOverride = false;
 
+    private double _instantHorizontal = 0;
+    private double _instantVertical = 0;
+    private double _instantRotation = 0;
+
     public void Init()
     {
         
@@ -302,6 +306,19 @@ public class Swerve implements System {
         return _wheelCount;
     }
 
+    public double GetInstantHorizontalAxis()
+    {
+        return _instantHorizontal;
+    }
+    public double GetInstanVerticalAxis()
+    {
+        return _instantVertical;
+    }
+    public double GetInstantRotationAxis()
+    {
+        return _instantRotation;
+    }
+
     int f = 0;
     public void DoSystem()
     {/*
@@ -420,7 +437,7 @@ public class Swerve implements System {
             //Remove the angle of the gyroscope to the azymuth to make the driving relative to the world
             translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 + 3.1415: 0;
 
-            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : _rotationRateLimiter.GetCurrent();
+            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : _rotationRateLimiter.GetCurrent() * _roationSpeedRatio;
 
             for(int i = 0; i < _wheelCount; i++)
             {
@@ -485,6 +502,10 @@ public class Swerve implements System {
 
         //Evaluate the robot position from the accelerometers
         _position.Evaluate(Mathf.RotatePoint(new Vector2d(_IMU.getAccelInstantX(), _IMU.getAccelInstantY()), GetHeading()), Timer.GetDeltaTime());
+
+        _instantHorizontal = _isHorizontalAxisOverride ? _horizontalAxisOverride : _horizontalRateLimiter.GetCurrent();
+        _instantVertical = _isVerticalAxisOverride ? _verticalAxisOverride : _verticaRateLimiter.GetCurrent();
+        _instantRotation = _isRotationAxisOverriden ? _rotationAxisOverride : _rotationRateLimiter.GetCurrent();
 
         //Reset the overriden state to false a the end of the "frame"
         _isRotationAxisOverriden = false;

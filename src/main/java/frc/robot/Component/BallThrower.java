@@ -61,6 +61,10 @@ public class BallThrower implements System
         new Vector2d(-7.6, 0)      
     );
 
+    private Curve _lateralMovementCompensationCurve = new Curve(
+
+    );
+
     private Servo _throwerServo;
 
     private double _idleRPM;
@@ -162,7 +166,7 @@ public class BallThrower implements System
                 SmartDashboard.putNumber("ThrowerAngle", throwerTarget);
 
                 _throwerServo.setAngle(throwerTarget);
-                Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX() - 1.5));
+                Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX() - 1.5 /*+ _lateralMovementCompensationCurve.Evaluate(Robot.SwerveDrive.GetInstantHorizontalAxis())*/));
             }
 
             if(_isAutoShoot || Input.GetButton("Shoot"))
