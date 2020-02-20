@@ -15,6 +15,7 @@ public class PID {
     public PID(double KP, double KI, double KD, String DebugName)
     {
         SetGain(KP, KI, KD);
+        
         SetDebugMode(DebugName);
     }
 
