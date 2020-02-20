@@ -83,6 +83,9 @@ public class BallThrower implements System
         _isReady = false;
 
         _climbMode = false;
+
+        _feederController.Set(0);
+        _conveyorBelt.Set(0);
     }
 
     public double GetDistance()

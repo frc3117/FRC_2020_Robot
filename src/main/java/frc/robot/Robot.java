@@ -82,7 +82,6 @@ public class Robot extends TimedRobot {
   {
     //Calculate the first time after use GetDeltaTime()
     Timer.Calculate();
-    InputManager.DoInputManager();
 
     if(currentStep == Step.length)
     {
@@ -167,6 +166,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() { 
     //Calculate the first time after use GetDeltaTime()
     Timer.Calculate();
+    InputManager.DoInputManager();
 
     //Execute Needed Component
     PneumaticSystem.CheckPressure();
