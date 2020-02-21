@@ -28,7 +28,6 @@ public class Swerve implements System {
 
         _driveMotor = new MotorController[_wheelCount];
         _directionMotor = new MotorController[_wheelCount];
-        _driveEncoder = new Encoder[_wheelCount];
         _directionEncoder = new AnalogInput[_wheelCount];
         _shifterValve = new Solenoid[_wheelCount];
         _rotationVector = new Vector2d[_wheelCount];
@@ -80,7 +79,6 @@ public class Swerve implements System {
 
     private MotorController[] _driveMotor;
     private MotorController[] _directionMotor;
-    private Encoder[] _driveEncoder;
     private AnalogInput[] _directionEncoder;
     private Solenoid[] _shifterValve;
     private Vector2d[] _rotationVector;

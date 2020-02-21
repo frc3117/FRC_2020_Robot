@@ -80,6 +80,9 @@ public class LimeLight {
     {
         table.getEntry("ledMode").setNumber(1);
     }
+    /**
+     * Make the light be on the state specified by the current pipeline
+     */
     public void SetLightDefault()
     {
         table.getEntry("ledMode").setNumber(0);

@@ -32,6 +32,7 @@ public class MotorController
 
             case TalonFX:
             _talonFX = new TalonFX(Channel);
+            _encoderResolution = 2048;
             break;
         }
 
@@ -54,6 +55,7 @@ public class MotorController
 
             case TalonFX:
             _talonFX = new TalonFX(Channel);
+            _encoderResolution = 2048;
             break;
         }
 
@@ -125,9 +127,25 @@ public class MotorController
         _encoderResolution = Resolution;
     }
 
-    public int GetEncoderVelocity()
+    /**
+     * Get the current velocity of the encoder connected to the motor controller
+     * @return The current volocity of the encoder
+     */
+    public double GetEncoderVelocity()
     {
-        return _talonFX.getSelectedSensorVelocity();
+        switch(_controllerType)
+        {
+            case SparkMax:
+            return _sparkMax.getEncoder().getVelocity() / 60.;
+
+            case TalonSRX:
+            return _talonSRX.getSelectedSensorVelocity() / _encoderResolution;
+
+            case TalonFX:
+            return _talonFX.getSelectedSensorVelocity();
+        }
+
+        return 0;
     }
 
     /**
