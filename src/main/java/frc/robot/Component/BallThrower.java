@@ -76,8 +76,6 @@ public class BallThrower implements System
     private boolean _isAllignOverriden = false;
     private boolean _isReady = false;
 
-    private boolean _climbMode = false;;
-
     private double _errorTolerency = 5;
 
     public void Init()
@@ -85,8 +83,6 @@ public class BallThrower implements System
         _isAutoShoot = false;
         _isAllign = false;
         _isReady = false;
-
-        _climbMode = false;
 
         _feederController.Set(0);
         _conveyorBelt.Set(0);
@@ -111,27 +107,9 @@ public class BallThrower implements System
         _limeLight.SetDriveMode();
     }
 
-    public void SetClimbMode(boolean State)
-    {
-        _climbMode = State;
-    }
-
     int frame = 0;
     public void DoSystem()
     {
-        if(_climbMode)
-        {
-            for(MotorController motorController : _inertiaWheelControler)
-            {
-                //Controll the Climber
-            }
-
-            _feederController.Set(0);
-            _conveyorBelt.Set(0);
-
-            return;
-        }
-        
         if(!_isAllignOverriden)
         {
             if(InputManager.GetButtonDown("Align"))

@@ -125,6 +125,11 @@ public class MotorController
         _encoderResolution = Resolution;
     }
 
+    public int GetEncoderVelocity()
+    {
+        return _talonFX.getSelectedSensorVelocity();
+    }
+
     /**
      * Set the value to send to the motor contoller
      * @param Value The value to send to the motor controller
@@ -171,10 +176,10 @@ public class MotorController
      * Get the instantaneous velocity of the encoder
      * @return The instantaneous velocity of the encoder
      */
-    public double GetEncoderVelocity()
+    /*public double GetEncoderVelocity()
     {
         return _encoder.getRate() / _encoderResolution;
-    }
+    }*/
 
     /**
      * Get the current voltage of the motor controller

@@ -60,6 +60,13 @@ public class LimeLight {
     // (3) Turn On
 
     /**
+     * Make the light on the limelight bink
+     */
+    public void BlinkLight()
+    {
+        table.getEntry("ledMode").setNumber(2);
+    }
+    /**
      * Turn on the light on the limelight
      */
     public void TurnOnLight()
@@ -72,6 +79,10 @@ public class LimeLight {
     public void TurnOffLight()
     {
         table.getEntry("ledMode").setNumber(1);
+    }
+    public void SetLightDefault()
+    {
+        table.getEntry("ledMode").setNumber(0);
     }
 
     /**

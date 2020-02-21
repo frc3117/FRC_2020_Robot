@@ -9,6 +9,7 @@ import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.LimeLightPosition;
 import frc.robot.Component.Data.RobotOdometry;
 import frc.robot.Component.Data.WheelData;
+import frc.robot.Component.Swerve.ShifterMode;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
 
@@ -42,7 +43,11 @@ public class Robot extends TimedRobot {
     };
 
     SwerveDrive = new Swerve(data);
-
+/*
+    SwerveDrive.SetShifterMode(ShifterMode.Automatic);
+    SwerveDrive.SetShiftThreshold(100. * 4., 200. * 4.);
+    SwerveDrive.SetShiftMinTime(0.5);
+*/
     SwerveDrive.SetCurrentMode(Swerve.DrivingMode.World);
 
     SwerveDrive.SetPIDGain(0, 1, 0, 0);
@@ -58,7 +63,7 @@ public class Robot extends TimedRobot {
     Thrower = new BallThrower(500, 3250);
     Intake = new BallIntake(6, 6, 7, 2, 3, -1200);
 
-    Climber = new Climber(0);
+    //Climber = new Climber(0);
 
     InputManager.Init();
   }
@@ -152,7 +157,7 @@ public class Robot extends TimedRobot {
     Thrower.Init();
     Intake.Init();
     
-    Climber.Init();
+    //Climber.Init();
 
     PneumaticSystem.Init();
     Timer.Init();

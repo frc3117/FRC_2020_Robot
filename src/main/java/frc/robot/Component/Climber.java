@@ -1,39 +1,36 @@
 package frc.robot.Component;
 
-import edu.wpi.first.wpilibj.Solenoid;
-import frc.robot.Robot;
 import frc.robot.Component.Data.InputManager;
+import frc.robot.Component.Data.MotorController;
+import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Interface.System;
-import frc.robot.Math.Timer;
 
 public class Climber implements System
 {
-    public Climber(int ShifterChannel)
+    public Climber(int MotorChannel)
     {
-        _ballShifter = new Solenoid(ShifterChannel);
+        _climberMotor = new MotorController(MotorControllerType.SparkMax, MotorChannel, true);
     }
 
-    private boolean _shifterState = false;
-    private Solenoid _ballShifter;
+    private MotorController  _climberMotor;
 
     public void Init()
     {
-        _shifterState = false;
-        _ballShifter.set(false);
     }
 
     public void DoSystem()
     {
-        //Allow the climber to move only in the last 30 seconds
-        if(Timer.GetPeriodTime() <= 30)
+        if(InputManager.GetButton("ClimberUp"))
         {
-            if(InputManager.GetButtonDown("ToggleClimber"))
-            {
-                _shifterState = !_shifterState;
-                _ballShifter.set(_shifterState);
-
-                Robot.Thrower.SetClimbMode(_shifterState);
-            }
+            _climberMotor.Set(1);
+        }
+        else if (InputManager.GetButton("ClimberDown"))
+        {
+            _climberMotor.Set(-1);
+        }
+        else
+        {
+            _climberMotor.Set(0);
         }
     }
 }

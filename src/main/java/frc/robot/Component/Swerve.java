@@ -297,7 +297,7 @@ public class Swerve implements System {
             Angle += 2 * 3.1415;
         }
 
-        Vector2d vec = new Polar((_driveEncoder[ID].getRate() / 256.) * 3.1415 * 2, Angle).vector();
+        Vector2d vec = new Polar((_driveMotor[ID].GetEncoderVelocity() / 256.) * 3.1415 * 2, Angle).vector();
 
         return vec;
     }
