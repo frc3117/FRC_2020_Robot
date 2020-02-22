@@ -39,7 +39,7 @@ public class MotorController
         _pid = new PID(0, 0, 0);
         _usePID = false;
     }
-    public MotorController(MotorControllerType type, int Channel, boolean IsBrushless, int EncoderChannelA, final int EncoderChannelB, final double Kp, final double Ki, final double Kd)
+    public MotorController(MotorControllerType type, int Channel, boolean IsBrushless, int EncoderChannelA, int EncoderChannelB, double Kp, double Ki, double Kd)
     {
         _controllerType = type;
 
