@@ -7,7 +7,10 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-import frc.robot.Component.Data.*;
+import frc.robot.Component.Data.Input;
+import frc.robot.Component.Data.InputManager;
+import frc.robot.Component.Data.LimeLightData;
+import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Interface.System;
 import frc.robot.Math.PID;
@@ -20,10 +23,12 @@ public class BallThrower implements System
     {
         _inertiaWheelControler = new MotorController[]
         {
-            new MotorController(MotorControllerType.TalonSRX, 3, false),
-            new MotorController(MotorControllerType.TalonSRX, 5, false),
-            new MotorController(MotorControllerType.TalonSRX, 10, false),
+            new MotorController(MotorControllerType.SparkMax, 15, true),
+            new MotorController(MotorControllerType.SparkMax, 17, true),
         };
+
+        _inertiaWheelControler[0].SetInverted(true);
+        
         _inertiaWheelEncoder = new Encoder(9, 8);
 
         _throwerServo = new Servo(1);
