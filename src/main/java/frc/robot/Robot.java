@@ -43,11 +43,11 @@ public class Robot extends TimedRobot {
     };
 
     SwerveDrive = new Swerve(data);
-/*
+
     SwerveDrive.SetShifterMode(ShifterMode.Automatic);
-    SwerveDrive.SetShiftThreshold(100. * 4., 200. * 4.);
+    SwerveDrive.SetShiftThreshold(10. * 4., 20. * 4.);
     SwerveDrive.SetShiftMinTime(0.5);
-*/
+
     SwerveDrive.SetCurrentMode(Swerve.DrivingMode.World);
 
     SwerveDrive.SetPIDGain(0, 1, 0, 0);
@@ -55,8 +55,8 @@ public class Robot extends TimedRobot {
     SwerveDrive.SetPIDGain(2, 1, 0, 0);
     SwerveDrive.SetPIDGain(3, 1, 0, 0);
 
-    SwerveDrive.SetRateLimiter(100000);
-    SwerveDrive.SetRotationRateLimiter(100000);
+    SwerveDrive.SetRateLimiter(2.5);
+    SwerveDrive.SetRotationRateLimiter(2.5);
 
     SwerveDrive.InitIMU();
 
