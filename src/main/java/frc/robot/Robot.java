@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
 
     SwerveDrive.InitIMU();
 
-    Thrower = new BallThrower(500, 3250);
+    Thrower = new BallThrower(500, 4250);
     Intake = new BallIntake(6, 6, 7, 2, 3, -1200);
 
     //Climber = new Climber(0);
