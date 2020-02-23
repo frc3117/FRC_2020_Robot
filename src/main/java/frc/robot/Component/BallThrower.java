@@ -166,7 +166,7 @@ public class BallThrower implements System
                     motorController.Set(val);
                 }
 
-                _isReady = true;
+                _isReady = current.IsTarget();
                 _isReady &= Math.abs(current.GetAngleX()) <= _errorTolerency;
                 _isReady &= RPM >= _shootRPM - RPM_Offset;
 
