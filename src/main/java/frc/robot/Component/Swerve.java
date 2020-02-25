@@ -37,6 +37,8 @@ public class Swerve implements System {
         _flipAngleOffset = new double[_wheelCount];
         _flipDriveMultiplicator = new double[_wheelCount];
 
+        _lastAngle = new double[_wheelCount];
+
         _horizontalRateLimiter = new RateLimiter(10000, 0);
         _verticaRateLimiter = new RateLimiter(10000, 0);
         _rotationRateLimiter = new RateLimiter(10000, 0);
@@ -90,6 +92,8 @@ public class Swerve implements System {
 
     private double[] _flipAngleOffset;
     private double[] _flipDriveMultiplicator;
+
+    private double[] _lastAngle;
 
     private PID[] _directionPID;
 
@@ -447,17 +451,27 @@ public class Swerve implements System {
 
                 //Radius = Wheel Speed
                 //Azymuth = Wheel Heading
+          
+                //mag cannot be smaller than 0.2 since deadzone is 0.2 
+                //So if mag is smaller that mean there is currently no input
+                if(mag <= 0.19)
+                {
+                    Sum.radius = 0.01;
+                    Sum.azymuth = _lastAngle[i];
+                }
+                else
+                {
+                    _lastAngle[i] = Sum.azymuth;
+                }
 
-                double wheelSpeed = Sum.radius;
-
-                _driveMotor[i].Set(Mathf.Clamp(wheelSpeed, -1, 1) * _flipDriveMultiplicator[i]);
+                _driveMotor[i].Set(Mathf.Clamp(Sum.radius, -1, 1) * _flipDriveMultiplicator[i]);
 
                 double deltaAngle = GetDeltaAngle(i, Sum.vector());
                 if(Math.abs(deltaAngle) <= 1 * Mathf.DEG_2_RAD)
                 {         
                     deltaAngle = 0;
                 }
-                
+
                 _directionMotor[i].Set(Mathf.Clamp(_directionPID[i].Evaluate(deltaAngle, dt), -1, 1));
             }
 
