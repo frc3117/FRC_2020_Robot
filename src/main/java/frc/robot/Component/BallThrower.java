@@ -50,20 +50,22 @@ public class BallThrower implements System
     private MotorController[] _inertiaWheelControler;
     private Encoder _inertiaWheelEncoder;
     private LimeLight _limeLight = new LimeLight();
-    private PID _directionPID = new PID(0.03, 0.01, 0.000);
+    private PID _directionPID = new PID(0.03, 0.06, 0.000);
     private PID _inertiaWheelPID = new PID(0.007, 0, 0, "Speed");
 
     private Joystick joystick = new Joystick(0);
 
     private Curve _throwerDistanceCurve = new Curve(
-        new Vector2d(-20.15, 50),
-        new Vector2d(-18.5, 60),
-        new Vector2d(-17.72, 70),
-        new Vector2d(-16.32, 80),
-        new Vector2d(-14.6, 90),
-        new Vector2d(-13.6, 60),
-        new Vector2d(-12, 20),
-        new Vector2d(-7.6, 0)      
+        new Vector2d(-16, 144),
+        new Vector2d(-14, 110),
+        new Vector2d(-12, 89),
+        new Vector2d(-10, 81),
+        new Vector2d(-8, 85),
+        new Vector2d(-6, 102),
+        new Vector2d(-4, 132),
+        new Vector2d(-2, 175),
+        new Vector2d(-1, 180),
+        new Vector2d(0, 180)
     );
 
     private Curve _lateralMovementCompensationCurve = new Curve(
@@ -140,16 +142,18 @@ public class BallThrower implements System
             Robot.SwerveDrive.OverrideShift(1);
 
             SmartDashboard.putBoolean("IsAlign", true);
+            //SmartDashboard.putNumber("ThrowerAngle", 0);
 
             LimeLightData current = _limeLight.GetCurrent();
             if(current.IsTarget())
             {
                 double throwerTarget = _throwerDistanceCurve.Evaluate(current.GetAngleY());
 
+                SmartDashboard.putNumber("Angle", current.GetAngleY());
                 SmartDashboard.putNumber("ThrowerAngle", throwerTarget);
 
                 _throwerServo.setAngle(throwerTarget);
-                Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX() - 1.5 /*+ _lateralMovementCompensationCurve.Evaluate(Robot.SwerveDrive.GetInstantHorizontalAxis())*/));
+                Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX()/*+ _lateralMovementCompensationCurve.Evaluate(Robot.SwerveDrive.GetInstantHorizontalAxis())*/));
             }
 
             if(_isAutoShoot || Input.GetButton("Shoot"))

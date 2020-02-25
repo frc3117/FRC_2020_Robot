@@ -376,8 +376,9 @@ public class Swerve implements System {
                             _shifterValve[i].set(_shiftState);
                         }
 
-                        _horizontalRateLimiter.SetCurrent(_horizontalRateLimiter.GetCurrent() * 0.2);
-                        _verticaRateLimiter.SetCurrent(_verticaRateLimiter.GetCurrent() * 0.2);
+                        _horizontalRateLimiter.SetCurrent(_horizontalRateLimiter.GetCurrent() * 0.4);
+                        _verticaRateLimiter.SetCurrent(_verticaRateLimiter.GetCurrent() * 0.4);
+                        _rotationRateLimiter.SetCurrent(_rotationRateLimiter.GetCurrent() * 0.4);
                     }
                 }
 

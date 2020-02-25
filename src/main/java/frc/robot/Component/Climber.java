@@ -22,11 +22,11 @@ public class Climber implements System
     {
         if(InputManager.GetButton("ClimberUp"))
         {
-            _climberMotor.Set(1);
+            _climberMotor.Set(-0.15);
         }
         else if (InputManager.GetButton("ClimberDown"))
         {
-            _climberMotor.Set(-1);
+            _climberMotor.Set(0.15);
         }
         else
         {

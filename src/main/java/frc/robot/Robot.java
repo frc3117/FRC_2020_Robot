@@ -44,9 +44,9 @@ public class Robot extends TimedRobot {
 
     SwerveDrive = new Swerve(data);
 
-    SwerveDrive.SetShifterMode(ShifterMode.Automatic);
-    SwerveDrive.SetShiftThreshold(10. * 4., 20. * 4.);
-    SwerveDrive.SetShiftMinTime(0.5);
+    SwerveDrive.SetShifterMode(ShifterMode.Manual);
+    SwerveDrive.SetShiftThreshold(90. * 4., 230. * 4.);
+    SwerveDrive.SetShiftMinTime(1.5);
 
     SwerveDrive.SetCurrentMode(Swerve.DrivingMode.World);
 
@@ -55,15 +55,15 @@ public class Robot extends TimedRobot {
     SwerveDrive.SetPIDGain(2, 1, 0, 0);
     SwerveDrive.SetPIDGain(3, 1, 0, 0);
 
-    SwerveDrive.SetRateLimiter(2.5);
-    SwerveDrive.SetRotationRateLimiter(2.5);
+    SwerveDrive.SetRateLimiter(5);
+    SwerveDrive.SetRotationRateLimiter(10);
 
     SwerveDrive.InitIMU();
 
-    Thrower = new BallThrower(500, 4250);
+    Thrower = new BallThrower(500, 4000);
     Intake = new BallIntake(6, 6, 7, 2, 3, -1200);
 
-    //Climber = new Climber(0);
+    Climber = new Climber(14);
 
     InputManager.Init();
   }
@@ -157,7 +157,7 @@ public class Robot extends TimedRobot {
     Thrower.Init();
     Intake.Init();
     
-    //Climber.Init();
+    Climber.Init();
 
     PneumaticSystem.Init();
     Timer.Init();
@@ -178,6 +178,8 @@ public class Robot extends TimedRobot {
     
     Thrower.DoSystem();
     Intake.DoSystem();
+
+    Climber.DoSystem();
 
     SwerveDrive.DoSystem();
   } 
