@@ -451,7 +451,14 @@ public class Swerve implements System {
                 double wheelSpeed = Sum.radius;
 
                 _driveMotor[i].Set(Mathf.Clamp(wheelSpeed, -1, 1) * _flipDriveMultiplicator[i]);
-                _directionMotor[i].Set(Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, Sum.vector()), dt), -1, 1));
+
+                double angle = Mathf.Clamp(_directionPID[i].Evaluate(GetDeltaAngle(i, Sum.vector()), dt), -1, 1);
+                if(Math.abs(angle) <= 1 * Mathf.DEG_2_RAD)
+                {
+                    angle = 0;
+                }
+
+                _directionMotor[i].Set(angle);
             }
 
             f++;
