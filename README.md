@@ -1,6 +1,6 @@
 # FRC_2020_Robot
  
-The FRC Team 3117 Harfangs Robot Code For The 2020 Competition Infinite Recharge
+The FRC Team 3117 Harfangs Robot Code For The 2020 Competition Infinite Recharge.
 
 # Component
 
@@ -28,4 +28,4 @@ It also use the Limelight to evaluate the distance to know at what angle to.
 
 The 3117 cell intake is pretty simple.
 The mechanism can be open and closed.
-It can also be reverse in case of a cell getting stock or to move cell on the ground out of the way of the robot
+It can also be reverse in case of a cell getting stuck or to move cell on the ground out of the way of the robot.
