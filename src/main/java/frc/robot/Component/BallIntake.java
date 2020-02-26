@@ -26,7 +26,7 @@ public class BallIntake implements System
     }
 
     private double _targetSpeed;
-    private boolean _isStarted = false;
+    private boolean _isOpen = false;
 
     private Encoder _motorEncoder;
     private PID _motorPID = new PID(0.002, 0.00001, 0, "Feeder");
@@ -36,24 +36,24 @@ public class BallIntake implements System
 
     public void Init()
     {
-        _isStarted = false;
+        _isOpen = false;
     }
 
-    public void StartIntake()
+    public void OpenIntake()
     {
-        _isStarted = true;
+        _isOpen = true;
         _solenoid.set(Value.kForward);
     }
-    public void StopIntake()
+    public void CloseIntake()
     {
-        _isStarted = false;
+        _isOpen = false;
         _solenoid.set(Value.kReverse);
     }
     public void ToggleIntake()
     {
-        _isStarted = !_isStarted;
+        _isOpen = !_isOpen;
 
-        if(_isStarted)
+        if(_isOpen)
         {
             _solenoid.set(Value.kForward);
         }
@@ -64,7 +64,7 @@ public class BallIntake implements System
     }
     public boolean IsOpen()
     {
-        return _isStarted;
+        return _isOpen;
     }
 
     public void DoSystem()
@@ -74,7 +74,7 @@ public class BallIntake implements System
             ToggleIntake();
         }
 
-        if(_isStarted)
+        if(_isOpen)
         {        
             double currentSpeed = (_motorEncoder.getRate() / 2048) * 60;
 
