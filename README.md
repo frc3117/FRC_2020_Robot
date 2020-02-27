@@ -22,10 +22,11 @@ It also support 3 drive mode.
 ## Cell Thrower
 
 The 3117 cell thrower use the Limelight to do visual recognition of the target and align to it by rotating the swerve drive.
-It also use the Limelight to evaluate the distance to know at what angle to.
+It also use the Limelight to evaluate the distance to know at what angle to shoot.
 
 ## Cell Intake
 
 The 3117 cell intake is pretty simple.
 The mechanism can be open and closed.
+The mechanism spin and feed the cell in the tank.
 It can also be reverse in case of a cell getting stuck or to move cell on the ground out of the way of the robot.

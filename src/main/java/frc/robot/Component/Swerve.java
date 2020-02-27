@@ -39,6 +39,7 @@ public class Swerve implements System {
 
         _lastAngle = new double[_wheelCount];
 
+        //Set default value of the rate limiter to "Infinity" (value that will make the rate limiter go instantly to the target)
         _horizontalRateLimiter = new RateLimiter(10000, 0);
         _verticaRateLimiter = new RateLimiter(10000, 0);
         _rotationRateLimiter = new RateLimiter(10000, 0);
@@ -142,10 +143,18 @@ public class Swerve implements System {
         
     }
 
+    /**
+     * Set the current drive mode of the swerve drive
+     * @param Mode The drive mode
+     */
     public void SetCurrentMode(DrivingMode Mode)
     {
         _mode = Mode;
     }
+    /**
+     * Set the current drive mode of the swerve drive
+     * @param Mode The drive mode
+     */
     public void SetCurrentMode(int Mode)
     {
         switch(Mode)
@@ -166,20 +175,36 @@ public class Swerve implements System {
             _mode = DrivingMode.Tank;
             break;
         }
-    }   
+    }
+    /**
+     * Set the exponent parameter of the point drive
+     * @param Exponent The exponent parameter
+     */
     public void SetPointDriveExponent(double Exponent)
     {
         _pointExponent = Exponent;
     }
+    /**
+     * Set the distance parameter of the point drive
+     * @param Distance The distance parameter
+     */
     public void SetPointDriveDistance(double Distance)
     {
         _pointDistance = Distance;
     }
 
+    /**
+     * Set the current shift mode of the swerve drive
+     * @param Mode The shift mode
+     */
     public void SetShifterMode(ShifterMode Mode)
     {
         _shiftMode = Mode;
     }
+    /**
+     * Set the current shift mode of the swerve drive
+     * @param Mode The shift mode
+     */
     public void SetShifterMode(int Mode)
     {
         switch(Mode)
@@ -193,22 +218,37 @@ public class Swerve implements System {
             break;
         }
     }
+    /**
+     * Set the minimum time between automatic shift
+     * @param Time The minimum time between automatic shift
+     */
     public void SetShiftMinTime(double Time)
     {
         _minShiftTime = Time;
     }
+    /**
+     * Set the threshold of the automatic shifter
+     * @param Downshift
+     * @param Upshift
+     */
     public void SetShiftThreshold(double Downshift, double Upshift)
     {
         _downshiftThreshold = Downshift;
         _upshiftThreshold = Upshift;
     }
     
+    /**
+     * Initialize the IMU
+     */
     public void InitIMU()
     {
         _IMU = new ADIS16448_IMU();
 
         RecalibrateIMU();
     }
+    /**
+     * Recalibrate the IMU
+     */
     public void RecalibrateIMU()
     {
         _IMU.reset();
@@ -217,31 +257,58 @@ public class Swerve implements System {
         _headingOffset = (_IMU.getGyroAngleZ() / 180) * 3.1415 + 3.1415;
     }
 
+    /**
+     * Set the speed ratio of the swerve drive
+     * @param Speed The speed ratio
+     */
     public void SetSpeed(double Speed)
     {
         _speedRatio = Speed;
     }
+    /**
+     * Set the PID gain of the wheel direction motor
+     * @param ID The id of the wheel
+     * @param Kp The proportional gain
+     * @param Ki The integral gain
+     * @param Kd The derivative gain
+     */
     public void SetPIDGain(int ID, double Kp, double Ki, double Kd)
     {
         _directionPID[ID].SetGain(Kp, Ki, Kd);
         _directionPID[ID].SetDebugMode("Swerve");
     }
 
+    /**
+     * Get the current shift state
+     * @return The current shift state
+     */
     public boolean GetGear()
     {
         return _shiftState;
     }
 
+    /**
+     * Set the rate limiter max speed
+     * @param MaxSpeed The max speed of the rate limiter
+     */
     public void SetRateLimiter(double MaxSpeed)
     {
         _horizontalRateLimiter.SetVelocity(MaxSpeed);
         _verticaRateLimiter.SetVelocity(MaxSpeed);
     }
+    /**
+     * Set the rotation rate limiter max speed
+     * @param MaxSpeed The max speed of the rotation rate limiter
+     */
     public void SetRotationRateLimiter(double MaxSpeed)
     {
         _rotationRateLimiter.SetVelocity(MaxSpeed);
     }
 
+    /**
+     * Override the current shift state
+     * @param Speed The shift state to set
+     */
     public void OverrideShift(int Speed)
     {
         if(Speed == 0)
@@ -255,36 +322,64 @@ public class Swerve implements System {
             _isShiftOverriden = true;
         }
     }
+    /**
+     * Override the current rotation axis value
+     * @param AxisValue The rotation value to set
+     */
     public void OverrideRotationAxis(double AxisValue)
     {
         _rotationAxisOverride = Mathf.Clamp(AxisValue, -1, 1);
         _isRotationAxisOverriden = true;
     }
+    /**
+     * Override the current horizontal axis value
+     * @param AxisValue The horizontal value to set
+     */
     public void OverrideHorizontalAxis(double AxisValue)
     {
         _horizontalAxisOverride = Mathf.Clamp(AxisValue, -1, 1);
         _isHorizontalAxisOverride = true;
     }
+    /**
+     * Override the current vertical axis value
+     * @param AxisValue The vertical value to set
+     */
     public void OverrideVerticalAxis(double AxisValue)
     {
         _verticalAxisOverride = Mathf.Clamp(AxisValue, -1, 1);
         _isVerticalAxisOverride = true;
     }
 
+    /**
+     * Get the current heading of the swerve drive
+     * @return
+     */
     public double GetHeading()
     {
         return (_IMU.getGyroAngleZ() / 180) * 3.1415 - _headingOffset;
     }
+    /**
+     * Get the current estimated position of the swerve drive
+     */
     public Vector2d GetPostion()
     {
         return _position.GetPosition();
     }
 
+    /**
+     * Set the current estimated position of the swerve drive
+     * @param Position The position to set
+     */
     public void SetPosition(Vector2d Position)
     {
         _position.SetPosition(Position);
     }
 
+    /**
+     * Get the current vector of a wheel
+     * @param ID The id of the wheel
+     * @return The current vector of the wheel
+     */
     public Vector2d GetWheelVector(int ID)
     {
         double Angle = ((_directionEncoder[ID].getValue() / 4096f) * 2 * 3.1415f) - _angleOffset[ID] - 3.1415;
@@ -302,19 +397,35 @@ public class Swerve implements System {
 
         return vec;
     }
+    /**
+     * Get the amount of wheel
+     * @return The amount of wheel
+     */
     public int GetWheelCount()
     {
         return _wheelCount;
     }
 
+    /**
+     * Get the current horizontal axis
+     * @return The horizontal axis value
+     */
     public double GetInstantHorizontalAxis()
     {
         return _instantHorizontal;
     }
+    /**
+     * Get the current vertical axis
+     * @return The vertical axis value
+     */
     public double GetInstanVerticalAxis()
     {
         return _instantVertical;
     }
+    /**
+     * Get the current rotation axis
+     * @return The rotation axis value
+     */
     public double GetInstantRotationAxis()
     {
         return _instantRotation;
