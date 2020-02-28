@@ -1,8 +1,6 @@
 package frc.robot.Component;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.InputManager;
@@ -17,11 +15,8 @@ public class BallIntake implements System
     public BallIntake(int ControlerChannel, int SolenoidChannelA, int SolenoidChannelB, int EncoderA, int EncoderB, int TargetRPM)
     {
         _controller = new MotorController(MotorControllerType.TalonSRX, ControlerChannel, false);
-
         _motorEncoder = new Encoder(EncoderA, EncoderB);
-
-        _solenoid = new DoubleSolenoid(SolenoidChannelA, SolenoidChannelB);
-
+        _solenoid = SolenoidValve.CreateDouble(SolenoidChannelA, SolenoidChannelB);
         _targetSpeed = TargetRPM;
     }
 
@@ -32,7 +27,7 @@ public class BallIntake implements System
     private PID _motorPID = new PID(0.002, 0.00001, 0, "Feeder");
     private MotorController _controller;
 
-    private DoubleSolenoid _solenoid;
+    private SolenoidValve _solenoid;
 
     public void Init()
     {
@@ -42,25 +37,18 @@ public class BallIntake implements System
     public void OpenIntake()
     {
         _isOpen = true;
-        _solenoid.set(Value.kForward);
+        _solenoid.SetState(true);
     }
     public void CloseIntake()
     {
         _isOpen = false;
-        _solenoid.set(Value.kReverse);
+        _solenoid.SetState(false);
     }
     public void ToggleIntake()
     {
         _isOpen = !_isOpen;
 
-        if(_isOpen)
-        {
-            _solenoid.set(Value.kForward);
-        }
-        else
-        {
-            _solenoid.set(Value.kReverse);
-        }
+        _solenoid.SetState(_isOpen);
     }
     public boolean IsOpen()
     {

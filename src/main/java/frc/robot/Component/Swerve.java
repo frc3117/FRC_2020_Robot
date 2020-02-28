@@ -16,7 +16,6 @@ import frc.robot.Math.Timer;
 import com.analog.adis16448.frc.ADIS16448_IMU;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,7 +27,7 @@ public class Swerve implements System {
         _driveMotor = new MotorController[_wheelCount];
         _directionMotor = new MotorController[_wheelCount];
         _directionEncoder = new AnalogInput[_wheelCount];
-        _shifterValve = new Solenoid[_wheelCount];
+        _shifterValve = new SolenoidValve[_wheelCount];
         _rotationVector = new Vector2d[_wheelCount];
         _wheelPosition = new Vector2d[_wheelCount];
         _directionPID = new PID[_wheelCount];
@@ -50,8 +49,8 @@ public class Swerve implements System {
             _driveMotor[i] = new MotorController(MotorControllerType.TalonFX, WheelsData[i].DriveChannel, true);
             _directionMotor[i] = new MotorController(MotorControllerType.TalonSRX , WheelsData[i].DirectionChannel, false);
             _directionEncoder[i] = new AnalogInput(WheelsData[i].DirectionEncoderChannel);
-            _shifterValve[i] = new Solenoid(WheelsData[i].ShifterChannel);
-            _shifterValve[i].set(false);
+            _shifterValve[i] = SolenoidValve.CreateSingle(WheelsData[i].ShifterChannel);
+            _shifterValve[i].SetState(false);
 
             _rotationVector[i] = WheelsData[i].GetWheelRotationVector();
             _wheelPosition[i] = WheelsData[i].WheelPosition;
@@ -82,7 +81,7 @@ public class Swerve implements System {
     private MotorController[] _driveMotor;
     private MotorController[] _directionMotor;
     private AnalogInput[] _directionEncoder;
-    private Solenoid[] _shifterValve;
+    private SolenoidValve[] _shifterValve;
     private Vector2d[] _rotationVector;
 
     private Vector2d[] _wheelPosition;
@@ -449,7 +448,7 @@ public class Swerve implements System {
             {
                 for(int i = 0; i < _wheelCount; i++)
                 {
-                    _shifterValve[i].set(_overridenShiftState);   
+                    _shifterValve[i].SetState(_overridenShiftState);   
                 }
 
                 _shiftState = _overridenShiftState;
@@ -478,7 +477,7 @@ public class Swerve implements System {
 
                         for(int i = 0; i < _shifterValve.length; i++)
                         {
-                            _shifterValve[i].set(_shiftState);
+                            _shifterValve[i].SetState(_shiftState);
                         }
                     }
                     else if (!_shiftState && Mag>= _upshiftThreshold)
@@ -488,7 +487,7 @@ public class Swerve implements System {
 
                         for(int i = 0; i < _shifterValve.length; i++)
                         {
-                            _shifterValve[i].set(_shiftState);
+                            _shifterValve[i].SetState(_shiftState);
                         }
 
                         _horizontalRateLimiter.SetCurrent(_horizontalRateLimiter.GetCurrent() * 0.4);
@@ -508,7 +507,7 @@ public class Swerve implements System {
 
                     for(int i = 0; i < _shifterValve.length; i++)
                     {
-                        _shifterValve[i].set(_shiftState);
+                        _shifterValve[i].SetState(_shiftState);
                     }
                 }
 
