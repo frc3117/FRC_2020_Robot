@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
+import frc.robot.Component.Data.SolenoidValve;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Interface.System;
 import frc.robot.Math.Mathf;

@@ -4,6 +4,7 @@ import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.RobotPosition;
+import frc.robot.Component.Data.SolenoidValve;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Interface.System;
