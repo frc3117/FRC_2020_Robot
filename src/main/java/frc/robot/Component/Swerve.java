@@ -3,7 +3,6 @@ package frc.robot.Component;
 import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
-import frc.robot.Component.Data.RobotPosition;
 import frc.robot.Component.Data.SolenoidValve;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
@@ -107,8 +106,6 @@ public class Swerve implements System {
     private double _pointDistance = 0;
 
     private double _headingOffset;
-
-    private RobotPosition _position = new RobotPosition(new Vector2d(0, 0));
 
     private RateLimiter _horizontalRateLimiter;
     private RateLimiter _verticaRateLimiter;
@@ -363,7 +360,7 @@ public class Swerve implements System {
      */
     public Vector2d GetPostion()
     {
-        return _position.GetPosition();
+        return new Vector2d();
     }
 
     /**
@@ -372,7 +369,7 @@ public class Swerve implements System {
      */
     public void SetPosition(Vector2d Position)
     {
-        _position.SetPosition(Position);
+        //Do nothing yes
     }
 
     /**
@@ -629,9 +626,6 @@ public class Swerve implements System {
             }
             break;
         }
-
-        //Evaluate the robot position from the accelerometers
-        _position.Evaluate(Mathf.RotatePoint(new Vector2d(_IMU.getAccelInstantX(), _IMU.getAccelInstantY()), GetHeading()), Timer.GetDeltaTime());
 
         _instantHorizontal = _isHorizontalAxisOverride ? _horizontalAxisOverride : _horizontalRateLimiter.GetCurrent();
         _instantVertical = _isVerticalAxisOverride ? _verticalAxisOverride : _verticaRateLimiter.GetCurrent();

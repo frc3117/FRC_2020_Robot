@@ -85,4 +85,21 @@ public class SolenoidValve
 
         return false;
     }
+
+    /**
+     * Disable the solenoid
+     */
+    public void SetOff()
+    {
+        switch(_type)
+        {
+            case Single:
+            _singleSolenoid.set(false);
+            break;
+
+            case Double:
+            _doubleSolenoid.set(Value.kOff);
+            break;
+        }
+    }
 }
