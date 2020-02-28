@@ -79,11 +79,16 @@ public class BallIntake implements System
             double currentSpeed = (_motorEncoder.getRate() / 2048) * 60;
 
             if(Input.GetButton("StartFeeder"))
-                _controller.Set(-1);//_controller.Set(Mathf.Clamp(_motorPID.Evaluate(_targetSpeed - currentSpeed), -1, 0));
-            else if(Input.GetButton("ReverseFeeder"))
-                _controller.Set(1);//_controller.Set(Mathf.Clamp(_motorPID.Evaluate((_targetSpeed * -1) - currentSpeed), 0, 1));
+            {
+                if(Input.GetButton("ReverseFeeder"))
+                    _controller.Set(1);
+                else
+                    _controller.Set(-1);          
+            }
             else
+            {
                 _controller.Set(0);
+            }
 
             SmartDashboard.putNumber("FeederSpeed", currentSpeed);
         }
