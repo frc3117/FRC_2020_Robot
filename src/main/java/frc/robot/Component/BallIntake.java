@@ -17,7 +17,7 @@ public class BallIntake implements System
     {
         _controller = new MotorController(MotorControllerType.TalonSRX, ControlerChannel, false);
         _motorEncoder = new Encoder(EncoderA, EncoderB);
-        _solenoid = SolenoidValve.CreateDouble(SolenoidChannelA, SolenoidChannelB);
+        _solenoid = SolenoidValve.CreateDouble(SolenoidChannelA, SolenoidChannelB, 0);
         _targetSpeed = TargetRPM;
     }
 

@@ -3,6 +3,7 @@ package frc.robot;
 import frc.robot.Component.BallIntake;
 import frc.robot.Component.BallThrower;
 import frc.robot.Component.Climber;
+import frc.robot.Component.Leds;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
 import frc.robot.Component.Data.InputManager;
@@ -23,6 +24,8 @@ public class Robot extends TimedRobot {
   public static BallIntake Intake;
 
   public static Climber Climber;
+
+  public static Leds Leds;
 
   public static PID DirectionHoldPID = new PID(3, 0, 0);
   public static PID PositionHoldPID = new PID(0.3, 0, 0);
@@ -61,6 +64,8 @@ public class Robot extends TimedRobot {
 
     Thrower = new BallThrower(500, 4000);
     Intake = new BallIntake(6, 6, 7, 2, 3, -1200);
+
+    Leds = new Leds(0, 1, 2);
 
     Climber = new Climber(14);
 
@@ -133,6 +138,8 @@ public class Robot extends TimedRobot {
     Thrower.DoSystem();
     Intake.DoSystem();
 
+    Leds.DoSystem();
+
     SwerveDrive.DoSystem();
   }
 
@@ -180,6 +187,9 @@ public class Robot extends TimedRobot {
     Intake.DoSystem();
 
     Climber.DoSystem();
+
+    Leds.DoSystem();
+    Leds.SetColor("off");
 
     SwerveDrive.DoSystem();
   } 

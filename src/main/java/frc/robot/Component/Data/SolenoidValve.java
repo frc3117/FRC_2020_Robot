@@ -9,15 +9,15 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
  */
 public class SolenoidValve 
 {
-    private SolenoidValve(int ChannelA)
+    private SolenoidValve(int ChannelA, int PcmId)
     {
         _type = SolenoidType.Single;
-        _singleSolenoid = new Solenoid(ChannelA);
+        _singleSolenoid = new Solenoid(PcmId, ChannelA);
     }
-    private SolenoidValve(int ChannelA, int ChannelB)
+    private SolenoidValve(int ChannelA, int ChannelB, int PcmId)
     {
         _type = SolenoidType.Double;
-        _doubleSolenoid = new DoubleSolenoid(ChannelA, ChannelB);
+        _doubleSolenoid = new DoubleSolenoid(PcmId, ChannelA, ChannelB);
     }
 
     private enum SolenoidType
@@ -36,9 +36,10 @@ public class SolenoidValve
      * @param ChannelA The channel of the solenoid valve
      * @return The single action solenoid valve
      */
-    public static SolenoidValve CreateSingle(int ChannelA)
+    public static SolenoidValve CreateSingle(int ChannelA, int PcmId)
     {
-        return new SolenoidValve(ChannelA);
+        
+        return new SolenoidValve(ChannelA, PcmId);
     }
     /**
      * Create a double action solenoid valve
@@ -46,9 +47,9 @@ public class SolenoidValve
      * @param ChannelB The reverse channel of the solenoid valve
      * @return The double action solenoid valve
      */
-    public static SolenoidValve CreateDouble(int ChannelA, int ChannelB)
+    public static SolenoidValve CreateDouble(int ChannelA, int ChannelB, int PcmId)
     {
-        return new SolenoidValve(ChannelA, ChannelB);
+        return new SolenoidValve(ChannelA, ChannelB, PcmId);
     }
 
     /**

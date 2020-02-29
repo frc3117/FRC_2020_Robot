@@ -49,7 +49,7 @@ public class Swerve implements System {
             _driveMotor[i] = new MotorController(MotorControllerType.TalonFX, WheelsData[i].DriveChannel, true);
             _directionMotor[i] = new MotorController(MotorControllerType.TalonSRX , WheelsData[i].DirectionChannel, false);
             _directionEncoder[i] = new AnalogInput(WheelsData[i].DirectionEncoderChannel);
-            _shifterValve[i] = SolenoidValve.CreateSingle(WheelsData[i].ShifterChannel);
+            _shifterValve[i] = SolenoidValve.CreateSingle(WheelsData[i].ShifterChannel, 0);
             _shifterValve[i].SetState(false);
 
             _rotationVector[i] = WheelsData[i].GetWheelRotationVector();
