@@ -28,20 +28,20 @@ public class InputManager
         Input.SetAxisDeadzone("Horizontal", 0.2);
         Input.SetAxisDeadzone("Vertical", 0.2);
 
-        Input.CreateButton("GearShift", 0, 2);
+        Input.CreateButton("GearShift", 0, 3);
 
         //Intake
-        Input.CreateButton("ToggleIntake", 0, 3);
-        Input.CreateButton("StartFeeder", 0, 0);
-        Input.CreateButton("ReverseFeeder", 0, 1);
+        Input.CreateButton("ToggleIntake", 0, 4);
+        Input.CreateButton("StartFeeder", 0, 1);
+        Input.CreateButton("ReverseFeeder", 0, 2);
 
         //Thrower
         Input.CreateButton("Align", 1, 1);
         Input.CreateButton("Shoot", 1, 2);
 
         //Climber
-        Input.CreateButton("ClimberUp", 1, 7);
-        Input.CreateButton("ClimberDown", 1, 8);
+        Input.CreateButton("ClimberUp", 1, 8);
+        Input.CreateButton("ClimberDown", 1, 7);
 
         _allButton = Input.GetAllButton();
         for (String key : _allButton)

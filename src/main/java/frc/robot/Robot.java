@@ -98,7 +98,8 @@ public class Robot extends TimedRobot {
 
     String current = Step[currentStep];
 
-    Vector2d pos;
+    Vector2d pos = Position.Evaluate();
+    System.out.println("(" + pos.x + ", " + pos.y + ")");
 
     switch(current)
     {
