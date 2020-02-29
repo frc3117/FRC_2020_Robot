@@ -68,10 +68,6 @@ public class BallThrower implements System
         new Vector2d(0, 180)
     );
 
-    private Curve _lateralMovementCompensationCurve = new Curve(
-
-    );
-
     private Servo _throwerServo;
 
     private double _idleRPM;
