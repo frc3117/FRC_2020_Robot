@@ -141,7 +141,8 @@ public class BallThrower implements System
             //SmartDashboard.putNumber("ThrowerAngle", 0);
 
             LimeLightData current = _limeLight.GetCurrent();
-            if(current.IsTarget())
+
+            if(current.IsTarget() && !(Input.GetButton("Shoot") || _isAutoShoot))
             {
                 double throwerTarget = _throwerDistanceCurve.Evaluate(current.GetAngleY());
 
@@ -149,7 +150,7 @@ public class BallThrower implements System
                 SmartDashboard.putNumber("ThrowerAngle", throwerTarget);
 
                 _throwerServo.setAngle(throwerTarget);
-                Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX()/*+ _lateralMovementCompensationCurve.Evaluate(Robot.SwerveDrive.GetInstantHorizontalAxis())*/));
+                Robot.SwerveDrive.OverrideRotationAxis(_directionPID.Evaluate(current.GetAngleX()));
             }
 
             if(_isAutoShoot || Input.GetButton("Shoot"))

@@ -1,5 +1,6 @@
 package frc.robot.Component;
 
+import frc.robot.Robot;
 import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
@@ -430,13 +431,15 @@ public class Swerve implements System {
 
     int f = 0;
     public void DoSystem()
-    {/*
-        System.out.println("(0): " + ((_directionEncoder[0].getValue() / 4096f) * 2 * 3.1415f));
-        System.out.println("(1): " + ((_directionEncoder[1].getValue() / 4096f) * 2 * 3.1415f));
+    {
+        /*
+        Robot.Println("(0): " + ((_directionEncoder[0].getValue() / 4096f) * 2 * 3.1415f));
+        Robot.Println("(1): " + ((_directionEncoder[1].getValue() / 4096f) * 2 * 3.1415f));
 
-        System.out.println("(2): " + ((_directionEncoder[2].getValue() / 4096f) * 2 * 3.1415f));
-        System.out.println("(3): " + ((_directionEncoder[3].getValue() / 4096f) * 2 * 3.1415f));
-*/
+        Robot.Println("(2): " + ((_directionEncoder[2].getValue() / 4096f) * 2 * 3.1415f));
+        Robot.Println("(3): " + ((_directionEncoder[3].getValue() / 4096f) * 2 * 3.1415f));
+        */
+
         double dt = Timer.GetDeltaTime();
 
         //Override the shift state of the robot for a peculiar task
@@ -547,12 +550,12 @@ public class Swerve implements System {
             //Remove the angle of the gyroscope to the azymuth to make the driving relative to the world
             translationPolar.azymuth -= _mode == DrivingMode.World ? (_IMU.getGyroAngleZ() % 360) * 0.01745 + 3.1415: 0;
 
-            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride : _rotationRateLimiter.GetCurrent() * _roationSpeedRatio;
+            double rotationAxis = _isRotationAxisOverriden ? _rotationAxisOverride * _roationSpeedRatio : _rotationRateLimiter.GetCurrent() * _roationSpeedRatio;
 
             for(int i = 0; i < _wheelCount; i++)
             {
                 //Each wheel have a predetermined rotation vector based on wheel position
-                Vector2d scaledRotationVector = new Vector2d(_rotationVector[i].x * rotationAxis * _roationSpeedRatio, _rotationVector[i].y * rotationAxis * _roationSpeedRatio);               
+                Vector2d scaledRotationVector = new Vector2d(_rotationVector[i].x * rotationAxis, _rotationVector[i].y * rotationAxis);               
 
                 Vector2d SumVec = Mathf.Vector2Sum(scaledRotationVector, translationPolar.vector());
                 Polar Sum = Polar.fromVector(SumVec);
@@ -562,7 +565,7 @@ public class Swerve implements System {
           
                 //mag cannot be smaller than 0.2 since deadzone is 0.2 
                 //So if mag is smaller that mean there is currently no input
-                if(mag <= 0.19)
+                if(mag <= 0.19 && !_isHorizontalAxisOverride && !_isVerticalAxisOverride && !_isRotationAxisOverriden)
                 {
                     Sum.radius = 0.01;
                     Sum.azymuth = _lastAngle[i];

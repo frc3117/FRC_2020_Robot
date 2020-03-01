@@ -30,6 +30,9 @@ public class BallIntake implements System
 
     private SolenoidValve _solenoid;
 
+    private boolean _isIntakeOverriden;
+    private double _intakeOverrideValue;
+
     public void Init()
     {
         _isOpen = false;
@@ -56,6 +59,12 @@ public class BallIntake implements System
         return _isOpen;
     }
 
+    public void OverrideIntake(double Speed)
+    {
+        _isIntakeOverriden = true;
+        _intakeOverrideValue = Speed;
+    }
+
     public void DoSystem()
     {
         if(InputManager.GetButtonDown("ToggleIntake"))
@@ -67,16 +76,23 @@ public class BallIntake implements System
         {        
             double currentSpeed = (_motorEncoder.getRate() / 2048) * 60;
 
-            if(Input.GetButton("StartFeeder"))
+            if(_isIntakeOverriden)
             {
-                if(Input.GetButton("ReverseFeeder"))
-                    _controller.Set(1);
-                else
-                    _controller.Set(-1);          
+                _controller.Set(_intakeOverrideValue);
             }
             else
             {
-                _controller.Set(0);
+                if(Input.GetButton("StartFeeder"))
+                {
+                    if(Input.GetButton("ReverseFeeder"))
+                        _controller.Set(0.8);
+                    else
+                        _controller.Set(-0.8);          
+                }
+                else
+                {
+                    _controller.Set(0);
+                }
             }
 
             SmartDashboard.putNumber("FeederSpeed", currentSpeed);
@@ -85,5 +101,7 @@ public class BallIntake implements System
         {
             _controller.Set(0);
         }    
+
+        _isIntakeOverriden = false;
     }
 }

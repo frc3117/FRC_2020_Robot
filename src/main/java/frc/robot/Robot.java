@@ -1,11 +1,13 @@
 package frc.robot;
 
+import frc.robot.Component.Autonomous;
 import frc.robot.Component.BallIntake;
 import frc.robot.Component.BallThrower;
 import frc.robot.Component.Climber;
 import frc.robot.Component.Leds;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
+import frc.robot.Component.Autonomous.AutonomousMode;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.LimeLightPosition;
 import frc.robot.Component.Data.RobotOdometry;
@@ -13,8 +15,11 @@ import frc.robot.Component.Data.WheelData;
 import frc.robot.Component.Swerve.ShifterMode;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.Vector2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
   public static Swerve SwerveDrive;
@@ -27,19 +32,28 @@ public class Robot extends TimedRobot {
 
   public static Leds Leds;
 
-  public static PID DirectionHoldPID = new PID(3, 0, 0);
+  public static PID DirectionHoldPID = new PID(0.000523599, 0.0010472, 0);
   public static PID PositionHoldPID = new PID(0.3, 0, 0);
+
 
   public static LimeLightPosition Position = new LimeLightPosition(new Vector2d(0, 0));
 
+  private SendableChooser<AutonomousMode> _autoChooser = new SendableChooser<AutonomousMode>();
+  private Autonomous _auto;
+  
   private boolean _isInit = false;
+
+  public static void Println(Object Line)
+  {
+    System.out.print(Line);
+  }
 
   @Override
   public void robotInit() {
     //Initializing the SwerveDrive drivetrain
     WheelData[] data = {
       new WheelData(20, 7, new Vector2d(0, 1), 0, 3, new Vector2d(-10, -11), 0.6964067- (3.1415/2.0)),
-      new WheelData(21, 8, new Vector2d(4, 5), 1, 0, new Vector2d(10, -11), 4.163101- (3.1415/2.0)),
+      new WheelData(21, 8, new Vector2d(4, 5), 1, 0, new Vector2d(10, -11), 4.2- (3.1415/2.0)),
       new WheelData(22, 9, new Vector2d(2, 3), 2, 1, new Vector2d(10, 11), 0.8344609- (3.1415/2.0)),
       new WheelData(23, 4, new Vector2d(6, 7), 3, 2, new Vector2d(-10, 11), 3.1476357- (3.1415/2.0))
     };
@@ -70,6 +84,13 @@ public class Robot extends TimedRobot {
     Climber = new Climber(14);
 
     InputManager.Init();
+
+    for(AutonomousMode mode : AutonomousMode.values())
+    {
+      _autoChooser.addOption(mode.toString(), mode);
+    }
+
+    SmartDashboard.putData("AutonomousSelector", _autoChooser);
   }
   
   @Override
@@ -77,70 +98,16 @@ public class Robot extends TimedRobot {
   {
     Init();
 
-    currentStep = 0;
-    _autonomousEnterTime = Timer.GetCurrentTime();
+    _auto = new Autonomous(_autoChooser.getSelected());
+    _auto.Init();
   }
 
-  private double _autonomousEnterTime;
-  private double _shootBallEnterTime;
-
-  int currentStep = 0;
-  String[] Step = {"CrossLine", "ShootBall"};
   @Override
   public void autonomousPeriodic() 
   {
-    //Calculate the first time after use GetDeltaTime()
     Timer.Calculate();
 
-    if(currentStep == Step.length)
-    {
-      Thrower.DoSystem();
-      Intake.DoSystem();
-  
-      SwerveDrive.DoSystem();;
-      return;
-    }
-
-    String current = Step[currentStep];
-
-    Vector2d pos = Position.Evaluate();
-    System.out.println("(" + pos.x + ", " + pos.y + ")");
-
-    switch(current)
-    {
-      case "CrossLine":
-      if((Timer.GetCurrentTime() - _autonomousEnterTime <= 2))
-      {
-        SwerveDrive.OverrideVerticalAxis(0.8);
-        Thrower.StartOverrideAlign();
-      }
-      else
-      {
-        currentStep++;
-        _shootBallEnterTime = Timer.GetCurrentTime();
-      }
-      break;
-
-      case "ShootBall":
-      if(Timer.GetCurrentTime() - _shootBallEnterTime >= 2.5 && Timer.GetCurrentTime() - _shootBallEnterTime <= 7)
-      {
-        Thrower.SetAutoShoot(true);
-      }
-      else
-      {
-        Thrower.SetAutoShoot(false);
-        Thrower.StopOverrideAlign();
-        currentStep++;
-      }
-      break;
-    }
-
-    Thrower.DoSystem();
-    Intake.DoSystem();
-
-    Leds.DoSystem();
-
-    SwerveDrive.DoSystem();
+    _auto.DoSystem();
   }
 
   @Override

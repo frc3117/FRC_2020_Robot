@@ -12,8 +12,9 @@ public class Autonomous implements System
 {
     public enum AutonomousMode
     {
-        Default,
+        ReverseShoot,
         Trench,
+        EnnemyTrench
     }
 
     public Autonomous(AutonomousMode Mode)
@@ -22,7 +23,7 @@ public class Autonomous implements System
     }
 
     private AutonomousMode _mode;
-    private LimeLightPosition _robotPosition;
+    private LimeLightPosition _robotPosition = new LimeLightPosition(new Vector2d(0, 0));
     
     private PID _horizontalPositionPID;
     private PID _verticalPositionPID;
@@ -43,12 +44,16 @@ public class Autonomous implements System
 
         switch(_mode)
         {
-            case Default:
-            DoDefault();
+            case ReverseShoot:
+            DoReverseShoot();
             break;
 
             case Trench:
             DoTrench();
+            break;
+
+            case EnnemyTrench:
+
             break;
         }
         
@@ -78,10 +83,57 @@ public class Autonomous implements System
 
     private void DoTrench()
     {
-        
-    }
-    private void DoDefault()
-    {
+        if(_currentTime <= 5.5)
+        {
+            Robot.SwerveDrive.OverrideRotationAxis(Mathf.Clamp(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), 90 * Mathf.DEG_2_RAD), -1, 1));
 
+            Robot.Intake.OpenIntake();
+            Robot.SwerveDrive.OverrideVerticalAxis(0.8);
+            Robot.SwerveDrive.OverrideHorizontalAxis(0.05);
+
+            Robot.Intake.OverrideIntake(-1);
+        }
+        else if(_currentTime <= 7)
+        {
+            Robot.SwerveDrive.OverrideRotationAxis(Mathf.Clamp(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), 90 * Mathf.DEG_2_RAD), -1, 1));
+
+            Robot.Intake.OverrideIntake(-1);
+        }
+        else if(_currentTime <= 14.5)
+        {
+            Robot.Thrower.StartOverrideAlign();
+            if(_currentTime >= 9)
+            {
+                Robot.Thrower.SetAutoShoot(true);
+            }
+        }
+        else
+        {
+            Robot.Thrower.SetAutoShoot(false);
+            Robot.Thrower.StopOverrideAlign();
+        }
+    }
+    private void DoReverseShoot()
+    {
+        if(_currentTime <= 2)
+        {
+          double rotationAxis = Robot.DirectionHoldPID.Evaluate(Mathf.DeltaAngle(0 ,Robot.SwerveDrive.GetHeading()));
+        
+          Robot.SwerveDrive.OverrideVerticalAxis(0.8);
+          Robot.SwerveDrive.OverrideRotationAxis(rotationAxis);
+        }
+        else if(_currentTime <= 11)
+        {
+            Robot.Thrower.StartOverrideAlign();
+            if(_currentTime >= 5.5)
+            {
+                Robot.Thrower.SetAutoShoot(true);
+            }
+        }
+        else
+        {
+            Robot.Thrower.SetAutoShoot(false);
+            Robot.Thrower.StopOverrideAlign();
+        }
     }
 }
