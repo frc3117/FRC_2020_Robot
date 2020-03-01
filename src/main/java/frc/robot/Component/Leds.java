@@ -8,6 +8,7 @@ public class Leds implements System {
     private SolenoidValve red;
 
     private String _color = "";
+    private Integer _priority = 0;
 
     public Leds(int greenChannel, int blueChannel, int redChannel) {
         green = SolenoidValve.CreateSingle(greenChannel, 1);
@@ -19,8 +20,11 @@ public class Leds implements System {
 
     }
 
-    public void SetColor(String color) {
-        _color = color;
+    public void SetColor(String color, Integer priority, Integer newPriority) {
+        if (priority >= _priority) {
+            _priority = newPriority;
+            _color = color;
+        }
     }
 
     public void DoSystem() {    

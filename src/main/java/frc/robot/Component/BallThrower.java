@@ -135,6 +135,8 @@ public class BallThrower implements System
             joystick.setRumble(RumbleType.kLeftRumble, 0.5);
             joystick.setRumble(RumbleType.kRightRumble, 0.5);
 
+            Robot.Leds.SetColor("lightpurple", 0, 0);
+
             Robot.SwerveDrive.OverrideShift(1);
 
             SmartDashboard.putBoolean("IsAlign", true);
@@ -145,6 +147,12 @@ public class BallThrower implements System
             if(current.IsTarget() && !(Input.GetButton("Shoot") || _isAutoShoot))
             {
                 double throwerTarget = _throwerDistanceCurve.Evaluate(current.GetAngleY());
+
+                if (Math.abs(current.GetAngleX()) <= _errorTolerency) {
+                    Robot.Leds.SetColor("blue", 0, 0);
+                } else {
+                    Robot.Leds.SetColor("lime", 0, 0);
+                }
 
                 SmartDashboard.putNumber("Angle", current.GetAngleY());
                 SmartDashboard.putNumber("ThrowerAngle", throwerTarget);
@@ -173,12 +181,17 @@ public class BallThrower implements System
 
                 if(_isReady)
                 {
+                    Robot.Leds.SetColor("green", 0, 0);
                     //Feed Ball
                     _feederController.Set(1);
                     _conveyorBelt.Set(0.3);
                 }
                 else
                 {
+                    if (RPM < _shootRPM - RPM_Offset) {
+                        Robot.Leds.SetColor("red", 0, 0);
+                    }
+
                     _feederController.Set(0);
                     _conveyorBelt.Set(0);
                 }
@@ -204,6 +217,8 @@ public class BallThrower implements System
         {
             joystick.setRumble(RumbleType.kLeftRumble, 0);
             joystick.setRumble(RumbleType.kRightRumble, 0);
+
+            Robot.Leds.SetColor("white", 0, 0);
 
             SmartDashboard.putBoolean("IsAlign", false);
 

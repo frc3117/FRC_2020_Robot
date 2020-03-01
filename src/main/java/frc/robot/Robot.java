@@ -108,6 +108,9 @@ public class Robot extends TimedRobot {
     Timer.Calculate();
 
     _auto.DoSystem();
+
+    // Must Run last
+    Leds.DoSystem();
   }
 
   @Override
@@ -155,9 +158,9 @@ public class Robot extends TimedRobot {
 
     Climber.DoSystem();
 
-    Leds.DoSystem();
-    Leds.SetColor("off");
-
     SwerveDrive.DoSystem();
+
+    // Must Run last
+    Leds.DoSystem();
   } 
 }
