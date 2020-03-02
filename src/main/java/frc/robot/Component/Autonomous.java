@@ -3,12 +3,12 @@ package frc.robot.Component;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import frc.robot.Robot;
 import frc.robot.Component.Data.LimeLightPosition;
-import frc.robot.Interface.System;
+import frc.robot.Interface.Component;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
 
-public class Autonomous implements System
+public class Autonomous implements Component
 {
     public enum AutonomousMode
     {

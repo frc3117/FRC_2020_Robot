@@ -1,9 +1,9 @@
 package frc.robot.Interface;
 
 /**
- * The base interface of every system
+ * The base interface of every component
  */
-public interface System
+public interface Component
 {
     public void Init();
     public void DoSystem();

@@ -4,9 +4,9 @@ import frc.robot.Robot;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
-import frc.robot.Interface.System;
+import frc.robot.Interface.Component;
 
-public class Climber implements System
+public class Climber implements Component
 {
     public Climber(int MotorChannel)
     {

@@ -7,11 +7,11 @@ import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.SolenoidValve;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
-import frc.robot.Interface.System;
+import frc.robot.Interface.Component;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
 
-public class BallIntake implements System
+public class BallIntake implements Component
 {
     public BallIntake(int ControlerChannel, int SolenoidChannelA, int SolenoidChannelB, int EncoderA, int EncoderB, int TargetRPM)
     {

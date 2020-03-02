@@ -1,8 +1,8 @@
 package frc.robot.Component;
 import frc.robot.Component.Data.SolenoidValve;
-import frc.robot.Interface.System;
+import frc.robot.Interface.Component;
 
-public class Leds implements System {
+public class Leds implements Component {
     private SolenoidValve green;
     private SolenoidValve blue;
     private SolenoidValve red;

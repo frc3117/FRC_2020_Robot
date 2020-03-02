@@ -1,13 +1,12 @@
 package frc.robot.Component;
 
-import frc.robot.Robot;
 import frc.robot.Component.Data.Input;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.SolenoidValve;
 import frc.robot.Component.Data.WheelData;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
-import frc.robot.Interface.System;
+import frc.robot.Interface.Component;
 import frc.robot.Math.Mathf;
 import frc.robot.Math.PID;
 import frc.robot.Math.Polar;
@@ -20,7 +19,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Swerve implements System {
+public class Swerve implements Component {
     public Swerve(WheelData[] WheelsData)
     {
         _wheelCount = WheelsData.length;

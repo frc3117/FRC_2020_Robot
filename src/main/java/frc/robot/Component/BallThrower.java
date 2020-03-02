@@ -12,12 +12,12 @@ import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.LimeLightData;
 import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
-import frc.robot.Interface.System;
+import frc.robot.Interface.Component;
 import frc.robot.Math.PID;
 import frc.robot.Math.Curve;
 import frc.robot.Math.Mathf;
 
-public class BallThrower implements System
+public class BallThrower implements Component
 {
     public BallThrower(double IdleRPM, double ShootRPM)
     {
