@@ -21,9 +21,11 @@ public class InputManager
     public static void Init()
     {
         //Swerve
-        Input.CreateAxis("Horizontal", 0, 0, false);
-        Input.CreateAxis("Vertical", 0, 1, false);
-        Input.CreateAxis("Rotation", 0, 2, false);
+        Input.CreateAxis("Horizontal", 1, 0, false);
+        Input.CreateAxis("Vertical", 1, 1, false);
+        Input.CreateAxis("Rotation", 1, 2, true);
+
+        Input.SetAxisNegative("Rotation", 1, 3, false);
 
         Input.SetAxisDeadzone("Horizontal", 0.2);
         Input.SetAxisDeadzone("Vertical", 0.2);

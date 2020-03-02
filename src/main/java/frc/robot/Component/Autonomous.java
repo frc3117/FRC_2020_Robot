@@ -83,26 +83,20 @@ public class Autonomous implements Component
 
     private void DoTrench()
     {
-        if(_currentTime <= 5.5)
+        if(_currentTime <= 4.5)
         {
             Robot.SwerveDrive.OverrideRotationAxis(Mathf.Clamp(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), 90 * Mathf.DEG_2_RAD), -1, 1));
 
             Robot.Intake.OpenIntake();
-            Robot.SwerveDrive.OverrideVerticalAxis(0.8);
+            Robot.SwerveDrive.OverrideVerticalAxis(0.9);
             Robot.SwerveDrive.OverrideHorizontalAxis(0.05);
-
-            Robot.Intake.OverrideIntake(-1);
-        }
-        else if(_currentTime <= 7)
-        {
-            Robot.SwerveDrive.OverrideRotationAxis(Mathf.Clamp(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), 90 * Mathf.DEG_2_RAD), -1, 1));
 
             Robot.Intake.OverrideIntake(-1);
         }
         else if(_currentTime <= 14.5)
         {
             Robot.Thrower.StartOverrideAlign();
-            if(_currentTime >= 9)
+            if(_currentTime >= 9.5)
             {
                 Robot.Thrower.SetAutoShoot(true);
             }

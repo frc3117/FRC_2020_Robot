@@ -35,7 +35,7 @@ public class BallThrower implements Component
 
         LimeLight.SetDriveMode();
 
-        SmartDashboard.putNumber("RPM_Offset", 200);
+        SmartDashboard.putNumber("RPM_Offset", 350);
 
         _idleRPM = IdleRPM;
         _shootRPM = ShootRPM;
@@ -55,16 +55,14 @@ public class BallThrower implements Component
     private Joystick joystick = new Joystick(0);
 
     private Curve _throwerDistanceCurve = new Curve(
-        new Vector2d(-16, 144),
-        new Vector2d(-14, 110),
-        new Vector2d(-12, 89),
-        new Vector2d(-10, 81),
-        new Vector2d(-8, 85),
-        new Vector2d(-6, 102),
-        new Vector2d(-4, 132),
-        new Vector2d(-2, 175),
-        new Vector2d(-1, 180),
-        new Vector2d(0, 180)
+        new Vector2d(-7.6, 180 - 100),
+        new Vector2d(-10.2, 175 - 100),
+        new Vector2d(-11.9, 170 - 100),
+        new Vector2d(-13.96, 140 - 100),
+        new Vector2d(-16.13, 115 - 100),
+        new Vector2d(-16.8, 110 - 100),
+        new Vector2d(-18.9, 120 - 100),
+        new Vector2d(-25, 120 - 100)
     );
 
     private Servo _throwerServo;
@@ -88,6 +86,8 @@ public class BallThrower implements Component
 
         _feederController.Set(0);
         _conveyorBelt.Set(0);
+
+        SmartDashboard.putNumber("ThrowerAngle", 0);
     }
 
     public double GetDistance()
@@ -139,11 +139,10 @@ public class BallThrower implements Component
             Robot.SwerveDrive.OverrideShift(1);
 
             SmartDashboard.putBoolean("IsAlign", true);
-            //SmartDashboard.putNumber("ThrowerAngle", 0);
 
             LimeLightData current = LimeLight.GetCurrent();
 
-            if(current.IsTarget() && !(Input.GetButton("Shoot") || _isAutoShoot))
+            if(current.IsTarget() && !Input.GetButton("Shoot") && !_isAutoShoot)
             {
                 double throwerTarget = _throwerDistanceCurve.Evaluate(current.GetAngleY());
 

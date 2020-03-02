@@ -60,7 +60,7 @@ public class Robot extends TimedRobot{
 
     SwerveDrive = new Swerve(data);
 
-    SwerveDrive.SetShifterMode(ShifterMode.Manual);
+    SwerveDrive.SetShifterMode(ShifterMode.Automatic);
     SwerveDrive.SetShiftThreshold(90. * 4., 230. * 4.);
     SwerveDrive.SetShiftMinTime(1.5);
 
