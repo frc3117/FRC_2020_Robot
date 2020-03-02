@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot{
   public static Swerve SwerveDrive;
   public static RobotOdometry Odometry;
 
