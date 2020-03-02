@@ -8,24 +8,19 @@ import frc.robot.Component.Data.MotorController;
 import frc.robot.Component.Data.SolenoidValve;
 import frc.robot.Component.Data.MotorController.MotorControllerType;
 import frc.robot.Interface.Component;
-import frc.robot.Math.Mathf;
-import frc.robot.Math.PID;
 
 public class BallIntake implements Component
 {
-    public BallIntake(int ControlerChannel, int SolenoidChannelA, int SolenoidChannelB, int EncoderA, int EncoderB, int TargetRPM)
+    public BallIntake(int ControlerChannel, int SolenoidChannelA, int SolenoidChannelB, int EncoderA, int EncoderB)
     {
         _controller = new MotorController(MotorControllerType.TalonSRX, ControlerChannel, false);
         _motorEncoder = new Encoder(EncoderA, EncoderB);
         _solenoid = SolenoidValve.CreateDouble(SolenoidChannelA, SolenoidChannelB, 0);
-        _targetSpeed = TargetRPM;
     }
 
-    private double _targetSpeed;
     private boolean _isOpen = false;
 
     private Encoder _motorEncoder;
-    private PID _motorPID = new PID(0.002, 0.00001, 0, "Feeder");
     private MotorController _controller;
 
     private SolenoidValve _solenoid;
