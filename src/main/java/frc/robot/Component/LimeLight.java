@@ -8,18 +8,18 @@ import frc.robot.Component.Data.LimeLightData;
  */
 public class LimeLight {
 
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    private static NetworkTable _table = NetworkTableInstance.getDefault().getTable("limelight");
 
     /**
      * Get the current data from the limelight
      * @return
      */
-    public LimeLightData GetCurrent()
+    public static LimeLightData GetCurrent()
     {        
-        NetworkTableEntry tx = table.getEntry("tx"); //X Angle (degree)
-        NetworkTableEntry ty = table.getEntry("ty"); //Y Angle (degree)
-        NetworkTableEntry ta = table.getEntry("ta"); //Screen Space (Percent)
-        NetworkTableEntry tv = table.getEntry("tv"); //Is Target (1 or 0)
+        NetworkTableEntry tx = _table.getEntry("tx"); //X Angle (degree)
+        NetworkTableEntry ty = _table.getEntry("ty"); //Y Angle (degree)
+        NetworkTableEntry ta = _table.getEntry("ta"); //Screen Space (Percent)
+        NetworkTableEntry tv = _table.getEntry("tv"); //Is Target (1 or 0)
 
         return new LimeLightData(tx.getDouble(0), ty.getDouble(0), ta.getDouble(0), tv.getDouble(0));
     }
@@ -27,27 +27,27 @@ public class LimeLight {
     /**
      * Set the limelight in drive mode
      */
-    public void SetDriveMode()
+    public static void SetDriveMode()
     {
-        table.getEntry("camMode").setNumber(1);
+        _table.getEntry("camMode").setNumber(1);
 
         TurnOffLight();
     }
     /**
      * Set the limelight in recognition mode
      */
-    public void SetRecognitionMode()
+    public static void SetRecognitionMode()
     {
-        table.getEntry("camMode").setNumber(0);
+        _table.getEntry("camMode").setNumber(0);
 
         TurnOnLight();
     }
 
-    public void Zoom()
+    public static void Zoom()
     {
         //haven't found how yet
     }
-    public void UnZoom()
+    public static void UnZoom()
     {
         //haven't found how yet
     }
@@ -62,46 +62,46 @@ public class LimeLight {
     /**
      * Make the light on the limelight bink
      */
-    public void BlinkLight()
+    public static void BlinkLight()
     {
-        table.getEntry("ledMode").setNumber(2);
+        _table.getEntry("ledMode").setNumber(2);
     }
     /**
      * Turn on the light on the limelight
      */
-    public void TurnOnLight()
+    public static void TurnOnLight()
     {
-        table.getEntry("ledMode").setNumber(3);
+        _table.getEntry("ledMode").setNumber(3);
     }
     /**
      * Turn off the light on the limelight
      */
-    public void TurnOffLight()
+    public static void TurnOffLight()
     {
-        table.getEntry("ledMode").setNumber(1);
+        _table.getEntry("ledMode").setNumber(1);
     }
     /**
      * Make the light be on the state specified by the current pipeline
      */
-    public void SetLightDefault()
+    public static void SetLightDefault()
     {
-        table.getEntry("ledMode").setNumber(0);
+        _table.getEntry("ledMode").setNumber(0);
     }
 
     /**
      * Set the current pipeline to run on the limelight
      * @param id The pipeline to set on the limelight
      */
-    public void SetPipeline(int id)
+    public static void SetPipeline(int id)
     {
-        table.getEntry("pipeline").setNumber(id);
+        _table.getEntry("pipeline").setNumber(id);
     }
     /**
      * Get the current pipeline running on the limelight
      * @return
      */
-    public int GetCurrentPipeline()
+    public static int GetCurrentPipeline()
     {
-        return (int)table.getEntry("getpipe").getDouble(0);
+        return (int)_table.getEntry("getpipe").getDouble(0);
     }
 }

@@ -33,7 +33,7 @@ public class BallThrower implements System
 
         _throwerServo = new Servo(1);
 
-        _limeLight.SetDriveMode();
+        LimeLight.SetDriveMode();
 
         SmartDashboard.putNumber("RPM_Offset", 200);
 
@@ -49,7 +49,6 @@ public class BallThrower implements System
     private MotorController _feederController = new MotorController(MotorControllerType.TalonSRX, 2, false);
     private MotorController[] _inertiaWheelControler;
     private Encoder _inertiaWheelEncoder;
-    private LimeLight _limeLight = new LimeLight();
     private PID _directionPID = new PID(0.03, 0.06, 0.000);
     private PID _inertiaWheelPID = new PID(0.007, 0, 0, "Speed");
 
@@ -93,7 +92,7 @@ public class BallThrower implements System
 
     public double GetDistance()
     {
-        LimeLightData current = _limeLight.GetCurrent();
+        LimeLightData current = LimeLight.GetCurrent();
         double Angle = (CamAngle + current.GetAngleY()) * Mathf.DEG_2_RAD;
 
         return (1 / Math.tan(Angle)) * (TargetHeight - CamHeight);
@@ -102,12 +101,12 @@ public class BallThrower implements System
     public void StartOverrideAlign()
     {
         _isAllignOverriden = true;
-        _limeLight.SetRecognitionMode();
+        LimeLight.SetRecognitionMode();
     }
     public void StopOverrideAlign()
     {
         _isAllignOverriden = false;
-        _limeLight.SetDriveMode();
+        LimeLight.SetDriveMode();
     }
 
     int frame = 0;
@@ -121,11 +120,11 @@ public class BallThrower implements System
 
                 if(_isAllign)
                 {
-                    _limeLight.SetRecognitionMode();
+                    LimeLight.SetRecognitionMode();
                 }
                 else
                 {
-                    _limeLight.SetDriveMode();
+                    LimeLight.SetDriveMode();
                 }
             }
         }
@@ -142,7 +141,7 @@ public class BallThrower implements System
             SmartDashboard.putBoolean("IsAlign", true);
             //SmartDashboard.putNumber("ThrowerAngle", 0);
 
-            LimeLightData current = _limeLight.GetCurrent();
+            LimeLightData current = LimeLight.GetCurrent();
 
             if(current.IsTarget() && !(Input.GetButton("Shoot") || _isAutoShoot))
             {

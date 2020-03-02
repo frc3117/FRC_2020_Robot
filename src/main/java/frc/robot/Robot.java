@@ -5,6 +5,7 @@ import frc.robot.Component.BallIntake;
 import frc.robot.Component.BallThrower;
 import frc.robot.Component.Climber;
 import frc.robot.Component.Leds;
+import frc.robot.Component.LimeLight;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
 import frc.robot.Component.Autonomous.AutonomousMode;
@@ -34,7 +35,6 @@ public class Robot extends TimedRobot {
 
   public static PID DirectionHoldPID = new PID(0.000523599, 0.0010472, 0);
   public static PID PositionHoldPID = new PID(0.3, 0, 0);
-
 
   public static LimeLightPosition Position = new LimeLightPosition(new Vector2d(0, 0));
 
@@ -162,5 +162,12 @@ public class Robot extends TimedRobot {
 
     // Must Run last
     Leds.DoSystem();
-  } 
+  }
+
+  @Override
+  public void disabledInit()
+  {
+    LimeLight.TurnOffLight();
+    LimeLight.SetDriveMode();
+  }
 }

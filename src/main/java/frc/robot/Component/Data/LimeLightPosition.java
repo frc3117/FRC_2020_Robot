@@ -16,7 +16,6 @@ public class LimeLightPosition
     }
 
     private Vector2d _currentPos;
-    private LimeLight _limeLight = new LimeLight();
 
     /**
      * Check if there is currently a target
@@ -24,7 +23,7 @@ public class LimeLightPosition
      */
     public boolean IsTarget()
     {
-        return _limeLight.GetCurrent().IsTarget();
+        return LimeLight.GetCurrent().IsTarget();
     }
 
     /**
@@ -33,7 +32,7 @@ public class LimeLightPosition
      */
     public Vector2d Evaluate()
     {
-        LimeLightData data = _limeLight.GetCurrent();
+        LimeLightData data = LimeLight.GetCurrent();
 
         double Theta = Robot.SwerveDrive.GetHeading();
         double Distance = Robot.Thrower.GetDistance();
