@@ -23,27 +23,27 @@ public class InputManager
         //Swerve
         Input.CreateAxis("Horizontal", 1, 0, false);
         Input.CreateAxis("Vertical", 1, 1, false);
-        Input.CreateAxis("Rotation", 1, 2, true);
+        Input.CreateAxis("Rotation", 1, 3, true);
 
-        Input.SetAxisNegative("Rotation", 1, 3, false);
+        Input.SetAxisNegative("Rotation", 1, 2, false);
 
         Input.SetAxisDeadzone("Horizontal", 0.2);
         Input.SetAxisDeadzone("Vertical", 0.2);
 
-        Input.CreateButton("GearShift", 0, 3);
+        Input.CreateButton("GearShift", 1, 4);
 
         //Intake
-        Input.CreateButton("ToggleIntake", 0, 4);
-        Input.CreateButton("StartFeeder", 0, 1);
-        Input.CreateButton("ReverseFeeder", 0, 2);
+        Input.CreateButton("ToggleIntake", 1, 4);
+        Input.CreateButton("StartFeeder", 1, 1);
+        Input.CreateButton("ReverseFeeder", 1, 2);
 
         //Thrower
-        Input.CreateButton("Align", 1, 1);
-        Input.CreateButton("Shoot", 1, 2);
+        Input.CreateButton("Align", 0, 1);
+        Input.CreateButton("Shoot", 0, 2);
 
         //Climber
-        Input.CreateButton("ClimberUp", 1, 8);
-        Input.CreateButton("ClimberDown", 1, 7);
+        Input.CreateButton("ClimberUp", 0, 9);
+        Input.CreateButton("ClimberDown", 0, 8);
 
         _allButton = Input.GetAllButton();
         for (String key : _allButton)

@@ -79,10 +79,11 @@ public class BallIntake implements Component
             {
                 if(Input.GetButton("StartFeeder"))
                 {
-                    if(Input.GetButton("ReverseFeeder"))
-                        _controller.Set(0.8);
-                    else
-                        _controller.Set(-0.8);          
+                    _controller.Set(-0.8);          
+                }
+                else if(Input.GetButton("ReverseFeeder"))
+                {
+                    _controller.Set(0.8);
                 }
                 else
                 {
