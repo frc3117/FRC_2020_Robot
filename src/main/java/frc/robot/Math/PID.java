@@ -207,7 +207,14 @@ public class PID {
         }
 
         _integral += Error * Dt;
-        _integral = Mathf.Clamp(_integral, _saturationIntegralMin, _staturationIntegralMax);
+        if(_isDebug)
+        {
+            _integral = Mathf.Clamp(_integral,  SmartDashboard.getNumber(_integralSaturationMinName, -999999), SmartDashboard.getNumber(_integralSaturationMaxName, 999999));
+        }
+        else
+        {
+            _integral = Mathf.Clamp(_integral,  _saturationIntegralMin, _staturationIntegralMax);
+        }
 
         double averageError = (Error + _previousError) / 2;
         double derivative = (averageError - _previousAverageError) / Dt;
