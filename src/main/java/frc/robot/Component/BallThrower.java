@@ -28,6 +28,9 @@ public class BallThrower implements Component
         };
 
         _inertiaWheelControler[0].SetInverted(true);
+
+        _inertiaWheelControler[0].SetBrake(false);
+        _inertiaWheelControler[1].SetBrake(false);
         
         _inertiaWheelEncoder = new Encoder(9, 8);
 
@@ -49,12 +52,8 @@ public class BallThrower implements Component
     private MotorController _feederController = new MotorController(MotorControllerType.TalonSRX, 2, false);
     private MotorController[] _inertiaWheelControler;
     private Encoder _inertiaWheelEncoder;
-    private PID _directionPID = new PID(0.03, 0.06, 0.000);
-    private PID _inertiaWheelPID = new PID(0.18, 0, 0, "Speed");
-
-    public Integer trueCount = 0;
-    public Integer falseCount = 0;
-    public Integer readingCount = 0;
+    private PID _directionPID = new PID(0.03, 0.06, 0.000, "direction");
+    private PID _inertiaWheelPID = new PID(0.18, 0, 0);
 
     private Joystick joystick = new Joystick(0);
 
@@ -180,23 +179,6 @@ public class BallThrower implements Component
                 _isReady = current.IsTarget();
                 _isReady &= Math.abs(current.GetAngleX()) <= _errorTolerency;
                 _isReady &= RPM >= _shootRPM - (RPM_Offset / 2) && RPM <= _shootRPM + (RPM_Offset / 2);
-
-                // Uncomment and show value as graph on ShuffleBoard to know % of time wheel is in range to tune PID
-                // Higher is better
-                /*if (readingCount < 100) {
-                    if (RPM >= _shootRPM - (RPM_Offset / 2) && RPM <= _shootRPM + (RPM_Offset / 2)) {
-                        trueCount++;
-                    } else {
-                        falseCount++;
-                    }
-
-                    readingCount++;
-                } else {
-                    SmartDashboard.putNumber("PIDWorth", trueCount);
-                    readingCount = 0;
-                    trueCount = 0;
-                    falseCount = 0;
-                }*/
 
                 if(_isReady)
                 {
