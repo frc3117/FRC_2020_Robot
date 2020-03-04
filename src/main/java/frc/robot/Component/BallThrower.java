@@ -52,7 +52,7 @@ public class BallThrower implements Component
     private MotorController _feederController = new MotorController(MotorControllerType.TalonSRX, 2, false);
     private MotorController[] _inertiaWheelControler;
     private Encoder _inertiaWheelEncoder;
-    private PID _directionPID = new PID(0.03, 0.06, 0.000, "direction");
+    private PID _directionPID = new PID(0.06, 0.1, 0.002, "direction");
     private PID _inertiaWheelPID = new PID(0.18, 0, 0);
 
     private Joystick joystick = new Joystick(0);

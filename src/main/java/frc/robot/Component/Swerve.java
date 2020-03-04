@@ -577,7 +577,7 @@ public class Swerve implements Component {
                 _driveMotor[i].Set(Mathf.Clamp(Sum.radius, -1, 1) * _flipDriveMultiplicator[i]);
 
                 double deltaAngle = GetDeltaAngle(i, Sum.vector());
-                if(Math.abs(deltaAngle) <= 1 * Mathf.DEG_2_RAD)
+                if(Math.abs(deltaAngle) <= 0.5 * Mathf.DEG_2_RAD)
                 {         
                     deltaAngle = 0;
                 }
