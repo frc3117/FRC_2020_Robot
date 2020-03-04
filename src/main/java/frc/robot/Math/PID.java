@@ -35,6 +35,11 @@ public class PID {
     private String _kpName;
     private String _kiName;
     private String _kdName;
+    private String _integralSaturationMinName;
+    private String _integralSaturationMaxName;
+
+    private double _saturationIntegralMin = -999999;
+    private double _staturationIntegralMax = 999999;
 
     private double _min;
     private double _max;
@@ -60,9 +65,15 @@ public class PID {
             _kiName = Name + "_Ki";
             _kdName = Name + "_Kd";
 
+            _integralSaturationMinName = Name + "_i_SaturationMin";
+            _integralSaturationMaxName = Name + "_i_SaturationMax";
+
             SmartDashboard.putNumber(_kpName, Kp);
             SmartDashboard.putNumber(_kiName, Ki);
             SmartDashboard.putNumber(_kdName, Kd);
+
+            SmartDashboard.putNumber(_integralSaturationMinName, _saturationIntegralMin);
+            SmartDashboard.putNumber(_integralSaturationMaxName, _staturationIntegralMax);
         }
     }
     /**
@@ -79,6 +90,9 @@ public class PID {
             SmartDashboard.delete(_kpName);
             SmartDashboard.delete(_kiName);
             SmartDashboard.delete(_kdName);
+
+            SmartDashboard.delete(_integralSaturationMinName);
+            SmartDashboard.delete(_integralSaturationMaxName);
         }
     }
 
@@ -164,6 +178,12 @@ public class PID {
         _feedFoward = FeedForward;
     }
 
+    public void SetSaturationIntegral(double Min, double Max)
+    {
+        _saturationIntegralMin = Min;
+        _staturationIntegralMax = Max;
+    }
+
     /**
      * Evaluate the current pid
      * @param Error The error of the system
@@ -187,6 +207,7 @@ public class PID {
         }
 
         _integral += Error * Dt;
+        _integral = Mathf.Clamp(_integral, _saturationIntegralMin, _staturationIntegralMax);
 
         double averageError = (Error + _previousError) / 2;
         double derivative = (averageError - _previousAverageError) / Dt;
