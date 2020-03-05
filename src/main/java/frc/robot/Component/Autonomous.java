@@ -67,7 +67,7 @@ public class Autonomous implements Component
     
         Robot.SwerveDrive.DoSystem();
 
-        Leds.DoSystem();
+        Robot.Leds.DoSystem();
     }
 
     private void PositionPID(Vector2d TargetPos)
