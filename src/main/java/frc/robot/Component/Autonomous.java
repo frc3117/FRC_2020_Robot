@@ -113,11 +113,7 @@ public class Autonomous implements Component
     }
     private void DoCenterCell() 
     {
-        
-    }
-    private void DoTrench()
-    {
-        if(_currentTime <= 4.5)
+        if(_currentTime <= 3.5)
         {
             Robot.SwerveDrive.OverrideRotationAxis(Mathf.Clamp(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), 90 * Mathf.DEG_2_RAD), -1, 1));
 
@@ -127,10 +123,45 @@ public class Autonomous implements Component
 
             Robot.Intake.OverrideIntake(-1);
         }
+        else if (_currentTime <= 4.5)
+        {
+            Robot.Intake.OverrideIntake(-1);
+        }
         else if(_currentTime <= 14.5)
         {
             Robot.Thrower.StartOverrideAlign();
             if(_currentTime >= 9.5)
+            {
+                Robot.Thrower.SetAutoShoot(true);
+            }
+        }
+        else
+        {
+            Robot.Thrower.SetAutoShoot(false);
+            Robot.Thrower.StopOverrideAlign();
+        }
+    }
+    private void DoTrench()
+    {
+        if(_currentTime <= 4.85)
+        {
+            Robot.SwerveDrive.OverrideRotationAxis(Mathf.Clamp(Mathf.DeltaAngle(Robot.SwerveDrive.GetHeading(), 90 * Mathf.DEG_2_RAD), -1, 1));
+
+            Robot.Intake.OpenIntake();
+            Robot.SwerveDrive.OverrideVerticalAxis(0.9);
+            Robot.SwerveDrive.OverrideHorizontalAxis(0.05);
+
+            Robot.Intake.OverrideIntake(-1);
+        }
+        else if(_currentTime <= 6)
+        {
+            Robot.SwerveDrive.OverrideHorizontalAxis(1);
+            Robot.Intake.OverrideIntake(-1);
+        }
+        else if(_currentTime <= 14.5)
+        {
+            Robot.Thrower.StartOverrideAlign();
+            if(_currentTime >= 10)
             {
                 Robot.Thrower.SetAutoShoot(true);
             }

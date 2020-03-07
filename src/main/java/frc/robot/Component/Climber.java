@@ -23,12 +23,12 @@ public class Climber implements Component
     {
         if(InputManager.GetButton("ClimberUp"))
         {
-            _climberMotor.Set(-0.75);
+            _climberMotor.Set(-0.35);
             Robot.Intake.OpenIntake();
         }
         else if (InputManager.GetButton("ClimberDown"))
         {
-            _climberMotor.Set(0.35);
+            _climberMotor.Set(0.75);
             Robot.Intake.OpenIntake();
         }
         else

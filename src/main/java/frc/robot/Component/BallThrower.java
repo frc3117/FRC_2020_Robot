@@ -90,6 +90,8 @@ public class BallThrower implements Component
         _feederController.Set(0);
         _conveyorBelt.Set(0);
 
+        _feederController.SetBrake(true);
+
         SmartDashboard.putNumber("ThrowerAngle", 0);
     }
 
