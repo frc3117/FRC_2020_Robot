@@ -9,6 +9,7 @@ import frc.robot.Component.LimeLight;
 import frc.robot.Component.PneumaticSystem;
 import frc.robot.Component.Swerve;
 import frc.robot.Component.Autonomous.AutonomousMode;
+import frc.robot.Component.Data.ClimbingLED;
 import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.LimeLightPosition;
 import frc.robot.Component.Data.RobotOdometry;
@@ -138,6 +139,8 @@ public class Robot extends TimedRobot{
 
     PneumaticSystem.Init();
     Timer.Init();
+
+    Leds.Init();
 
     _isInit = true;
 

@@ -1,4 +1,6 @@
 package frc.robot.Component;
+import java.util.Random;
+
 import frc.robot.Component.Data.SolenoidValve;
 import frc.robot.Interface.Component;
 
@@ -10,6 +12,10 @@ public class Leds implements Component {
     private String _color = "";
     private Integer _priority = 0;
 
+    private CycleKey[] _cycle;
+    private int _currentCycleIndex = 0;
+    private boolean _isCycle = false;
+
     public Leds(int greenChannel, int blueChannel, int redChannel) {
         green = SolenoidValve.CreateSingle(greenChannel, 1);
         blue = SolenoidValve.CreateSingle(blueChannel, 1);
@@ -17,6 +23,12 @@ public class Leds implements Component {
     }
 
     public void Init() {
+        _color = "off";
+        _priority = 0;
+    }
+
+    public void SetColorCycle(String Cycle)
+    {
 
     }
 
@@ -71,6 +83,12 @@ public class Leds implements Component {
                 red.SetState(true);
             break;
 
+            case "random":
+                green.SetState(new Random().nextInt(2) == 1);
+                blue.SetState(new Random().nextInt(2) == 1);
+                green.SetState(new Random().nextInt(2) == 1);
+            break;
+
             case "off":
             default:
                 green.SetState(false);
@@ -78,5 +96,11 @@ public class Leds implements Component {
                 red.SetState(false);
             break;
         }
+    }
+
+    private class CycleKey
+    {
+        public String Color;
+        public double Time;
     }
 }

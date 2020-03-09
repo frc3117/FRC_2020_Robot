@@ -15,6 +15,7 @@ public class Autonomous implements Component
         ReverseShoot,
         CenterCell,
         Trench,
+        TrenchLateral,
         EnnemyTrench
     }
 
@@ -54,6 +55,7 @@ public class Autonomous implements Component
             break;
 
             case Trench:
+            case TrenchLateral:
             DoTrench();
             break;
 
@@ -155,7 +157,10 @@ public class Autonomous implements Component
         }
         else if(_currentTime <= 6)
         {
-            Robot.SwerveDrive.OverrideHorizontalAxis(1);
+            if(_mode == AutonomousMode.TrenchLateral)
+            {
+                Robot.SwerveDrive.OverrideHorizontalAxis(1);
+            }
             Robot.Intake.OverrideIntake(-1);
         }
         else if(_currentTime <= 14.5)

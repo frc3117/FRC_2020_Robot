@@ -45,6 +45,8 @@ public class InputManager
         Input.CreateButton("ClimberUp", 0, 8);
         Input.CreateButton("ClimberDown", 0, 7);
 
+        Input.CreateButton("Temp", 0, 5);
+
         _allButton = Input.GetAllButton();
         for (String key : _allButton)
         {
