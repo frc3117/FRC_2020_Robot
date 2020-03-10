@@ -17,7 +17,6 @@ public class Leds implements Component {
     private HashMap<String, ColorCycle> _cycle;
     private double _startTime;
     private int _currentCycleIndex = 0;
-    private boolean _isCycle = false;
 
     public Leds(int greenChannel, int blueChannel, int redChannel) {
         green = SolenoidValve.CreateSingle(greenChannel, 1);

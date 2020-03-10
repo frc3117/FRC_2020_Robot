@@ -28,6 +28,37 @@ public class Mathf
     public final static double FEET_2_METER = 0.3048;
 
     /**
+     * Round the current number to the closest base
+     * @param value The number to round
+     * @param base The base to round the number to
+     * @return The current number to the closest base
+     */
+    public static double RoundTo(double value, double base)
+    {
+        return Math.round(value / base) * base;
+    }
+    /**
+     * Floor the current number to the closest base
+     * @param value The number to round
+     * @param base The base to round the number to
+     * @return The current number to the closest base
+    */
+    public static double FloorTo(double value, double base)
+    {
+        return Math.floor(value / base) * base;
+    }
+    /**
+     * Ceil the current number to the closest base
+     * @param value The number to round
+     * @param base The base to round the number to
+     * @return The current number to the closest base
+     */
+    public static double CeilTo(double value, double base)
+    {
+        return Math.ceil(value / base) * base;
+    }
+
+    /**
      * Force your value to stay betwen the min and the max value
      * @param value The value to clamp
      * @param min The min value
