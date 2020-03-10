@@ -1,4 +1,5 @@
 package frc.robot.Component;
+
 import java.util.HashMap;
 import java.util.Random;
 
@@ -6,6 +7,9 @@ import frc.robot.Component.Data.SolenoidValve;
 import frc.robot.Interface.Component;
 import frc.robot.Math.Timer;
 
+/**
+ * The LED controller
+ */
 public class Leds implements Component {
     private SolenoidValve green;
     private SolenoidValve blue;
@@ -31,6 +35,12 @@ public class Leds implements Component {
         _cycle = new HashMap<String, ColorCycle>();
     }
 
+    /**
+     * Set the new color of the led strip
+     * @param color The new color
+     * @param priority The priority of the new color
+     * @param newPriority The priority to keep in memory
+     */
     public void SetColor(String color, Integer priority, Integer newPriority) {
         if (priority >= _priority) {
             _priority = newPriority;
@@ -44,6 +54,11 @@ public class Leds implements Component {
         }
     }
 
+    /**
+     * Add a new color cycle
+     * @param CycleName The name of the color cycle
+     * @param Cycle The new color cycle
+     */
     public void AddColorCycle(String CycleName, String Cycle)
     {
         if(_cycle.containsKey(CycleName))
