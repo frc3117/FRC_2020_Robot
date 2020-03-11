@@ -14,6 +14,7 @@ import frc.robot.Component.Data.InputManager;
 import frc.robot.Component.Data.LimeLightPosition;
 import frc.robot.Component.Data.RobotOdometry;
 import frc.robot.Component.Data.WheelData;
+import frc.robot.Component.Leds.Mode;
 import frc.robot.Component.Swerve.ShifterMode;
 import frc.robot.Math.PID;
 import frc.robot.Math.Timer;
@@ -80,7 +81,7 @@ public class Robot extends TimedRobot{
     Thrower = new BallThrower(500, 3900);
     Intake = new BallIntake(6, 6, 7, 2, 3);
 
-    Leds = new Leds(0, 1, 2);
+    Leds = new Leds(0, 1, 2, Mode.Solenoid);
 
     Climber = new Climber(14);
 
