@@ -43,14 +43,16 @@ public class ClimbingLED implements Component
 
     public void DoSystem()
     {
+        if(!_isAnimation)
+            return;
+
         if((frc.robot.Math.Timer.GetCurrentTime() - _startTime) >= (_count) * _time)
         {
             _isAnimation = false;
-            Robot.Leds.SetColor("random", 101, 100);
-        }
-
-        if(!_isAnimation)
+            Robot.Leds.SetColor("random", 101, 0);
+    
             return;
+        }
 
         double currentCycle = (frc.robot.Math.Timer.GetCurrentTime() - _startTime) % _time;
 

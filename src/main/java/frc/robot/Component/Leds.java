@@ -26,13 +26,13 @@ public class Leds implements Component {
         green = SolenoidValve.CreateSingle(greenChannel, 1);
         blue = SolenoidValve.CreateSingle(blueChannel, 1);
         red = SolenoidValve.CreateSingle(redChannel, 1);
+    
+        _cycle = new HashMap<String, ColorCycle>();
     }
 
     public void Init() {
         _color = "off";
         _priority = 0;
-
-        _cycle = new HashMap<String, ColorCycle>();
     }
 
     /**
@@ -93,12 +93,12 @@ public class Leds implements Component {
 
             if(current.Time[_currentCycleIndex] <= Timer.GetCurrentTime() - _startTime)
             {
-                if(_currentCycleIndex++ == current.Time.length)
+                if(++_currentCycleIndex == current.Time.length)
                 {
                     _currentCycleIndex = 0;
                 }
 
-                _startTime = 0;
+                _startTime = Timer.GetCurrentTime();
             }
 
             CurrentColor = current.Color[_currentCycleIndex];
