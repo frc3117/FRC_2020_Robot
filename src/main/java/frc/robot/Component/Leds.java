@@ -42,24 +42,13 @@ public class Leds implements Component {
         _cycle = new HashMap<String, ColorCycle>();
         _mode = mode;
 
+        ColorList = new HashMap<String, Color>();
+
         if(mode == Mode.Solenoid)
         {
             green = SolenoidValve.CreateSingle(greenChannel, 1);
             blue = SolenoidValve.CreateSingle(blueChannel, 1);
             red = SolenoidValve.CreateSingle(redChannel, 1);
-        }
-        else
-        {
-            greenPWM = new PWM(greenChannel);
-            bluePWM = new PWM(blueChannel);
-            redPWM = new PWM(redChannel);
-        }
-
-        ColorList = new HashMap<String, Color>();
-
-        if(_mode == Mode.Solenoid)
-        {
-            _color = new Color(false, false, false);
 
             //Default color in the list
             ColorList.put("white", new Color(true, true, true));
@@ -70,9 +59,16 @@ public class Leds implements Component {
         }
         else
         {
-            _color = new Color(0, 0, 0);
+            greenPWM = new PWM(greenChannel);
+            bluePWM = new PWM(blueChannel);
+            redPWM = new PWM(redChannel);
 
             //Default color in the list
+            ColorList.put("white", new Color(255, 255, 255));
+
+            ColorList.put("red", new Color(255, 0, 0));
+            ColorList.put("green", new Color(0, 255, 0));
+            ColorList.put("blue", new Color(0, 0, 255));
         }
     }
 
